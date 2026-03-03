@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-9: Support Tickets | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .filter-bar select,
+    .filter-bar input {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      background: #fff;
+    }
+    .filter-bar select:focus,
+    .filter-bar input:focus {
+      border-color: var(--primary);
+    }
+    .ticket-detail {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 20px;
+    }
+    .ticket-detail-main {
+      min-width: 0;
+    }
+    .ticket-detail-sidebar {
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      height: fit-content;
+    }
+    .ticket-detail-sidebar .sidebar-item {
+      margin-bottom: 14px;
+    }
+    .ticket-detail-sidebar .sidebar-item .sidebar-item-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 2px;
+    }
+    .ticket-detail-sidebar .sidebar-item .sidebar-item-value {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .reply-box {
+      margin-top: 16px;
+    }
+    .reply-box textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      min-height: 80px;
+      resize: vertical;
+      outline: none;
+    }
+    .reply-box textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .reply-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .internal-notes {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+    .status-assignment-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding: 14px;
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .status-assignment-bar .form-group {
+      margin-bottom: 0;
+    }
+    .status-assignment-bar select {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      background: #fff;
+    }
+    .attachment-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f3f4f6;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .attachment-link:hover {
+      background: #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html" class="active"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Support Tickets</h1>
+      <p class="page-subtitle">Manage tenant-raised support issues</p>
+
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat-box" style="border-left: 3px solid var(--info);">
+          <div class="stat-value" style="color: var(--info);">14</div>
+          <div class="stat-label">Open Tickets</div>
+        </div>
+        <div class="stat-box" style="border-left: 3px solid var(--warning);">
+          <div class="stat-value" style="color: var(--warning);">8</div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-box" style="border-left: 3px solid var(--danger);">
+          <div class="stat-value" style="color: var(--danger);">3</div>
+          <div class="stat-label">Unresolved &gt;48h</div>
+        </div>
+        <div class="stat-box" style="border-left: 3px solid var(--success);">
+          <div class="stat-value" style="color: var(--success);">18h</div>
+          <div class="stat-label">Avg Resolution</div>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <select>
+          <option>All Status</option>
+          <option>Open</option>
+          <option>In Progress</option>
+          <option>Awaiting Tenant</option>
+          <option>Resolved</option>
+          <option>Closed</option>
+        </select>
+        <select>
+          <option>All Priority</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+          <option>Critical</option>
+        </select>
+        <select>
+          <option>All Category</option>
+          <option>Billing</option>
+          <option>Technical</option>
+          <option>Feature Request</option>
+          <option>Account Access</option>
+          <option>General</option>
+        </select>
+        <select>
+          <option>All Assigned</option>
+          <option>Unassigned</option>
+          <option>John Admin</option>
+          <option>Amy Admin</option>
+        </select>
+        <select>
+          <option>All Ages</option>
+          <option>&lt; 24h</option>
+          <option>24&ndash;48h</option>
+          <option>&gt; 48h</option>
+          <option>&gt; 7 days</option>
+        </select>
+        <input type="text" placeholder="Search tenant..." style="width: 160px;">
+        <input type="date" title="Date From">
+        <input type="date" title="Date To">
+        <button class="btn btn-primary btn-sm">Filter</button>
+      </div>
+
+      <!-- Tickets Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Tenant / Company</th>
+              <th>Subject</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Raised By</th>
+              <th>Date Raised</th>
+              <th>Age</th>
+              <th>Assigned To</th>
+              <th>Last Updated</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260301-0001</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">BrightFlow HVAC</a></td>
+              <td>Unable to generate invoice PDF</td>
+              <td>Technical</td>
+              <td><span class="badge badge-critical">Critical</span></td>
+              <td><span class="badge badge-open">Open</span></td>
+              <td>Mark Thompson</td>
+              <td>Mar 1</td>
+              <td>8h</td>
+              <td style="color: var(--danger); font-weight: 500;">Unassigned</td>
+              <td>8h ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                  <button class="btn btn-outline btn-sm">Assign</button>
+                  <button class="btn btn-outline btn-sm">Reply</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 2 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260228-0002</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">QuickFix Plumbing</a></td>
+              <td>Billing charged twice this month</td>
+              <td>Billing</td>
+              <td><span class="badge badge-high">High</span></td>
+              <td><span class="badge badge-inprogress">In Progress</span></td>
+              <td>Sarah Miller</td>
+              <td>Feb 28</td>
+              <td>2d</td>
+              <td>John Admin</td>
+              <td>4h ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                  <button class="btn btn-outline btn-sm">Reply</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 3 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260227-0003</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">ElectroPro Services</a></td>
+              <td>Request: Bulk lead import feature</td>
+              <td>Feature Request</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+              <td><span class="badge badge-open">Open</span></td>
+              <td>Tom Chen</td>
+              <td>Feb 27</td>
+              <td>3d</td>
+              <td style="color: var(--danger); font-weight: 500;">Unassigned</td>
+              <td>3d ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                  <button class="btn btn-outline btn-sm">Assign</button>
+                  <button class="btn btn-outline btn-sm">Reply</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 4 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260225-0004</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">RoofMaster Inc</a></td>
+              <td>Cannot login after password change</td>
+              <td>Account Access</td>
+              <td><span class="badge badge-high">High</span></td>
+              <td><span class="badge badge-resolved">Resolved</span></td>
+              <td>Dave Wilson</td>
+              <td>Feb 25</td>
+              <td>5d</td>
+              <td>Amy Admin</td>
+              <td>1d ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                  <button class="btn btn-outline btn-sm">Close</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 5 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260220-0005</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">CoolAir Solutions</a></td>
+              <td>How to add more users?</td>
+              <td>General</td>
+              <td><span class="badge badge-low">Low</span></td>
+              <td><span class="badge badge-closed">Closed</span></td>
+              <td>Amy Lee</td>
+              <td>Feb 20</td>
+              <td>10d</td>
+              <td>John Admin</td>
+              <td>5d ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 6 -->
+            <tr>
+              <td style="font-family: monospace; font-weight: 600; font-size: 12px;">TKT-20260301-0006</td>
+              <td><a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">BrightFlow HVAC</a></td>
+              <td>Floor plan tool not loading</td>
+              <td>Technical</td>
+              <td><span class="badge badge-medium">Medium</span></td>
+              <td><span class="badge badge-open">Open</span></td>
+              <td>Mark Thompson</td>
+              <td>Mar 1</td>
+              <td>4h</td>
+              <td>Amy Admin</td>
+              <td>2h ago</td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View</button>
+                  <button class="btn btn-outline btn-sm">Reply</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Ticket Detail Card -->
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+          <div>
+            Ticket Detail &mdash; <span style="font-family: monospace;">TKT-20260301-0001</span>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span class="badge badge-open">Open</span>
+            <span class="badge badge-critical">Critical</span>
+          </div>
+        </div>
+
+        <div class="ticket-detail">
+          <!-- Main Content -->
+          <div class="ticket-detail-main">
+            <!-- Meta -->
+            <div style="font-size: 12px; color: var(--text-light); margin-bottom: 14px;">
+              Created by <strong style="color: var(--text);">Mark Thompson</strong> &bull; Mar 1, 2026 &bull;
+              Tenant: <a href="sa4-tenant-detail.html" style="color: var(--primary); text-decoration: none; font-weight: 500;">BrightFlow HVAC</a>
+            </div>
+
+            <!-- Description -->
+            <div style="background: #f8f9fb; padding: 14px; border-radius: 8px; font-size: 13px; line-height: 1.6; margin-bottom: 14px;">
+              When I try to generate an invoice PDF for Job JOB-0001, the system returns a blank page. I've tried multiple browsers. This is urgent as I need to send the invoice to my client today.
+            </div>
+
+            <!-- Attachments -->
+            <div style="margin-bottom: 20px;">
+              <div style="font-size: 12px; font-weight: 600; margin-bottom: 6px;">Attachments</div>
+              <a href="#" class="attachment-link">&#128206; screenshot_error.png (245 KB)</a>
+            </div>
+
+            <!-- Conversation Thread -->
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Conversation</div>
+            <div class="thread">
+              <div class="thread-message tenant-msg">
+                <div class="msg-header">Mark Thompson &bull; Mar 1, 09:00</div>
+                Please help, this is blocking my business...
+              </div>
+              <div class="thread-message admin-msg">
+                <div class="msg-header">Amy Admin &bull; Mar 1, 10:30</div>
+                Hi Mark, I'm looking into this. Can you confirm which browser you're using?
+              </div>
+              <div class="thread-message tenant-msg">
+                <div class="msg-header">Mark Thompson &bull; Mar 1, 11:15</div>
+                Chrome version 120. Also tried Firefox.
+              </div>
+            </div>
+
+            <!-- Reply Box -->
+            <div class="reply-box">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Reply</div>
+              <textarea placeholder="Type your reply..."></textarea>
+              <div class="reply-actions">
+                <button class="btn btn-outline btn-sm">Attach File</button>
+                <button class="btn btn-primary btn-sm">Send Reply</button>
+              </div>
+            </div>
+
+            <!-- Internal Notes -->
+            <div class="internal-notes">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px;">Internal Notes <span style="font-size: 11px; font-weight: 400; color: var(--text-light);">(not visible to tenant)</span></div>
+              <textarea style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-family: inherit; min-height: 60px; resize: vertical; outline: none;" placeholder="Internal notes (not visible to tenant)..."></textarea>
+              <div style="margin-top: 8px;">
+                <button class="btn btn-outline btn-sm">Save Note</button>
+              </div>
+            </div>
+
+            <!-- Status / Assignment Bar -->
+            <div class="status-assignment-bar">
+              <div class="form-group">
+                <label style="font-size: 11px; margin-bottom: 2px;">Status</label>
+                <select>
+                  <option selected>Open</option>
+                  <option>In Progress</option>
+                  <option>Awaiting Tenant</option>
+                  <option>Resolved</option>
+                  <option>Closed</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 11px; margin-bottom: 2px;">Assigned To</label>
+                <select>
+                  <option>Unassigned</option>
+                  <option>John Admin</option>
+                  <option>Amy Admin</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label style="font-size: 11px; margin-bottom: 2px;">Priority</label>
+                <select>
+                  <option>Low</option>
+                  <option>Medium</option>
+                  <option>High</option>
+                  <option selected>Critical</option>
+                </select>
+              </div>
+              <button class="btn btn-primary btn-sm">Update</button>
+            </div>
+
+          </div>
+
+          <!-- Sidebar Info Panel -->
+          <div class="ticket-detail-sidebar">
+            <div style="font-size: 13px; font-weight: 700; margin-bottom: 14px;">Tenant Info</div>
+            <div class="sidebar-item">
+              <div class="sidebar-item-label">Plan</div>
+              <div class="sidebar-item-value"><span class="plan-badge plan-gold">Gold</span></div>
+            </div>
+            <div class="sidebar-item">
+              <div class="sidebar-item-label">Status</div>
+              <div class="sidebar-item-value"><span class="badge badge-active">Active</span></div>
+            </div>
+            <div class="sidebar-item">
+              <div class="sidebar-item-label">Storage</div>
+              <div class="sidebar-item-value">3.2 / 5 GB</div>
+            </div>
+            <div class="sidebar-item">
+              <div class="sidebar-item-label">Last Login</div>
+              <div class="sidebar-item-value">2 hrs ago</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html"><strong>SA-9. Support</strong></a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

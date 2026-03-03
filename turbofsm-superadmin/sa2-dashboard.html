@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-2: Dashboard | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html" class="active"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle">Platform operational overview</p>
+
+      <!-- TENANT HEALTH KPIs -->
+      <div class="kpi-section-title">TENANT HEALTH</div>
+      <div class="kpi-grid">
+        <div class="kpi-card accent-primary">
+          <div class="kpi-value">342</div>
+          <div class="kpi-label">Total Tenants</div>
+        </div>
+        <div class="kpi-card accent-success">
+          <div class="kpi-value">285</div>
+          <div class="kpi-label">Active Tenants</div>
+        </div>
+        <div class="kpi-card accent-info">
+          <div class="kpi-value">38</div>
+          <div class="kpi-label">Trial Tenants</div>
+        </div>
+        <div class="kpi-card accent-danger">
+          <div class="kpi-value">12</div>
+          <div class="kpi-label">Suspended Tenants</div>
+        </div>
+        <div class="kpi-card accent-success">
+          <div class="kpi-value">8</div>
+          <div class="kpi-label">Trial Conversions MTD</div>
+          <div class="kpi-delta up">+23% vs last month</div>
+        </div>
+        <div class="kpi-card accent-info">
+          <div class="kpi-value">15</div>
+          <div class="kpi-label">New Sign-ups MTD</div>
+        </div>
+        <div class="kpi-card accent-danger">
+          <div class="kpi-value">3</div>
+          <div class="kpi-label">Churned MTD</div>
+          <div class="kpi-delta down">-2 vs last month</div>
+        </div>
+      </div>
+
+      <!-- REVENUE KPIs -->
+      <div class="kpi-section-title">REVENUE</div>
+      <div class="kpi-grid">
+        <div class="kpi-card accent-primary">
+          <div class="kpi-value">$34,580</div>
+          <div class="kpi-label">MRR</div>
+        </div>
+        <div class="kpi-card accent-primary">
+          <div class="kpi-value">$414,960</div>
+          <div class="kpi-label">ARR</div>
+        </div>
+        <div class="kpi-card accent-info">
+          <div class="kpi-value">$121.33</div>
+          <div class="kpi-label">ARPU</div>
+        </div>
+        <div class="kpi-card accent-success">
+          <div class="kpi-value">$28,450</div>
+          <div class="kpi-label">Payments Received MTD</div>
+        </div>
+        <div class="kpi-card accent-danger">
+          <div class="kpi-value">$2,340</div>
+          <div class="kpi-label">Payments Failed MTD</div>
+        </div>
+        <div class="kpi-card accent-warning">
+          <div class="kpi-value">$5,890</div>
+          <div class="kpi-label">Outstanding Balance</div>
+        </div>
+      </div>
+
+      <!-- OPERATIONAL KPIs -->
+      <div class="kpi-section-title">OPERATIONAL</div>
+      <div class="kpi-grid">
+        <div class="kpi-card accent-warning">
+          <div class="kpi-value">14</div>
+          <div class="kpi-label">Open Support Tickets</div>
+        </div>
+        <div class="kpi-card accent-danger">
+          <div class="kpi-value">3</div>
+          <div class="kpi-label">Tickets Unresolved &gt;48h</div>
+        </div>
+        <div class="kpi-card accent-warning">
+          <div class="kpi-value">4</div>
+          <div class="kpi-label">Accounts Pending Suspension</div>
+        </div>
+        <div class="kpi-card accent-info">
+          <div class="kpi-value">1.2 TB / 5 TB</div>
+          <div class="kpi-label">Storage Used</div>
+        </div>
+        <div class="kpi-card accent-primary">
+          <div class="kpi-value">6</div>
+          <div class="kpi-label">Active Coupons</div>
+        </div>
+      </div>
+
+      <!-- Wireframe Note -->
+      <div class="wireframe-note">
+        <strong>Wireframe Note:</strong> All KPI cards are clickable &mdash; they navigate to their respective detail screens with pre-applied filters.
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html"><strong>SA-2. Dashboard</strong></a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

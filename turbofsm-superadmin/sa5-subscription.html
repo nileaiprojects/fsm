@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-5: Subscription &amp; Plan Management | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .read-only-field {
+      padding: 8px 12px;
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .input-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .input-group .form-control {
+      flex: 1;
+    }
+    .form-note {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 3px;
+      font-style: italic;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .stepper button {
+      width: 32px;
+      height: 34px;
+      border: none;
+      background: #f8f9fb;
+      font-size: 16px;
+      cursor: pointer;
+      color: var(--text);
+    }
+    .stepper button:hover {
+      background: #e5e7eb;
+    }
+    .stepper .stepper-value {
+      width: 48px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 600;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html" class="active"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="sa3-tenants.html">Tenant Management</a> &gt; <a href="sa4-tenant-detail.html">BrightFlow HVAC</a> &gt; Subscription Management
+      </div>
+
+      <h1 class="page-title">Subscription &amp; Plan Management</h1>
+      <p class="page-subtitle">Modify tenant subscription, pricing, and add-ons</p>
+
+      <!-- Plan Change Card -->
+      <div class="card">
+        <div class="card-title">Plan Change</div>
+
+        <div class="form-group">
+          <label>Current Plan</label>
+          <div class="read-only-field">
+            <span class="plan-badge plan-gold">Gold</span> &mdash; $130/mo
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>New Plan</label>
+          <select class="form-control">
+            <option>Starter &mdash; Free</option>
+            <option>Basic &mdash; $60/mo</option>
+            <option>Super &mdash; $100/mo</option>
+            <option selected>Gold &mdash; $130/mo</option>
+            <option>Platinum &mdash; $200/mo</option>
+            <option>Platinum Pro &mdash; $400/mo</option>
+          </select>
+          <div class="wireframe-note" style="margin-top: 8px; margin-bottom: 0;">
+            <strong>Wireframe Note:</strong> Cannot downgrade below current usage. System validates user count, storage, and feature dependencies before allowing plan change.
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Effective Date</label>
+            <input type="date" class="form-control" value="2026-03-02">
+          </div>
+          <div class="form-group">
+            <label>Proration Handling</label>
+            <select class="form-control">
+              <option selected>Prorate credit</option>
+              <option>No proration</option>
+              <option>Manual adjustment</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Apply Coupon Code</label>
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="Enter coupon code...">
+            <button class="btn btn-outline btn-sm">Validate</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Override Price (Admin)</label>
+          <div class="input-group">
+            <span style="font-size: 16px; font-weight: 600; color: var(--text-light);">$</span>
+            <input type="number" class="form-control" placeholder="0.00" step="0.01">
+          </div>
+          <div class="form-note">Super Admin only &mdash; requires reason. Leave blank to use standard pricing.</div>
+        </div>
+
+        <div class="form-group">
+          <label>New Monthly Price</label>
+          <div class="read-only-field" style="font-weight: 700; font-size: 16px; color: var(--primary);">
+            $130.00
+          </div>
+          <div class="form-note">Calculated based on plan, add-ons, coupons, and overrides.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" checked>
+            Notify Tenant by Email
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label>Internal Note</label>
+          <textarea class="form-control" placeholder="Add internal notes about this change..."></textarea>
+        </div>
+
+        <button class="btn btn-primary">Save Changes</button>
+      </div>
+
+      <!-- Add-on Management Card -->
+      <div class="card">
+        <div class="card-title">Add-on Management</div>
+
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Add-on</th>
+                <th>Status</th>
+                <th>Price</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 500;">AI Lead Analysis</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                    <span style="font-size: 12px; color: var(--success); font-weight: 600;">ON</span>
+                  </div>
+                </td>
+                <td>$30/mo</td>
+                <td><button class="btn-link" style="font-size: 12px;">Enable Free</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Floor Plan Creation</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch"></div>
+                    <span style="font-size: 12px; color: var(--text-light);">OFF</span>
+                  </div>
+                </td>
+                <td>$40/mo</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Virtual Assistant</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch"></div>
+                    <span style="font-size: 12px; color: var(--text-light);">OFF</span>
+                  </div>
+                </td>
+                <td>$60/mo</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Additional Storage</td>
+                <td>
+                  <div class="stepper">
+                    <button>-</button>
+                    <div class="stepper-value">0</div>
+                    <button>+</button>
+                  </div>
+                  <span style="font-size: 12px; color: var(--text-light); margin-left: 8px;">x 10GB</span>
+                </td>
+                <td>$10/mo per 10GB</td>
+                <td>&mdash;</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Single User Add-on</td>
+                <td>
+                  <div class="stepper">
+                    <button>-</button>
+                    <div class="stepper-value">0</div>
+                    <button>+</button>
+                  </div>
+                  <span style="font-size: 12px; color: var(--text-light); margin-left: 8px;">extra</span>
+                </td>
+                <td>$10/mo per user</td>
+                <td>&mdash;</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Grace Period Configuration Card -->
+      <div class="card">
+        <div class="card-title">Grace Period Configuration</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Payment Grace Period (days)</label>
+            <input type="number" class="form-control" value="7" min="1" max="30">
+            <div class="form-note">Range: 1&ndash;30 days. Default: 7 days.</div>
+          </div>
+          <div class="form-group">
+            <label>Trial Extension (days)</label>
+            <input type="number" class="form-control" placeholder="0" min="1" max="30">
+            <div class="form-note">Range: 1&ndash;30 days.</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Suspension Override Expiry</label>
+            <input type="date" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Data Retention After Deletion (days)</label>
+            <input type="number" class="form-control" value="30">
+            <div class="form-note">Default: 30 days.</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary">Save Grace Period Settings</button>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html"><strong>SA-5. Subscription</strong></a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

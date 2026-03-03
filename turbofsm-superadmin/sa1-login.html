@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-1: Login / Authentication | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+    .auth-logo .logo-icon {
+      width: 40px; height: 40px;
+      background: var(--primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px; font-weight: 800;
+      color: #fff;
+    }
+    .auth-logo .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .auth-domain {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-light);
+      margin-bottom: 24px;
+    }
+    .password-wrapper {
+      position: relative;
+    }
+    .password-wrapper .toggle-password {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--text-light);
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .mfa-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .mfa-section h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+    .mfa-section .mfa-subtitle {
+      font-size: 12px;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 18px;
+    }
+    .otp-inputs {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .otp-inputs input {
+      width: 44px; height: 50px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      font-family: inherit;
+    }
+    .otp-inputs input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .auth-notes {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .auth-notes ul {
+      list-style: none;
+      padding: 0;
+    }
+    .auth-notes ul li {
+      font-size: 11px;
+      color: var(--text-light);
+      padding: 3px 0;
+      padding-left: 16px;
+      position: relative;
+    }
+    .auth-notes ul li::before {
+      content: '~';
+      position: absolute;
+      left: 0;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .forgot-link {
+      display: block;
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .forgot-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<div class="auth-wrapper">
+  <div class="auth-box">
+
+    <!-- Logo -->
+    <div class="auth-logo">
+      <div class="logo-icon">SA</div>
+      <div class="logo-text">TurboFSM Super Admin</div>
+    </div>
+    <div class="auth-domain">admin.turbofsm.com</div>
+
+    <!-- Sign In Form -->
+    <h2>Sign In</h2>
+    <div class="subtitle">Access the Super Admin portal</div>
+
+    <div class="form-group">
+      <label class="required">Email</label>
+      <input type="email" class="form-control" placeholder="admin@turbofsm.com">
+    </div>
+
+    <div class="form-group">
+      <label class="required">Password</label>
+      <div class="password-wrapper">
+        <input type="password" class="form-control" placeholder="Enter your password">
+        <button class="toggle-password" title="Show/Hide password">&#128065;</button>
+      </div>
+    </div>
+
+    <a href="sa2-dashboard.html" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px; text-decoration: none; display: inline-block; text-align: center;">Sign In</a>
+
+    <!-- MFA Section -->
+    <div class="mfa-section">
+      <h3>Multi-Factor Authentication</h3>
+      <div class="mfa-subtitle">Enter the 6-digit code from your authenticator app</div>
+
+      <div class="otp-inputs">
+        <input type="text" maxlength="1" value="4">
+        <input type="text" maxlength="1" value="7">
+        <input type="text" maxlength="1" value="2">
+        <input type="text" maxlength="1" value="">
+        <input type="text" maxlength="1" value="">
+        <input type="text" maxlength="1" value="">
+      </div>
+
+      <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 10px;">Verify</button>
+    </div>
+
+    <!-- Notes -->
+    <div class="auth-notes">
+      <ul>
+        <li>TOTP MFA required (Google Authenticator / Authy)</li>
+        <li>Account locked after 5 failed attempts</li>
+        <li>Session timeout: 4 hours of inactivity</li>
+      </ul>
+    </div>
+
+    <!-- Forgot Password -->
+    <a href="#" class="forgot-link">Forgot Password?</a>
+
+    <!-- Wireframe Note -->
+    <div class="wireframe-note" style="margin-top: 20px;">
+      <strong>Wireframe Note:</strong> No OTP-only login. Password + TOTP MFA mandatory. All actions logged to Audit Log.
+    </div>
+
+  </div>
+</div>
+
+<!-- Screen Navigation Footer -->
+<div class="screen-nav">
+    <strong>Super Admin Wireframe Navigation:</strong><br><br>
+    <a href="sa1-login.html"><strong>SA-1. Login</strong></a>
+    <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+    <a href="sa3-tenants.html">SA-3. Tenants</a>
+    <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+    <a href="sa5-subscription.html">SA-5. Subscription</a>
+    <a href="sa6-payments.html">SA-6. Payments</a>
+    <a href="sa7-coupons.html">SA-7. Coupons</a>
+    <a href="sa8-revenue.html">SA-8. Revenue</a>
+    <a href="sa9-support.html">SA-9. Support</a>
+    <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+    <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+    <a href="sa12-settings.html">SA-12. Settings</a>
+  </div>
+
+</body>
+</html>

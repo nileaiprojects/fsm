@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-8: Revenue &amp; Analytics | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .kpi-large {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .kpi-large-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .kpi-large-card .kpi-large-value {
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .kpi-large-card .kpi-large-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+    .kpi-large-card .kpi-large-delta {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+    .kpi-large-card .kpi-large-delta.up { color: var(--success); }
+    .kpi-large-card .kpi-large-delta.down { color: var(--danger); }
+    .stats-row-6 {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-mini {
+      text-align: center;
+      padding: 14px 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .stat-mini .stat-mini-value {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .stat-mini .stat-mini-label {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .export-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html" class="active"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Revenue &amp; Analytics</h1>
+      <p class="page-subtitle">SaaS metrics, churn analysis, and forecasting</p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">Overview</div>
+        <div class="tab">MRR Movement</div>
+        <div class="tab">Churn Analysis</div>
+        <div class="tab">Growth Metrics</div>
+        <div class="tab">Forecasting</div>
+        <div class="tab">Payment Analytics</div>
+      </div>
+
+      <!-- ==================== OVERVIEW TAB ==================== -->
+
+      <!-- 4 Large KPI Cards -->
+      <div class="kpi-large">
+        <div class="kpi-large-card" style="border-left: 4px solid var(--primary);">
+          <div class="kpi-large-value">$34,580</div>
+          <div class="kpi-large-label">Monthly Recurring Revenue (MRR)</div>
+          <div class="kpi-large-delta up">+5.2% MoM</div>
+        </div>
+        <div class="kpi-large-card" style="border-left: 4px solid var(--success);">
+          <div class="kpi-large-value">$414,960</div>
+          <div class="kpi-large-label">Annual Recurring Revenue (ARR)</div>
+          <div class="kpi-large-delta up">+5.2%</div>
+        </div>
+        <div class="kpi-large-card" style="border-left: 4px solid var(--info);">
+          <div class="kpi-large-value">$121.33</div>
+          <div class="kpi-large-label">Average Revenue Per User (ARPU)</div>
+          <div class="kpi-large-delta up">+$3.20</div>
+        </div>
+        <div class="kpi-large-card" style="border-left: 4px solid var(--warning);">
+          <div class="kpi-large-value">$2,426.60</div>
+          <div class="kpi-large-label">Lifetime Value (LTV)</div>
+          <div class="kpi-large-delta up">&nbsp;</div>
+        </div>
+      </div>
+
+      <!-- Stats Row -->
+      <div class="stats-row-6">
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--success);">108%</div>
+          <div class="stat-mini-label">Net Revenue Retention</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--primary);">62%</div>
+          <div class="stat-mini-label">Trial Conversion</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--success);">$2,450</div>
+          <div class="stat-mini-label">Expansion MRR</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--danger);">-$680</div>
+          <div class="stat-mini-label">Contraction MRR</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--warning);">6.8%</div>
+          <div class="stat-mini-label">Payment Failure Rate</div>
+        </div>
+        <div class="stat-mini">
+          <div class="stat-mini-value" style="color: var(--info);">73%</div>
+          <div class="stat-mini-label">Dunning Success Rate</div>
+        </div>
+      </div>
+
+      <!-- ==================== MRR MOVEMENT ==================== -->
+
+      <div class="card">
+        <div class="card-title">MRR Movement &mdash; Waterfall</div>
+
+        <div class="waterfall-chart">
+          <!-- Starting MRR -->
+          <div class="waterfall-bar">
+            <div class="bar-value">$32,800</div>
+            <div class="bar-block" style="height: 160px; background: var(--success);"></div>
+            <div class="bar-label">Starting MRR</div>
+          </div>
+          <!-- New MRR -->
+          <div class="waterfall-bar">
+            <div class="bar-value">+$2,100</div>
+            <div class="bar-block" style="height: 40px; background: var(--success);"></div>
+            <div class="bar-label">New MRR</div>
+          </div>
+          <!-- Expansion -->
+          <div class="waterfall-bar">
+            <div class="bar-value">+$2,450</div>
+            <div class="bar-block" style="height: 48px; background: var(--success);"></div>
+            <div class="bar-label">Expansion</div>
+          </div>
+          <!-- Contraction -->
+          <div class="waterfall-bar">
+            <div class="bar-value">-$680</div>
+            <div class="bar-block" style="height: 14px; background: var(--danger);"></div>
+            <div class="bar-label">Contraction</div>
+          </div>
+          <!-- Churned -->
+          <div class="waterfall-bar">
+            <div class="bar-value">-$2,090</div>
+            <div class="bar-block" style="height: 40px; background: var(--danger);"></div>
+            <div class="bar-label">Churned</div>
+          </div>
+          <!-- Net MRR -->
+          <div class="waterfall-bar">
+            <div class="bar-value" style="color: var(--primary);">$34,580</div>
+            <div class="bar-block" style="height: 170px; background: var(--primary);"></div>
+            <div class="bar-label"><strong>Net MRR</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== PLAN DISTRIBUTION ==================== -->
+
+      <div class="card">
+        <div class="card-title">Plan Distribution</div>
+
+        <div class="chart-placeholder" style="margin-bottom: 20px;">
+          Pie Chart &mdash; Plan Distribution
+        </div>
+
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Plan</th>
+                <th>Tenants</th>
+                <th>% of Total</th>
+                <th>MRR Contribution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="plan-badge plan-starter">Starter</span></td>
+                <td>38</td>
+                <td>13.3%</td>
+                <td>$0</td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-basic">Basic</span></td>
+                <td>95</td>
+                <td>33.3%</td>
+                <td>$5,700</td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-super">Super</span></td>
+                <td>72</td>
+                <td>25.3%</td>
+                <td>$7,200</td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-gold">Gold</span></td>
+                <td>45</td>
+                <td>15.8%</td>
+                <td>$5,850</td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-platinum">Platinum</span></td>
+                <td>25</td>
+                <td>8.8%</td>
+                <td>$5,000</td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-platinumpro">Platinum Pro</span></td>
+                <td>10</td>
+                <td>3.5%</td>
+                <td>$4,000</td>
+              </tr>
+              <tr style="background: #f8f9fb; font-weight: 700;">
+                <td>Total</td>
+                <td>285</td>
+                <td>100%</td>
+                <td>$27,750</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== FORECASTING ==================== -->
+
+      <div class="card">
+        <div class="card-title">Revenue Forecast &mdash; Next 12 Months</div>
+
+        <div class="chart-placeholder" style="margin-bottom: 20px;">
+          Line Chart &mdash; Projected MRR
+        </div>
+
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Scenario</th>
+                <th>3 Months</th>
+                <th>6 Months</th>
+                <th>12 Months</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 500;">Base Case (Status Quo)</td>
+                <td>$36,200</td>
+                <td>$38,500</td>
+                <td>$42,000</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Growth (+10% MoM)</td>
+                <td>$38,100</td>
+                <td>$45,200</td>
+                <td>$62,800</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Churn Reduction (-50%)</td>
+                <td>$37,400</td>
+                <td>$41,800</td>
+                <td>$50,200</td>
+              </tr>
+              <tr style="background: #f0fdf4; font-weight: 600;">
+                <td>Combined</td>
+                <td>$39,500</td>
+                <td>$48,600</td>
+                <td>$71,400</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Export Buttons -->
+      <div class="export-buttons">
+        <button class="btn btn-outline">MRR Report (CSV)</button>
+        <button class="btn btn-outline">Churn Report (CSV)</button>
+        <button class="btn btn-outline">Revenue Forecast (PDF)</button>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html"><strong>SA-8. Revenue</strong></a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

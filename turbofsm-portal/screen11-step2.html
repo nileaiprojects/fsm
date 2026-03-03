@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Create Estimate (Step 2: Services &amp; Pricing)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="estimate-wizard">
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">&#9889;</div><span>Turbo<span style="color:#818CF8;">FSM</span></span></div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+        <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Leads</a>
+        <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
+        <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
+        <a href="screen10-estimates.html" class="active"><span class="nav-icon">&#128196;</span> Estimates</a>
+        <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
+        <a href="screen13-jobs.html"><span class="nav-icon">&#128736;</span> Jobs Board</a>
+        <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
+        <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoices</a>
+        <a href="screen15-management.html"><span class="nav-icon">&#9881;</span> Management Master</a>
+        <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- ESTIMATE HEADER BAR -->
+      <div class="est-header-bar">
+        <div class="est-header-left">
+          <a href="screen10-estimates.html" class="est-back-btn">&larr;</a>
+          <div>
+            <div class="est-title-group">
+              <span class="est-title">New Estimate <span class="est-id">#EST-208</span></span>
+              <span class="est-badge-draft">Draft</span>
+            </div>
+            <div class="est-meta">
+              <span>&#128100; James Wilson</span>
+              <span>&middot;</span>
+              <span>&#128205; 123 Maple St, Springfield</span>
+            </div>
+          </div>
+        </div>
+        <div class="est-header-actions">
+          <button class="est-save-draft-btn">Save as Draft</button>
+          <a href="screen10-estimates.html" class="est-close-btn">&times;</a>
+        </div>
+      </div>
+
+      <!-- WIZARD PROGRESS: Step 2 Active -->
+      <div class="est-wizard">
+        <div class="est-wizard-step completed">
+          <div class="est-step-circle">&#10003;</div>
+          <div class="est-step-label">Cover Page</div>
+        </div>
+        <div class="est-wizard-connector completed"></div>
+        <div class="est-wizard-step active">
+          <div class="est-step-circle">2</div>
+          <div class="est-step-label">Services &amp; Pricing</div>
+        </div>
+        <div class="est-wizard-connector"></div>
+        <div class="est-wizard-step">
+          <div class="est-step-circle">3</div>
+          <div class="est-step-label">Notes &amp; Terms</div>
+        </div>
+        <div class="est-wizard-connector"></div>
+        <div class="est-wizard-step">
+          <div class="est-step-circle">4</div>
+          <div class="est-step-label">Preview &amp; Send</div>
+        </div>
+      </div>
+
+      <!-- CONTENT: Two-Panel Layout -->
+      <div class="content">
+        <div class="est-panels est-panels--55-45">
+
+          <!-- LEFT PANEL: Service Catalog -->
+          <div class="est-panel-left">
+            <div class="est-card">
+              <input type="text" class="est-search-input" placeholder="Search services, parts, bundles..." style="margin-bottom: 16px; padding-left: 36px;">
+
+              <!-- Tabs -->
+              <div class="est-service-tabs">
+                <div class="est-service-tab active">Services</div>
+                <div class="est-service-tab">Materials</div>
+                <div class="est-service-tab">Bundles</div>
+                <div class="est-service-tab">Gallery</div>
+              </div>
+
+              <!-- Category: HVAC Maintenance -->
+              <div class="est-category-header">
+                <span>HVAC Maintenance</span>
+                <span>&#9660;</span>
+              </div>
+
+              <div class="est-service-item">
+                <div>
+                  <div class="est-service-name">Basic AC Tune-up</div>
+                  <div class="est-service-desc">21-point inspection &amp; cleaning</div>
+                </div>
+                <div class="est-service-price">$149.00</div>
+              </div>
+
+              <div class="est-service-item">
+                <div>
+                  <div class="est-service-name">Premium System Service</div>
+                  <div class="est-service-desc">Deep clean + filter replacement</div>
+                </div>
+                <div class="est-service-price">$249.00</div>
+              </div>
+
+              <div class="est-service-item">
+                <div>
+                  <div class="est-service-name">Duct Cleaning (Per Vent)</div>
+                  <div class="est-service-desc">High pressure vacuum</div>
+                </div>
+                <div class="est-service-price">$35.00</div>
+              </div>
+
+              <!-- Category: Diagnostics & Repair -->
+              <div class="est-category-header">
+                <span>Diagnostics &amp; Repair</span>
+                <span>&#9660;</span>
+              </div>
+
+              <div class="est-service-item">
+                <div>
+                  <div class="est-service-name">Diagnostic Fee (Waived with repair)</div>
+                  <div class="est-service-desc">Standard trip charge</div>
+                </div>
+                <div class="est-service-price">$89.00</div>
+              </div>
+
+              <div class="est-service-item">
+                <div>
+                  <div class="est-service-name">Refrigerant Recharge</div>
+                  <div class="est-service-desc">R-410A system recharge</div>
+                </div>
+                <div class="est-service-price">$275.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL: Line Items Builder -->
+          <div class="est-panel-right">
+
+            <!-- SITE GROUPING HEADER -->
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #e8f0fe; border: 1px solid #bbd0f7; border-radius: 8px; margin-bottom: 12px;">
+              <span style="font-size: 16px;">&#128205;</span>
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 700; color: #1565c0;">Site 1: Downtown Office</div>
+                <div style="font-size: 12px; color: #5a7bb5;">456 Commerce Blvd, Springfield, IL 62704</div>
+              </div>
+              <select style="padding: 4px 10px; border: 1px solid #bbd0f7; border-radius: 4px; font-size: 11px; background: #fff;">
+                <option selected>Downtown Office</option>
+                <option>Warehouse B</option>
+              </select>
+            </div>
+
+            <!-- Services Section -->
+            <div class="est-card">
+              <div class="est-line-items-header">
+                <div class="est-section-title">&#128736; Services</div>
+                <span class="est-item-count">2 items</span>
+              </div>
+              <table class="est-line-items-table">
+                <thead>
+                  <tr>
+                    <th>Item &amp; Description</th>
+                    <th style="width:60px;">Qty</th>
+                    <th style="width:90px;">Cost</th>
+                    <th style="width:90px;">Price</th>
+                    <th style="width:80px;">Total</th>
+                    <th style="width:30px;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="item-name">Basic AC Tune-up</div>
+                      <div class="item-desc">21-point inspection including filter check, coil cleaning, and refrigerant pressure test.</div>
+                    </td>
+                    <td><input value="1" style="width:50px;"></td>
+                    <td><input value="149.00"></td>
+                    <td><input value="149.00"></td>
+                    <td class="item-total">$149.00</td>
+                    <td><button class="est-delete-btn">&#128465;</button></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="item-name">Duct Cleaning (Per Vent)</div>
+                      <div class="item-desc">High pressure vacuum cleaning.</div>
+                    </td>
+                    <td><input value="8" style="width:50px;"></td>
+                    <td><input value="149.00"></td>
+                    <td><input value="35.00"></td>
+                    <td class="item-total">$280.00</td>
+                    <td><button class="est-delete-btn">&#128465;</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="est-add-manual-link">+ Add Manual Item</div>
+            </div>
+
+            <!-- Materials Section -->
+            <div class="est-card">
+              <div class="est-line-items-header">
+                <div class="est-section-title">&#128230; Materials</div>
+                <span class="est-item-count">1 item</span>
+              </div>
+              <table class="est-line-items-table">
+                <thead>
+                  <tr>
+                    <th>Item &amp; Description</th>
+                    <th style="width:60px;">Qty</th>
+                    <th style="width:90px;">Cost</th>
+                    <th style="width:90px;">Price</th>
+                    <th style="width:80px;">Total</th>
+                    <th style="width:30px;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="item-name">MERV 11 Air Filter (20x25x4)</div>
+                    </td>
+                    <td><input value="1" style="width:50px;"></td>
+                    <td><input value="45.00"></td>
+                    <td><input value="45.00"></td>
+                    <td class="item-total">$45.00</td>
+                    <td><button class="est-delete-btn">&#128465;</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="est-add-manual-link">+ Add Manual Item</div>
+            </div>
+
+            <!-- Totals -->
+            <div class="est-card" style="background: #F8FAFC;">
+              <div class="est-summary-card">
+                <div class="summary-row"><span>Subtotal</span><span>$474.00</span></div>
+                <div class="summary-row"><span>Tax (8.25%)</span><span>$39.11</span></div>
+                <div class="summary-row"><span style="font-size:15px;">Total</span><span class="total-value" style="font-size:15px;">$513.11</span></div>
+              </div>
+            </div>
+
+            <!-- SITE 2 GROUPING HEADER -->
+            <div style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; background: #fef3e2; border: 1px solid #f5d5a0; border-radius: 8px; margin-bottom: 12px; margin-top: 20px;">
+              <span style="font-size: 16px;">&#128205;</span>
+              <div style="flex: 1;">
+                <div style="font-size: 14px; font-weight: 700; color: #e65100;">Site 2: Warehouse B</div>
+                <div style="font-size: 12px; color: #bf7530;">789 Industrial Park, Springfield, IL 62705</div>
+              </div>
+              <select style="padding: 4px 10px; border: 1px solid #f5d5a0; border-radius: 4px; font-size: 11px; background: #fff;">
+                <option>Downtown Office</option>
+                <option selected>Warehouse B</option>
+              </select>
+            </div>
+
+            <!-- Site 2: Services Section -->
+            <div class="est-card">
+              <div class="est-line-items-header">
+                <div class="est-section-title">&#128736; Services</div>
+                <span class="est-item-count">1 item</span>
+              </div>
+              <table class="est-line-items-table">
+                <thead>
+                  <tr>
+                    <th>Item &amp; Description</th>
+                    <th style="width:60px;">Qty</th>
+                    <th style="width:90px;">Cost</th>
+                    <th style="width:90px;">Price</th>
+                    <th style="width:80px;">Total</th>
+                    <th style="width:30px;"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="item-name">Refrigerant Recharge</div>
+                      <div class="item-desc">R-410A system recharge for warehouse HVAC unit.</div>
+                    </td>
+                    <td><input value="1" style="width:50px;"></td>
+                    <td><input value="275.00"></td>
+                    <td><input value="275.00"></td>
+                    <td class="item-total">$275.00</td>
+                    <td><button class="est-delete-btn">&#128465;</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="est-add-manual-link">+ Add Manual Item</div>
+            </div>
+
+            <!-- Site 2 Totals -->
+            <div class="est-card" style="background: #FFFAF0;">
+              <div class="est-summary-card">
+                <div class="summary-row"><span>Site 2 Subtotal</span><span>$275.00</span></div>
+                <div class="summary-row"><span>Tax (8.25%)</span><span>$22.69</span></div>
+                <div class="summary-row"><span style="font-size:15px;">Site 2 Total</span><span class="total-value" style="font-size:15px;">$297.69</span></div>
+              </div>
+            </div>
+
+            <!-- GRAND TOTAL (All Sites) -->
+            <div class="est-card" style="background: #F0F7F0; border: 2px solid #c8e6c9;">
+              <div class="est-summary-card">
+                <div class="summary-row" style="font-size: 13px; font-weight: 600;"><span>Site 1: Downtown Office</span><span>$513.11</span></div>
+                <div class="summary-row" style="font-size: 13px; font-weight: 600;"><span>Site 2: Warehouse B</span><span>$297.69</span></div>
+                <div style="border-top: 2px solid #a5d6a7; margin: 8px 0; padding-top: 8px;">
+                  <div class="summary-row"><span style="font-size:16px; font-weight: 700;">Grand Total (All Sites)</span><span class="total-value" style="font-size:16px; font-weight: 700; color: #2e7d32;">$810.80</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step Navigation -->
+            <div class="est-step-footer">
+              <a href="screen11-estimate-form.html" class="est-btn-prev" style="text-decoration:none;">&larr; Back to Cover</a>
+              <div class="est-step-footer-actions">
+                <button class="est-save-draft-btn">Save as Draft</button>
+                <a href="screen11-step3.html" class="est-btn-next" style="text-decoration:none;">Continue to Notes &rarr;</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html">11. Est Step 1</a>
+        <a href="screen11-step2.html"><strong>11-S2. Services</strong></a>
+        <a href="screen11-step3.html">11-S3. Notes</a>
+        <a href="screen11-step4.html">11-S4. Preview</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html">12. Floor Plan</a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

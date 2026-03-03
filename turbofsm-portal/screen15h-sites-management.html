@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Sites / Service Locations</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tenant-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .header-storage { display: flex; align-items: center; gap: 12px; }
+
+    .site-badge-primary {
+      display: inline-block; padding: 2px 8px; background: #e8f0fe; color: #1565c0;
+      border-radius: 10px; font-size: 10px; font-weight: 600;
+    }
+
+    .site-badge-active {
+      display: inline-block; padding: 2px 8px; background: #e8f5e9; color: #2e7d32;
+      border-radius: 10px; font-size: 10px; font-weight: 600;
+    }
+
+    .site-badge-inactive {
+      display: inline-block; padding: 2px 8px; background: #f5f5f5; color: #9e9e9e;
+      border-radius: 10px; font-size: 10px; font-weight: 600;
+    }
+
+    /* Add Site Modal Preview */
+    .add-site-form {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-top: 20px;
+    }
+
+    .add-site-form .form-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .form-info-text { font-size: 12px; color: var(--text-light); margin-top: 4px; font-style: italic; }
+
+    .form-actions {
+      display: flex; gap: 12px; margin-top: 24px;
+      padding-top: 20px; border-top: 1px solid var(--border);
+    }
+
+    .location-input {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+    }
+
+    .location-input input {
+      border: none; padding: 8px 12px; font-size: 13px; outline: none; flex: 1;
+    }
+
+    .location-input .pin-icon {
+      padding: 8px 12px; background: #f8f9fa; color: var(--danger);
+      border-left: 1px solid var(--border); cursor: pointer; font-size: 14px;
+    }
+
+    /* Stats row */
+    .site-stats {
+      display: flex; gap: 16px; margin-bottom: 20px;
+    }
+    .site-stat-card {
+      flex: 1; padding: 16px 20px; background: var(--card-bg);
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .site-stat-value { font-size: 24px; font-weight: 700; color: var(--text); }
+    .site-stat-label { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TF</div>
+        <span>TurboFSM</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+        <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Lead Manager</a>
+        <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
+        <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
+        <a href="screen10-estimates.html"><span class="nav-icon">&#128196;</span> Estimation</a>
+        <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
+        <a href="screen13-jobs.html"><span class="nav-icon">&#128736;</span> Job Creation</a>
+        <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
+        <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoicing</a>
+        <a href="screen15-management.html" class="active"><span class="nav-icon">&#9881;</span> Management Master</a>
+        <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <div class="header-storage">
+            <div class="storage-bar">
+              <span>2.1 GB / 5 GB</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 42%;"></div>
+              </div>
+            </div>
+            <a href="screen5-pricing.html" class="btn-sm" style="text-decoration:none;">Buy More Space</a>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="tenant-name">ABC Plumbing Co.</div>
+          <div class="notification-bell">&#128276;<div class="badge">3</div></div>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <!-- BACK LINK -->
+        <div style="margin-bottom: 12px;">
+          <a href="screen15-management.html" class="btn btn-link" style="font-size: 13px;">&larr; Back to Management Master</a>
+        </div>
+
+        <!-- PAGE TITLE -->
+        <div class="page-title">Sites / Service Locations</div>
+        <div class="page-subtitle">Manage all service locations across your customers. Sites are where work is performed.</div>
+
+        <!-- WIREFRAME NOTE -->
+        <div class="wireframe-note">
+          &#128221; <strong>Sites Management (Screen 15h):</strong>
+          <ul style="margin: 6px 0 0 16px; line-height: 1.8;">
+            <li><strong>Site Entity:</strong> First-class entity linked to a Customer/Lead. Site ID format: SITE-YYYYMMDD-NNNN. Each customer can have multiple sites.</li>
+            <li><strong>Site vs. Billing Address:</strong> The customer's primary/billing address is stored on the Lead/Customer record. Sites are separate service locations where work is performed.</li>
+            <li><strong>Site Fields:</strong> Site Name (required), Address (required), City, State, Zip, Google Location Pin, Site Contact Name, Site Contact Phone, Site Notes (access codes, gate info), Active/Inactive flag, Primary flag.</li>
+            <li><strong>Usage:</strong> Sites appear as dropdowns on Appointment (Screen 8a), Estimate (Screen 11), and Job (Screen 13a) forms. One site = one job. An estimate can cover multiple sites, spawning multiple jobs on approval.</li>
+            <li><strong>Inline Add:</strong> Sites can be added from any screen via "+ Add New Site" button, which links back to the customer record.</li>
+          </ul>
+        </div>
+
+        <!-- STATS -->
+        <div class="site-stats">
+          <div class="site-stat-card">
+            <div class="site-stat-value">14</div>
+            <div class="site-stat-label">Total Sites</div>
+          </div>
+          <div class="site-stat-card">
+            <div class="site-stat-value">12</div>
+            <div class="site-stat-label">Active Sites</div>
+          </div>
+          <div class="site-stat-card">
+            <div class="site-stat-value">8</div>
+            <div class="site-stat-label">Customers with Sites</div>
+          </div>
+          <div class="site-stat-card">
+            <div class="site-stat-value">6</div>
+            <div class="site-stat-label">Active Jobs at Sites</div>
+          </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <input type="text" placeholder="Search sites by name, address, or customer...">
+              <button>&#128269;</button>
+            </div>
+            <select class="filter-select">
+              <option value="all">All Sites</option>
+              <option value="active">Active Only</option>
+              <option value="inactive">Inactive Only</option>
+              <option value="primary">Primary Sites Only</option>
+            </select>
+            <select class="filter-select">
+              <option value="all">All Customers</option>
+              <option value="c1">James Wilson</option>
+              <option value="c2">David Park</option>
+              <option value="c3">Lisa Brown</option>
+              <option value="c4">Sarah Johnson</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <a href="#add-site" class="btn btn-primary">+ Add New Site</a>
+          </div>
+        </div>
+
+        <!-- SITES TABLE -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Site ID</th>
+                <th>Site Name</th>
+                <th>Customer</th>
+                <th>Address</th>
+                <th>Site Contact</th>
+                <th>Active Jobs</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-size: 12px; color: var(--text-light);">SITE-20260115-0001</td>
+                <td>
+                  <div style="font-weight: 600;">Downtown Office</div>
+                  <span class="site-badge-primary">Primary</span>
+                </td>
+                <td><a href="screen7-lead-form.html" style="color: var(--primary);">James Wilson</a></td>
+                <td style="font-size: 12px;">456 Commerce Blvd, Springfield, IL 62704</td>
+                <td style="font-size: 12px;">
+                  <div>Mike Johnson</div>
+                  <div style="color: var(--text-light);">(555) 111-2222</div>
+                </td>
+                <td style="text-align: center;"><span class="badge badge-inprogress">2</span></td>
+                <td><span class="site-badge-active">Active</span></td>
+                <td>
+                  <div class="action-icons">
+                    <a href="#" class="action-icon" title="View Site">&#128205;</a>
+                    <a href="#" class="action-icon edit" title="Edit Site">&#9998;</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px; color: var(--text-light);">SITE-20260115-0002</td>
+                <td>
+                  <div style="font-weight: 600;">Warehouse B</div>
+                </td>
+                <td><a href="screen7-lead-form.html" style="color: var(--primary);">James Wilson</a></td>
+                <td style="font-size: 12px;">789 Industrial Park, Springfield, IL 62705</td>
+                <td style="font-size: 12px;">
+                  <div>Same as customer</div>
+                </td>
+                <td style="text-align: center;"><span class="badge badge-draft">0</span></td>
+                <td><span class="site-badge-active">Active</span></td>
+                <td>
+                  <div class="action-icons">
+                    <a href="#" class="action-icon" title="View Site">&#128205;</a>
+                    <a href="#" class="action-icon edit" title="Edit Site">&#9998;</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px; color: var(--text-light);">SITE-20260201-0003</td>
+                <td>
+                  <div style="font-weight: 600;">Residential Property</div>
+                  <span class="site-badge-primary">Primary</span>
+                </td>
+                <td><a href="screen7-lead-form.html" style="color: var(--primary);">David Park</a></td>
+                <td style="font-size: 12px;">123 Green St, San Antonio TX 78205</td>
+                <td style="font-size: 12px;">
+                  <div>David Park</div>
+                  <div style="color: var(--text-light);">(555) 678-9012</div>
+                </td>
+                <td style="text-align: center;"><span class="badge badge-inprogress">1</span></td>
+                <td><span class="site-badge-active">Active</span></td>
+                <td>
+                  <div class="action-icons">
+                    <a href="#" class="action-icon" title="View Site">&#128205;</a>
+                    <a href="#" class="action-icon edit" title="Edit Site">&#9998;</a>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-size: 12px; color: var(--text-light);">SITE-20260210-0004</td>
+                <td>
+                  <div style="font-weight: 600;">Main Office</div>
+                  <span class="site-badge-primary">Primary</span>
+                </td>
+                <td><a href="screen7-lead-form.html" style="color: var(--primary);">Lisa Brown</a></td>
+                <td style="font-size: 12px;">555 Oak Ave, Dallas TX 75201</td>
+                <td style="font-size: 12px;">
+                  <div>Lisa Brown</div>
+                  <div style="color: var(--text-light);">(555) 345-6789</div>
+                </td>
+                <td style="text-align: center;"><span class="badge badge-inprogress">1</span></td>
+                <td><span class="site-badge-active">Active</span></td>
+                <td>
+                  <div class="action-icons">
+                    <a href="#" class="action-icon" title="View Site">&#128205;</a>
+                    <a href="#" class="action-icon edit" title="Edit Site">&#9998;</a>
+                  </div>
+                </td>
+              </tr>
+              <tr style="opacity: 0.6;">
+                <td style="font-size: 12px; color: var(--text-light);">SITE-20260105-0005</td>
+                <td>
+                  <div style="font-weight: 600;">Old Branch Office</div>
+                </td>
+                <td><a href="screen7-lead-form.html" style="color: var(--primary);">Lisa Brown</a></td>
+                <td style="font-size: 12px;">222 Elm St, Dallas TX 75202</td>
+                <td style="font-size: 12px;">
+                  <div>N/A</div>
+                </td>
+                <td style="text-align: center;"><span class="badge badge-draft">0</span></td>
+                <td><span class="site-badge-inactive">Inactive</span></td>
+                <td>
+                  <div class="action-icons">
+                    <a href="#" class="action-icon" title="View Site">&#128205;</a>
+                    <a href="#" class="action-icon edit" title="Edit Site">&#9998;</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ADD SITE FORM (Inline) -->
+        <div class="add-site-form" id="add-site">
+          <div class="form-section-title">
+            &#128205; Add New Service Site
+          </div>
+
+          <!-- Customer Selection -->
+          <div class="form-group">
+            <label><span class="required">Customer</span></label>
+            <select class="form-control">
+              <option value="">-- Select Customer --</option>
+              <option>James Wilson</option>
+              <option selected>David Park</option>
+              <option>Lisa Brown</option>
+              <option>Sarah Johnson</option>
+              <option>Mike Williams</option>
+            </select>
+          </div>
+
+          <!-- Site Name -->
+          <div class="form-row">
+            <div class="form-group">
+              <label><span class="required">Site Name</span></label>
+              <input type="text" class="form-control" placeholder="e.g., Downtown Office, Warehouse B, Residence">
+            </div>
+            <div class="form-group">
+              <label>Site Contact Name</label>
+              <input type="text" class="form-control" placeholder="On-site contact person (optional)">
+            </div>
+          </div>
+
+          <!-- Address -->
+          <div class="form-row">
+            <div class="form-group">
+              <label><span class="required">Address Line 1</span></label>
+              <input type="text" class="form-control" placeholder="Street address">
+            </div>
+            <div class="form-group">
+              <label>Address Line 2</label>
+              <input type="text" class="form-control" placeholder="Apt, Suite, Unit (optional)">
+            </div>
+          </div>
+
+          <div class="form-row-3">
+            <div class="form-group">
+              <label><span class="required">City</span></label>
+              <input type="text" class="form-control" placeholder="City">
+            </div>
+            <div class="form-group">
+              <label><span class="required">State</span></label>
+              <select class="form-control">
+                <option value="">-- Select --</option>
+                <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+                <option selected>IL</option><option>IN</option><option>IA</option><option>KS</option>
+                <option>TX</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><span class="required">Zip Code</span></label>
+              <input type="text" class="form-control" placeholder="5-digit zip">
+            </div>
+          </div>
+
+          <!-- Google Location Pin -->
+          <div class="form-group">
+            <label>Google Location Pin</label>
+            <div class="location-input">
+              <input type="text" placeholder="Paste Google Maps link or search location...">
+              <span class="pin-icon" title="Set Location Pin">&#128205;</span>
+            </div>
+          </div>
+
+          <!-- Contact Phone + Notes -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Site Contact Phone</label>
+              <input type="tel" class="form-control" placeholder="(555) 000-0000">
+            </div>
+            <div class="form-group">
+              <label>Site Notes</label>
+              <input type="text" class="form-control" placeholder="Gate code, parking info, access instructions...">
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="form-row">
+            <div class="form-group">
+              <label>Mark as Primary Service Location?</label>
+              <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
+                <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--primary);">
+                <span style="font-size: 13px; color: var(--text);">Yes, make this the default site for this customer</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select class="form-control">
+                <option value="active" selected>Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+              <div class="form-info-text">Inactive sites won't appear in dropdowns</div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="form-actions">
+            <button class="btn btn-primary">Save Site</button>
+            <button class="btn btn-outline">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html">11. Est Step 1</a>
+        <a href="screen11-step2.html">11-S2. Est Builder</a>
+        <a href="screen11-step3.html">11-S3. Terms</a>
+        <a href="screen11-step4.html">11-S4. Review</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html">12. Floor Plan</a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+        <a href="screen15g-currency-settings.html">15g. Currency</a>
+        <a href="screen15h-sites-management.html"><strong>15h. Sites</strong></a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

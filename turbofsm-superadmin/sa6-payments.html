@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-6: Payment &amp; Billing | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .filter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+    }
+    .filter-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .filter-row:last-child { margin-bottom: 0; }
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .filter-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+    }
+    .filter-group input,
+    .filter-group select {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+    .filter-group input:focus,
+    .filter-group select:focus {
+      border-color: var(--primary);
+    }
+    .action-forms-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .action-form-card {
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .action-form-card h4 {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .action-form-card .form-group {
+      margin-bottom: 10px;
+    }
+    .action-form-card .form-group label {
+      font-size: 11px;
+    }
+    .action-form-card .form-control {
+      font-size: 12px;
+      padding: 6px 10px;
+    }
+    .dunning-connector {
+      position: absolute;
+      top: 14px;
+      left: -50%;
+      right: 50%;
+      height: 2px;
+      background: #d1d5db;
+      z-index: 0;
+    }
+    .dunning-step:first-child .dunning-connector { display: none; }
+    .paypal-code {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      background: #f3f4f6;
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .retry-note {
+      font-size: 11px;
+      color: var(--text-light);
+      font-style: italic;
+      margin-bottom: 12px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html" class="active"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Payment &amp; Billing</h1>
+      <p class="page-subtitle">Transaction ledger and dunning management</p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">Transactions</div>
+        <div class="tab">Dunning Management</div>
+      </div>
+
+      <!-- ==================== TRANSACTIONS TAB ==================== -->
+
+      <!-- Filter Bar -->
+      <div class="filter-card">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label>Status</label>
+            <select>
+              <option>All</option>
+              <option>Success</option>
+              <option>Failed</option>
+              <option>Refunded</option>
+              <option>Pending</option>
+              <option>Disputed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Date From</label>
+            <input type="date">
+          </div>
+          <div class="filter-group">
+            <label>Date To</label>
+            <input type="date">
+          </div>
+          <div class="filter-group" style="flex: 1;">
+            <label>Tenant</label>
+            <input type="text" placeholder="Search tenant..." style="width: 100%;">
+          </div>
+          <div class="filter-group">
+            <label>Transaction Type</label>
+            <select>
+              <option>All Types</option>
+              <option>Subscription</option>
+              <option>Add-on</option>
+              <option>Manual</option>
+              <option>Refund</option>
+            </select>
+          </div>
+        </div>
+        <div class="filter-row">
+          <div class="filter-group">
+            <label>Amount Min ($)</label>
+            <input type="number" placeholder="0" style="width: 100px;">
+          </div>
+          <div class="filter-group">
+            <label>Amount Max ($)</label>
+            <input type="number" placeholder="999" style="width: 100px;">
+          </div>
+          <div class="filter-group" style="margin-left: auto; flex-direction: row; align-items: flex-end; gap: 8px;">
+            <button class="btn btn-primary btn-sm">Filter</button>
+            <button class="btn btn-outline btn-sm">Export CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transactions Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Transaction ID</th>
+              <th>Tenant / Company</th>
+              <th>Amount</th>
+              <th>Type</th>
+              <th>Status</th>
+              <th>PayPal Status</th>
+              <th>Failure Reason</th>
+              <th>Date &amp; Time</th>
+              <th>Plan</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- PAY-001 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-001</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">BrightFlow HVAC</a></td>
+              <td style="font-weight: 600;">$130.00</td>
+              <td>Subscription</td>
+              <td><span class="badge badge-success">Success</span></td>
+              <td><span class="paypal-code">COMPLETED</span></td>
+              <td style="color: var(--text-light);">&mdash;</td>
+              <td>Mar 1, 2026 09:00</td>
+              <td><span class="plan-badge plan-gold">Gold</span></td>
+              <td><button class="btn btn-outline btn-sm">View Receipt</button></td>
+            </tr>
+            <!-- PAY-002 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-002</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">QuickFix Plumbing</a></td>
+              <td style="font-weight: 600;">$60.00</td>
+              <td>Subscription</td>
+              <td><span class="badge badge-success">Success</span></td>
+              <td><span class="paypal-code">COMPLETED</span></td>
+              <td style="color: var(--text-light);">&mdash;</td>
+              <td>Mar 1, 2026 09:15</td>
+              <td><span class="plan-badge plan-basic">Basic</span></td>
+              <td><button class="btn btn-outline btn-sm">View Receipt</button></td>
+            </tr>
+            <!-- PAY-003 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-003</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">ElectroPro Services</a></td>
+              <td style="font-weight: 600;">$100.00</td>
+              <td>Subscription</td>
+              <td><span class="badge badge-failed">Failed</span></td>
+              <td><span class="paypal-code">INSUFFICIENT_FUNDS</span></td>
+              <td style="color: var(--danger); font-size: 12px;">Insufficient funds</td>
+              <td>Mar 1, 2026 09:30</td>
+              <td><span class="plan-badge plan-super">Super</span></td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-primary btn-sm">Retry</button>
+                  <button class="btn btn-warning btn-sm">Flag</button>
+                </div>
+              </td>
+            </tr>
+            <!-- PAY-004 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-004</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">GreenScape Lawns</a></td>
+              <td style="font-weight: 600;">$0.00</td>
+              <td>Subscription</td>
+              <td><span class="badge badge-failed">Failed</span></td>
+              <td><span class="paypal-code">CARD_EXPIRED</span></td>
+              <td style="color: var(--danger); font-size: 12px;">Card expired</td>
+              <td>Feb 20, 2026 09:00</td>
+              <td><span class="plan-badge plan-starter">Starter</span></td>
+              <td style="color: var(--text-light);">&mdash;</td>
+            </tr>
+            <!-- PAY-005 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-005</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">RoofMaster Inc</a></td>
+              <td style="font-weight: 600;">$200.00</td>
+              <td>Subscription</td>
+              <td><span class="badge badge-success">Success</span></td>
+              <td><span class="paypal-code">COMPLETED</span></td>
+              <td style="color: var(--text-light);">&mdash;</td>
+              <td>Mar 1, 2026 10:00</td>
+              <td><span class="plan-badge plan-platinum">Platinum</span></td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">View Receipt</button>
+                  <button class="btn btn-danger btn-sm">Refund</button>
+                </div>
+              </td>
+            </tr>
+            <!-- PAY-006 -->
+            <tr>
+              <td style="font-family: monospace; font-size: 12px;">PAY-006</td>
+              <td><a href="sa4-tenant-detail.html" style="color:var(--primary);text-decoration:none;font-weight:600;">BrightFlow HVAC</a></td>
+              <td style="font-weight: 600;">$30.00</td>
+              <td>Add-on</td>
+              <td><span class="badge badge-refunded">Refunded</span></td>
+              <td><span class="paypal-code">REFUNDED</span></td>
+              <td style="color: var(--text-light);">&mdash;</td>
+              <td>Feb 28, 2026 14:20</td>
+              <td><span class="plan-badge plan-gold">Gold</span></td>
+              <td><button class="btn btn-outline btn-sm">View Receipt</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Manual Payment Actions -->
+      <div class="card" style="margin-top: 16px;">
+        <div class="card-title">Manual Payment Actions</div>
+
+        <div class="action-forms-grid">
+          <!-- Issue Refund -->
+          <div class="action-form-card">
+            <h4 style="color: var(--danger);">Issue Refund</h4>
+            <div class="form-group">
+              <label>Refund Amount ($)</label>
+              <input type="number" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Reason</label>
+              <textarea class="form-control" style="min-height: 50px;" placeholder="Reason for refund..."></textarea>
+            </div>
+            <div class="form-group">
+              <label class="checkbox-label">
+                <input type="checkbox" checked>
+                Notify Tenant
+              </label>
+            </div>
+            <button class="btn btn-danger btn-sm">Process Refund</button>
+          </div>
+
+          <!-- Mark as Manually Received -->
+          <div class="action-form-card">
+            <h4 style="color: var(--success);">Mark as Manually Received</h4>
+            <div class="form-group">
+              <label>Payment Date</label>
+              <input type="date" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Amount ($)</label>
+              <input type="number" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Reference</label>
+              <input type="text" class="form-control" placeholder="Check #, wire ref...">
+            </div>
+            <div class="form-group">
+              <label>Mode</label>
+              <select class="form-control">
+                <option>ACH</option>
+                <option>Check</option>
+                <option>Wire</option>
+              </select>
+            </div>
+            <button class="btn btn-success btn-sm">Mark Received</button>
+          </div>
+
+          <!-- Retry Payment -->
+          <div class="action-form-card">
+            <h4 style="color: var(--primary);">Retry Payment</h4>
+            <div class="retry-note">Only available if &lt; 24hrs since last attempt.</div>
+            <button class="btn btn-primary btn-sm">Retry Now</button>
+          </div>
+
+          <!-- Waive Balance -->
+          <div class="action-form-card">
+            <h4 style="color: var(--warning);">Waive Balance</h4>
+            <div class="form-group">
+              <label>Amount to Waive ($)</label>
+              <input type="number" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+            <div class="form-group">
+              <label class="required">Reason</label>
+              <textarea class="form-control" style="min-height: 50px;" placeholder="Reason for waiver (required)..."></textarea>
+            </div>
+            <button class="btn btn-warning btn-sm">Waive</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== DUNNING MANAGEMENT ==================== -->
+
+      <div class="card" style="margin-top: 24px;">
+        <div class="card-title">Dunning Workflow &mdash; Automated Schedule</div>
+
+        <!-- Dunning Timeline -->
+        <div class="dunning-timeline">
+          <div class="dunning-step">
+            <div class="step-circle gray">D0</div>
+            <div class="step-label"><strong>Billing Fails</strong></div>
+            <div class="step-action">Payment logged</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle blue">D1</div>
+            <div class="step-label"><strong>Email Sent</strong></div>
+            <div class="step-action">Payment Failed notice</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle blue">D3</div>
+            <div class="step-label"><strong>Reminder</strong></div>
+            <div class="step-action">Email + in-app banner</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle yellow">D5</div>
+            <div class="step-label"><strong>Escalation</strong></div>
+            <div class="step-action">Email + SMS + admin alert</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle red">D7</div>
+            <div class="step-label"><strong>SUSPENSION</strong></div>
+            <div class="step-action">Account suspended</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle red">D15</div>
+            <div class="step-label"><strong>Data Warning</strong></div>
+            <div class="step-action">Pay now to restore</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle red">D30</div>
+            <div class="step-label"><strong>Archive</strong></div>
+            <div class="step-action">Cold storage</div>
+          </div>
+          <div class="dunning-step">
+            <div class="dunning-connector"></div>
+            <div class="step-circle red">30+</div>
+            <div class="step-label"><strong>Deletion</strong></div>
+            <div class="step-action">Permanent deletion</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PayPal Failure Codes -->
+      <div class="card">
+        <div class="card-title">PayPal Failure Codes &mdash; Reference</div>
+
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Code</th>
+                <th>Action</th>
+                <th>Retry Policy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="paypal-code">INSUFFICIENT_FUNDS</span></td>
+                <td>Trigger dunning Day 1</td>
+                <td>Retry in 3 days</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">CARD_EXPIRED</span></td>
+                <td>Email to update payment</td>
+                <td>No auto-retry</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">DECLINED</span></td>
+                <td>Retry after 24hrs</td>
+                <td>2nd decline starts dunning</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">INSTRUMENT_DECLINED</span></td>
+                <td>Tenant updates PayPal</td>
+                <td>No auto-retry</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">AUTHORIZATION_ERROR</span></td>
+                <td>Retry once</td>
+                <td>Escalate if persists</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">DUPLICATE_TRANSACTION</span></td>
+                <td>Investigate</td>
+                <td>Don't retry</td>
+              </tr>
+              <tr>
+                <td><span class="paypal-code">INTERNAL_SERVER_ERROR</span></td>
+                <td>Auto-retry 1hr</td>
+                <td>Escalate if persistent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html"><strong>SA-6. Payments</strong></a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

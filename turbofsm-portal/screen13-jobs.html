@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Jobs</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tenant-name { font-size: 14px; font-weight: 600; color: var(--text); }
+    .header-storage { display: flex; align-items: center; gap: 12px; }
+
+    .badge-onhold { background: #fce4ec; color: #ad1457; }
+    .badge-cancelled-job { background: #ffebee; color: #c62828; }
+
+    .row-action-btn {
+      padding: 4px 10px; font-size: 11px; font-weight: 500; border-radius: 4px;
+      border: none; cursor: pointer; text-decoration: none; display: inline-flex;
+      align-items: center; gap: 4px; white-space: nowrap;
+    }
+    .row-action-btn.view { background: #e3f2fd; color: #1565c0; }
+    .row-action-btn.view:hover { background: #bbdefb; }
+    .row-action-btn.assign { background: #e8f5e9; color: #2e7d32; }
+    .row-action-btn.assign:hover { background: #c8e6c9; }
+    .row-action-btn.invoice { background: #fff3e0; color: #e65100; }
+    .row-action-btn.invoice:hover { background: #ffe0b2; }
+    .row-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .job-kpi-strip { display: flex; gap: 16px; margin-bottom: 20px; }
+    .job-kpi {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+      padding: 14px 20px; text-align: center; flex: 1;
+    }
+    .job-kpi .kpi-val { font-size: 24px; font-weight: 700; }
+    .job-kpi .kpi-lbl { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+    .job-kpi.total .kpi-val { color: var(--primary); }
+    .job-kpi.inprog .kpi-val { color: #f57f17; }
+    .job-kpi.scheduled .kpi-val { color: #1565c0; }
+    .job-kpi.completed .kpi-val { color: #2e7d32; }
+    .job-kpi.draft .kpi-val { color: #616161; }
+    .job-kpi.recurring .kpi-val { color: #00897b; }
+
+    /* Recurring Job Indicators */
+    tr.recurring-parent { border-left: 3px solid #00897b; }
+    tr.recurring-child { background: #f8fffe; border-left: 3px solid #b2dfdb; }
+    tr.recurring-child:hover { background: #e0f2f1; }
+    tr.recurring-child td { font-size: 12px; }
+
+    .recurrence-indicator {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 10px; background: #e0f2f1; border: 1px solid #b2dfdb;
+      border-radius: 12px; font-size: 11px; font-weight: 600; color: #00695c;
+      white-space: nowrap;
+    }
+
+    .recurrence-indicator-none { color: #ccc; font-size: 12px; }
+
+    .recurrence-indent { display: inline-block; width: 20px; }
+
+    .badge-active { background: #e0f2f1; color: #00695c; }
+    .badge-paused { background: #fff8e1; color: #f57f17; }
+
+    .show-all-link {
+      font-size: 11px; color: var(--primary); cursor: pointer;
+      text-decoration: underline; padding: 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">TF</div><span>TurboFSM</span></div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+        <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Lead Manager</a>
+        <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
+        <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
+        <a href="screen10-estimates.html"><span class="nav-icon">&#128196;</span> Estimation</a>
+        <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
+        <a href="screen13-jobs.html" class="active"><span class="nav-icon">&#128736;</span> Job Creation</a>
+        <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
+        <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoicing</a>
+        <a href="screen15-management.html"><span class="nav-icon">&#9881;</span> Management Master</a>
+        <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;"><span class="nav-icon">&#10140;</span> Log Out</a>
+      </nav>
+    </aside>
+
+    <div class="main-area">
+      <header class="header">
+        <div class="header-left">
+          <div class="header-storage">
+            <div class="storage-bar"><span>2.1 GB / 5 GB</span><div class="bar"><div class="bar-fill" style="width: 42%;"></div></div></div>
+            <a href="screen5-pricing.html" class="btn-sm" style="text-decoration:none;">Buy More Space</a>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="tenant-name">ABC Plumbing Co.</div>
+          <div class="notification-bell">&#128276;<div class="badge">3</div></div>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-title">Jobs</div>
+        <div class="page-subtitle">Manage all jobs — auto-created from approved estimates or manually created</div>
+
+        <!-- KPI STRIP -->
+        <div class="job-kpi-strip">
+          <div class="job-kpi total"><div class="kpi-val">9</div><div class="kpi-lbl">Total Jobs</div></div>
+          <div class="job-kpi recurring"><div class="kpi-val">2</div><div class="kpi-lbl">Active Recurring</div></div>
+          <div class="job-kpi inprog"><div class="kpi-val">2</div><div class="kpi-lbl">In Progress</div></div>
+          <div class="job-kpi scheduled"><div class="kpi-val">2</div><div class="kpi-lbl">Scheduled</div></div>
+          <div class="job-kpi completed"><div class="kpi-val">2</div><div class="kpi-lbl">Completed</div></div>
+          <div class="job-kpi draft"><div class="kpi-val">1</div><div class="kpi-lbl">Draft</div></div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div class="search-box">
+              <input type="text" placeholder="Search jobs...">
+              <button>&#128269;</button>
+            </div>
+            <select class="filter-select">
+              <option value="all">Status: All</option>
+              <option value="draft">Draft</option>
+              <option value="scheduled">Scheduled</option>
+              <option value="inprogress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="onhold">On Hold</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="recurring">Recurring Only</option>
+              <option value="active-recurring">Active Recurring</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <a href="screen13a-job-form.html" class="btn btn-primary" style="text-decoration:none;">+ Create Job</a>
+          </div>
+        </div>
+
+        <!-- JOBS TABLE (List Only) -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Job ID</th>
+                <th>Customer</th>
+                <th>Job Type</th>
+                <th>Recurrence</th>
+                <th>Address</th>
+                <th>Quote</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Status</th>
+                <th style="min-width: 200px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Row 1: JOB-0001 (one-time) -->
+              <tr>
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0001</a></td>
+                <td>Lisa Brown</td>
+                <td>Full Re-pipe</td>
+                <td><span class="recurrence-indicator-none">&mdash;</span></td>
+                <td>321 Maple Ln, San Antonio TX</td>
+                <td>$22,000</td>
+                <td>Mar 1</td>
+                <td>Mar 15</td>
+                <td><span class="badge badge-inprogress">In Progress</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                    <a href="screen14a-invoicing.html" class="row-action-btn invoice">&#128176; Invoice</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 2: JOB-0007 — Recurring Parent (Lawn Service · Billing-Period Model) -->
+              <tr class="recurring-parent">
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0007</a></td>
+                <td>David Park</td>
+                <td>&#128260; Lawn Service</td>
+                <td><div class="recurrence-indicator">&#128260; Weekly &middot; Monthly Billing &middot; Job 3 of 12</div></td>
+                <td>123 Green St, San Antonio TX</td>
+                <td>$1,200/job</td>
+                <td>Mar 2026</td>
+                <td>Feb 2027</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 2a: JOB-0007-03 — Billing Period #3 (Mar 2026, In Progress) -->
+              <tr class="recurring-child">
+                <td><span class="recurrence-indent"></span>#7-03</td>
+                <td>David Park</td>
+                <td><span class="recurrence-indent"></span>&darr; Mar 2026 (4 visits)</td>
+                <td>
+                  <div style="font-size: 11px; line-height: 1.6;">
+                    &#10003; Mar 3 (Tue) &middot; &#10003; Mar 10 (Tue)<br>
+                    &#128197; Mar 17 (Tue) &middot; &#128197; Mar 24 (Tue)
+                  </div>
+                </td>
+                <td>123 Green St, San Antonio TX</td>
+                <td>$1,200<br><span style="font-size:10px;color:var(--text-light);">4 &times; $300</span></td>
+                <td>Mar 1</td>
+                <td>Mar 31</td>
+                <td><span class="badge badge-inprogress">In Progress</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14a-invoicing.html" class="row-action-btn invoice">&#128176; Invoice</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 2b: JOB-0007-02 — Billing Period #2 (Feb 2026, Completed) -->
+              <tr class="recurring-child">
+                <td><span class="recurrence-indent"></span>#7-02</td>
+                <td>David Park</td>
+                <td><span class="recurrence-indent"></span>&darr; Feb 2026 (4 visits)</td>
+                <td>
+                  <div style="font-size: 11px; color: #2e7d32;">
+                    &#10003; All 4 visits completed
+                  </div>
+                </td>
+                <td>123 Green St, San Antonio TX</td>
+                <td>$1,200<br><span style="font-size:10px;color:var(--text-light);">4 &times; $300</span></td>
+                <td>Feb 1</td>
+                <td>Feb 28</td>
+                <td><span class="badge badge-completed">Completed</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14a-invoicing.html" class="row-action-btn invoice">&#128176; Invoice</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 3: JOB-0002 (one-time) -->
+              <tr>
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0002</a></td>
+                <td>Mike Williams</td>
+                <td>Water Heater</td>
+                <td><span class="recurrence-indicator-none">&mdash;</span></td>
+                <td>789 Elm Dr, Houston TX</td>
+                <td>$5,750</td>
+                <td>Mar 5</td>
+                <td>Mar 6</td>
+                <td><span class="badge badge-scheduled">Scheduled</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 4: JOB-0008 — Recurring Parent (Office Cleaning · Billing-Period Model) -->
+              <tr class="recurring-parent">
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0008</a></td>
+                <td>Sarah Chen</td>
+                <td>&#128260; Office Cleaning</td>
+                <td><div class="recurrence-indicator">&#128260; Biweekly &middot; Monthly Billing &middot; Job 1 of 6</div></td>
+                <td>456 Commerce Blvd, San Antonio TX</td>
+                <td>$1,200/job</td>
+                <td>Mar 2026</td>
+                <td>Aug 2026</td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 4a: JOB-0008-01 — Billing Period #1 (Mar 2026, In Progress) -->
+              <tr class="recurring-child">
+                <td><span class="recurrence-indent"></span>#8-01</td>
+                <td>Sarah Chen</td>
+                <td><span class="recurrence-indent"></span>&darr; Mar 2026 (8 visits)</td>
+                <td>
+                  <div style="font-size: 11px; line-height: 1.6;">
+                    &#10003; 3 of 8 visits completed<br>
+                    Mon &amp; Thu &middot; 2&times;/week
+                  </div>
+                </td>
+                <td>456 Commerce Blvd, San Antonio TX</td>
+                <td>$1,200<br><span style="font-size:10px;color:var(--text-light);">8 &times; $150</span></td>
+                <td>Mar 1</td>
+                <td>Mar 31</td>
+                <td><span class="badge badge-inprogress">In Progress</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14a-invoicing.html" class="row-action-btn invoice">&#128176; Invoice</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 5: JOB-0003 (one-time) -->
+              <tr>
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0003</a></td>
+                <td>Amy Wilson</td>
+                <td>Bathroom Reno</td>
+                <td><span class="recurrence-indicator-none">&mdash;</span></td>
+                <td>987 Birch Way, Plano TX</td>
+                <td>$15,800</td>
+                <td>Feb 28</td>
+                <td>Mar 20</td>
+                <td><span class="badge badge-inprogress">In Progress</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                    <a href="screen14a-invoicing.html" class="row-action-btn invoice">&#128176; Invoice</a>
+                  </div>
+                </td>
+              </tr>
+              <!-- Row 6: JOB-0005 (one-time) -->
+              <tr>
+                <td><a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">JOB-0005</a></td>
+                <td>John Smith</td>
+                <td>Pipe Replace</td>
+                <td><span class="recurrence-indicator-none">&mdash;</span></td>
+                <td>123 Oak St, Austin TX</td>
+                <td>$8,500</td>
+                <td>Mar 10</td>
+                <td>Mar 12</td>
+                <td><span class="badge badge-draft">Draft</span></td>
+                <td>
+                  <div class="row-actions">
+                    <a href="screen13b-job-detail.html" class="row-action-btn view">&#128065; View</a>
+                    <a href="screen14-crew.html" class="row-action-btn assign">&#128101; Assign</a>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wireframe-note" style="margin-top: 20px;">
+          &#128221; <strong>Job List Page — Billing-Period-Based Recurring Model:</strong> Shows all jobs including recurring job support. Jobs are auto-created when estimates are approved, or manually via "+ Create Job".<br><br>
+          <strong>Recurring Job Features (Billing-Period Model):</strong><br>
+          &bull; Each recurring "job" on this list represents one <strong>billing period</strong> (not an individual visit)<br>
+          &bull; Parent row shows: frequency, billing cycle, and progress (e.g., "Weekly &middot; Monthly Billing &middot; Job 3 of 12")<br>
+          &bull; Child rows show billing periods with visit counts (e.g., "Mar 2026 (4 visits)") and visit completion status<br>
+          &bull; Quote column shows invoice amount per job = rate per visit &times; visits per billing period (e.g., $300 &times; 4 = $1,200/job)<br>
+          &bull; Start/End dates reflect the billing period date range (e.g., Mar 1 – Mar 31)<br>
+          &bull; "Active" status badge (teal) indicates an ongoing recurrence series<br>
+          &bull; Filter options: "Recurring Only" and "Active Recurring" in the status dropdown
+        </div>
+      </div>
+
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a> <a href="screen2-registration.html">2. Registration</a> <a href="screen3-signin.html">3. Sign In</a> <a href="screen4-dashboard.html">4. Dashboard</a> <a href="screen5-pricing.html">5. Pricing</a> <a href="screen5a-payment.html">5a. Payment</a> <a href="screen6-leads.html">6. Lead Manager</a> <a href="screen7-lead-form.html">7. Lead Form</a> <a href="screen8-appointments.html">8. Appointments</a> <a href="screen8a-appointment-form.html">8a. Appt Form</a> <a href="screen8b-appointment-detail.html">8b. Appt Detail</a> <a href="screen9-schedule.html">9. Schedule</a> <a href="screen10-estimates.html">10. Estimates</a> <a href="screen11-estimate-form.html">11. Est Step 1</a> <a href="screen11-step2.html">11-S2. Est Builder</a> <a href="screen11-step3.html">11-S3. Terms</a> <a href="screen11-step4.html">11-S4. Review</a> <a href="screen11a-customer-portal.html">11a. Customer Portal</a> <a href="screen12-floorplan.html">12. Floor Plan</a> <a href="screen13-jobs.html"><strong>13. Jobs</strong></a> <a href="screen13a-job-form.html">13a. Job Form</a> <a href="screen13b-job-detail.html">13b. Job Detail</a> <a href="screen14-crew.html">14. Crew Assignment</a> <a href="screen14a-invoicing.html">14a. Invoicing</a> <a href="screen15-management.html">15. Management Master</a> <a href="screen15a-nomenclature.html">15a. Nomenclature</a> <a href="screen15b-materials.html">15b. Materials</a> <a href="screen15c-services.html">15c. Services</a> <a href="screen15d-estimate-template.html">15d. Estimate Template</a> <a href="screen15e-invoice-template.html">15e. Invoice Template</a> <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a> <a href="screen16-settings.html">16. Settings</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

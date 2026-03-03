@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Floor Plan Creation</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tenant-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .header-storage {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .floor-plan-workspace {
+      display: flex;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .floor-plan-toolbox {
+      width: 80px;
+      background: #f8f9fa;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 0;
+      gap: 6px;
+    }
+
+    .tool-item {
+      width: 60px;
+      height: 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 9px;
+      color: var(--text-light);
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .tool-item:hover {
+      background: #e8f0fe;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .tool-item .tool-icon {
+      font-size: 20px;
+    }
+
+    .floor-plan-canvas-area {
+      flex: 1;
+      min-height: 420px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      position: relative;
+    }
+
+    .canvas-placeholder {
+      text-align: center;
+      color: var(--text-light);
+    }
+
+    .canvas-placeholder .canvas-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+
+    .canvas-placeholder .canvas-text {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .canvas-placeholder .canvas-subtext {
+      font-size: 12px;
+    }
+
+    .canvas-grid-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
+        linear-gradient(to right, #e0e0e0 1px, transparent 1px),
+        linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+      background-size: 20px 20px;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .linked-info {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 20px;
+    }
+
+    .linked-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .linked-info-item .info-label {
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 12px;
+    }
+
+    .linked-info-item .info-value {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .linked-info-item .info-value a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .action-buttons-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TF</div>
+        <span>TurboFSM</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html">
+          <span class="nav-icon">&#9632;</span> Dashboard
+        </a>
+        <a href="screen6-leads.html">
+          <span class="nav-icon">&#9672;</span> Lead Manager
+        </a>
+        <a href="screen8-appointments.html">
+          <span class="nav-icon">&#128197;</span> Appointments
+        </a>
+        <a href="screen9-schedule.html">
+          <span class="nav-icon">&#128339;</span> Schedule
+        </a>
+        <a href="screen10-estimates.html">
+          <span class="nav-icon">&#128196;</span> Estimation
+        </a>
+        <a href="screen12-floorplan.html" class="active">
+          <span class="nav-icon">&#9633;</span> Floor Plan
+        </a>
+        <a href="screen13-jobs.html">
+          <span class="nav-icon">&#128736;</span> Job Creation
+        </a>
+        <a href="screen14-crew.html">
+          <span class="nav-icon">&#128101;</span> Assign Crew
+        </a>
+        <a href="screen14a-invoicing.html">
+          <span class="nav-icon">&#128176;</span> Invoicing
+        </a>
+        <a href="screen15-management.html">
+          <span class="nav-icon">&#9881;</span> Management Master
+        </a>
+        <a href="screen16-settings.html">
+          <span class="nav-icon">&#128295;</span> Client Settings
+        </a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <div class="header-storage">
+            <div class="storage-bar">
+              <span>2.1 GB / 5 GB</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 42%;"></div>
+              </div>
+            </div>
+            <button class="btn-sm">Buy More Space</button>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="tenant-name">ABC Plumbing Co.</div>
+          <div class="notification-bell">
+            &#128276;
+            <div class="badge">3</div>
+          </div>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <!-- PAGE TITLE -->
+        <div class="page-title">Floor Plan Creation</div>
+        <div class="page-subtitle">Create floor plans for your estimates</div>
+
+        <!-- WIREFRAME NOTES -->
+        <div class="wireframe-note">
+          &#128221; <strong>Note:</strong> Available only if Floor Plan add-on ($40/mo) is purchased.
+        </div>
+        <div class="wireframe-note">
+          &#128221; <strong>Note:</strong> Floor plan PDF/thumbnail gets embedded in the estimate on Screen 11.
+        </div>
+
+        <!-- LINKED INFO -->
+        <div class="card">
+          <div class="linked-info">
+            <div class="linked-info-item">
+              <span class="info-label">Linked Estimate:</span>
+              <span class="info-value"><a href="screen11-estimate-form.html">EST-20260215-0001</a></span>
+            </div>
+            <div class="linked-info-item">
+              <span class="info-label">Customer:</span>
+              <span class="info-value">John Smith</span>
+            </div>
+          </div>
+
+          <!-- FLOOR PLAN EDITOR -->
+          <div class="floor-plan-workspace">
+
+            <!-- Left Toolbox -->
+            <div class="floor-plan-toolbox">
+              <div class="tool-item">
+                <span class="tool-icon">&#9608;</span>
+                Walls
+              </div>
+              <div class="tool-item">
+                <span class="tool-icon">&#128682;</span>
+                Doors
+              </div>
+              <div class="tool-item">
+                <span class="tool-icon">&#9634;</span>
+                Windows
+              </div>
+              <div class="tool-item">
+                <span class="tool-icon">&#128688;</span>
+                Fixtures
+              </div>
+              <div class="tool-item">
+                <span class="tool-icon">T</span>
+                Text
+              </div>
+              <div class="tool-item">
+                <span class="tool-icon">&#128207;</span>
+                Measure
+              </div>
+            </div>
+
+            <!-- Canvas Area -->
+            <div class="floor-plan-canvas-area">
+              <div class="canvas-grid-overlay"></div>
+              <div class="canvas-placeholder">
+                <div class="canvas-icon">&#9633;</div>
+                <div class="canvas-text">Floor Plan Editor</div>
+                <div class="canvas-subtext">Drag &amp; drop tools to create your floor plan</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="action-buttons-row">
+            <a href="screen11-estimate-form.html" class="btn btn-primary">Save &amp; Attach to Estimate</a>
+            <a href="screen11-estimate-form.html" class="btn btn-outline">Cancel</a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html">11. Est Step 1</a>
+        <a href="screen11-step2.html">11-S2. Est Builder</a>
+        <a href="screen11-step3.html">11-S3. Terms</a>
+        <a href="screen11-step4.html">11-S4. Review</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html"><strong>12. Floor Plan</strong></a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

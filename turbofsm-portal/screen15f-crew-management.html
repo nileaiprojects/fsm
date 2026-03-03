@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crew &amp; Employee Management – TurboFSM Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <div class="logo-icon">TF</div>
+                <span class="logo-text">TurboFSM</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+                <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Lead Manager</a>
+                <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
+                <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
+                <a href="screen10-estimates.html"><span class="nav-icon">&#128196;</span> Estimation</a>
+                <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
+                <a href="screen13-jobs.html"><span class="nav-icon">&#128736;</span> Job Creation</a>
+                <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
+                <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoicing</a>
+                <a href="screen15-management.html" class="active"><span class="nav-icon">&#9881;</span> Management Master</a>
+                <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
+                <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;"><span class="nav-icon">&#10140;</span> Log Out</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-area">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <div class="storage-bar">
+                        <span>2.1 GB / 5 GB</span>
+                        <div class="bar">
+                            <div class="bar-fill" style="width: 42%;"></div>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline btn-sm">Buy More Space</button>
+                </div>
+                <div class="header-right">
+                    <span class="tenant-name">ABC Plumbing Co.</span>
+                    <div class="notification-bell">
+                        &#128276;
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="user-avatar">JS</div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <div class="content">
+                <div class="breadcrumb">
+                    <a href="screen15-management.html"><span class="nav-icon">&#9881;</span> Management Master</a> &gt; Crew &amp; Employees
+                </div>
+
+                <div class="page-header">
+                    <h1>Crew &amp; Employee Management</h1>
+                    <p class="subtitle">Manage users, roles, and permissions</p>
+                </div>
+
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <input type="text" class="form-input search-input" placeholder="Search users...">
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-primary">+ Add User</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Phone</th>
+                                        <th>Email</th>
+                                        <th>Skills</th>
+                                        <th>Role</th>
+                                        <th>Access Level</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>John Smith</strong></td>
+                                        <td>(555) 123-4567</td>
+                                        <td>john@abc.com</td>
+                                        <td>Master Plumber</td>
+                                        <td><span class="role-badge role-admin">Full Admin</span></td>
+                                        <td>All Screens</td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                        <td>
+                                            <a href="#" class="action-icon" title="Edit">&#9998;</a>
+                                            <a href="#" class="action-icon" title="Send App Download Link" style="color: var(--primary); font-size: 11px; width: auto; padding: 0 6px;">&#128241;</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sarah Lee</strong></td>
+                                        <td>(555) 234-5678</td>
+                                        <td>sarah@abc.com</td>
+                                        <td>Office Manager</td>
+                                        <td><span class="role-badge role-employee-admin">Employee (Admin)</span></td>
+                                        <td>Leads, Estimates, Invoicing</td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                        <td>
+                                            <a href="#" class="action-icon" title="Edit">&#9998;</a>
+                                            <a href="#" class="action-icon" title="Send App Download Link" style="color: var(--primary); font-size: 11px; width: auto; padding: 0 6px;">&#128241;</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>James Rodriguez</strong></td>
+                                        <td>(555) 345-6789</td>
+                                        <td>james@abc.com</td>
+                                        <td>Master Plumber, Pipe Fitting</td>
+                                        <td><span class="role-badge role-crew">Crew Member</span></td>
+                                        <td>&mdash;</td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                        <td>
+                                            <a href="#" class="action-icon" title="Edit">&#9998;</a>
+                                            <a href="#" class="action-icon" title="Send App Download Link" style="color: var(--primary); font-size: 11px; width: auto; padding: 0 6px;">&#128241;</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Carlos Mendez</strong></td>
+                                        <td>(555) 456-7890</td>
+                                        <td>carlos@abc.com</td>
+                                        <td>Journeyman Plumber</td>
+                                        <td><span class="role-badge role-crew">Crew Member</span></td>
+                                        <td>&mdash;</td>
+                                        <td><span class="status-badge status-active">Active</span></td>
+                                        <td>
+                                            <a href="#" class="action-icon" title="Edit">&#9998;</a>
+                                            <a href="#" class="action-icon" title="Send App Download Link" style="color: var(--primary); font-size: 11px; width: auto; padding: 0 6px;">&#128241;</a>
+                                        </td>
+                                    </tr>
+                                    <tr class="row-inactive">
+                                        <td><strong>Kevin Park</strong></td>
+                                        <td>(555) 567-8901</td>
+                                        <td>kevin@abc.com</td>
+                                        <td>Apprentice</td>
+                                        <td><span class="role-badge role-crew">Crew Member</span></td>
+                                        <td>&mdash;</td>
+                                        <td><span class="status-badge status-inactive">Inactive</span></td>
+                                        <td>
+                                            <a href="#" class="action-icon" title="Edit">&#9998;</a>
+                                            <a href="#" class="action-icon" title="Activate">&#10004;</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add/Edit User Form -->
+                <div class="card" style="margin-top: 1.5rem;">
+                    <div class="card-header">
+                        <h3>Add / Edit User</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-grid form-grid-3">
+                            <div class="form-group">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-input" placeholder="Full name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-input" placeholder="(555) 000-0000">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input" placeholder="user@company.com">
+                            </div>
+                        </div>
+
+                        <div class="form-grid form-grid-2" style="margin-top: 1rem;">
+                            <div class="form-group">
+                                <label class="form-label">Skills</label>
+                                <input type="text" class="form-input" placeholder="Enter skills (comma-separated tags)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Role</label>
+                                <select class="form-select">
+                                    <option>Select role...</option>
+                                    <option>Full Admin</option>
+                                    <option>Employee (Admin)</option>
+                                    <option>Crew Member</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Access Level (shown when role = Employee Admin) -->
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label">Access Level <span class="form-hint">(shown when role = Employee Admin)</span></label>
+                            <div class="checkbox-grid">
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Dashboard
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Lead Manager
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Appointments
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Schedule
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Estimation
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Job Creation
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Assign Crew
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Invoicing
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Management Master
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Client Settings
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Status Toggle -->
+                        <div class="form-group" style="margin-top: 1rem;">
+                            <label class="form-label">Status</label>
+                            <div class="toggle-group">
+                                <label class="toggle-label">
+                                    <input type="radio" name="user-status" checked> Active
+                                </label>
+                                <label class="toggle-label">
+                                    <input type="radio" name="user-status"> Inactive
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions" style="margin-top: 1.5rem;">
+                            <button class="btn btn-primary">Save</button>
+                            <button class="btn btn-outline">Cancel</button>
+                            <button class="btn btn-outline" style="margin-left: auto; color: var(--primary); border-color: var(--primary);">&#128241; Send App Download Link</button>
+                        </div>
+                        <div style="margin-top: 8px; font-size: 12px; color: var(--text-light); font-style: italic;">
+                            "Send App Download Link" sends the TurboFSM mobile app link to the team member's registered email address.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen Navigation Footer -->
+            <div class="screen-nav">
+                <strong>Wireframe Screen Navigation:</strong><br><br>
+                <a href="screen1-landing.html">1. Landing</a>
+                <a href="screen2-registration.html">2. Registration</a>
+                <a href="screen3-signin.html">3. Sign In</a>
+                <a href="screen4-dashboard.html">4. Dashboard</a>
+                <a href="screen5-pricing.html">5. Pricing</a>
+                <a href="screen5a-payment.html">5a. Payment</a>
+                <a href="screen6-leads.html">6. Lead Manager</a>
+                <a href="screen7-lead-form.html">7. Lead Form</a>
+                <a href="screen8-appointments.html">8. Appointments</a>
+                <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+                <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+                <a href="screen9-schedule.html">9. Schedule</a>
+                <a href="screen10-estimates.html">10. Estimates</a>
+                <a href="screen11-estimate-form.html">11. Est Step 1</a>
+                <a href="screen11-step2.html">11-S2. Est Builder</a>
+                <a href="screen11-step3.html">11-S3. Terms</a>
+                <a href="screen11-step4.html">11-S4. Review</a>
+                <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+                <a href="screen12-floorplan.html">12. Floor Plan</a>
+                <a href="screen13-jobs.html">13. Jobs</a>
+                <a href="screen13a-job-form.html">13a. Job Form</a>
+                <a href="screen13b-job-detail.html">13b. Job Detail</a>
+                <a href="screen14-crew.html">14. Crew Assignment</a>
+                <a href="screen14a-invoicing.html">14a. Invoicing</a>
+                <a href="screen15-management.html">15. Management Master</a>
+                <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+                <a href="screen15b-materials.html">15b. Materials</a>
+                <a href="screen15c-services.html">15c. Services</a>
+                <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+                <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+                <a href="screen15f-crew-management.html"><strong>15f. Crew Mgmt</strong></a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+                <a href="screen16-settings.html">16. Settings</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

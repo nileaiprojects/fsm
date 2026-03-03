@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-7: Coupons &amp; Promotions | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 4px;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .input-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .input-group .form-control {
+      flex: 1;
+    }
+    .form-note {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-top: 3px;
+      font-style: italic;
+    }
+    .checkbox-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html" class="active"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Coupons &amp; Promotions</h1>
+      <p class="page-subtitle">Create and manage discount coupons</p>
+
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-left"></div>
+        <div class="toolbar-right">
+          <a href="#create-coupon-form" class="btn btn-primary">Create Coupon</a>
+        </div>
+      </div>
+
+      <!-- Coupons Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Coupon Code</th>
+              <th>Campaign Name</th>
+              <th>Discount Type</th>
+              <th>Value</th>
+              <th>Applicable Plans</th>
+              <th>Valid From</th>
+              <th>Valid Until</th>
+              <th>Max Uses</th>
+              <th>Used</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- BLACKFRI2026 -->
+            <tr>
+              <td><span class="coupon-code">BLACKFRI2026</span></td>
+              <td>Black Friday 2026</td>
+              <td>Percentage</td>
+              <td style="font-weight: 600;">25%</td>
+              <td>All Plans</td>
+              <td>Nov 25, 2026</td>
+              <td>Nov 30, 2026</td>
+              <td>500</td>
+              <td>0</td>
+              <td><span class="badge badge-active">Active</span></td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">Edit</button>
+                  <button class="btn btn-outline btn-sm">Pause</button>
+                  <button class="btn btn-outline btn-sm">View</button>
+                </div>
+              </td>
+            </tr>
+            <!-- WELCOME20 -->
+            <tr>
+              <td><span class="coupon-code">WELCOME20</span></td>
+              <td>New Customer Welcome</td>
+              <td>Fixed</td>
+              <td style="font-weight: 600;">$20.00</td>
+              <td>Basic, Super</td>
+              <td>Jan 1, 2026</td>
+              <td>Dec 31, 2026</td>
+              <td>0 <span style="font-size: 10px; color: var(--text-light);">(unlimited)</span></td>
+              <td>47</td>
+              <td><span class="badge badge-active">Active</span></td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">Edit</button>
+                  <button class="btn btn-outline btn-sm">Pause</button>
+                  <button class="btn btn-outline btn-sm">View</button>
+                </div>
+              </td>
+            </tr>
+            <!-- SPRING15 -->
+            <tr>
+              <td><span class="coupon-code">SPRING15</span></td>
+              <td>Spring Promo</td>
+              <td>Percentage</td>
+              <td style="font-weight: 600;">15%</td>
+              <td>Gold, Platinum</td>
+              <td>Mar 1, 2026</td>
+              <td>Mar 31, 2026</td>
+              <td>100</td>
+              <td>89</td>
+              <td><span class="badge badge-active">Active</span></td>
+              <td>
+                <div style="display: flex; gap: 4px;">
+                  <button class="btn btn-outline btn-sm">Edit</button>
+                  <button class="btn btn-outline btn-sm">Pause</button>
+                  <button class="btn btn-outline btn-sm">View</button>
+                </div>
+              </td>
+            </tr>
+            <!-- XMAS2025 -->
+            <tr>
+              <td><span class="coupon-code">XMAS2025</span></td>
+              <td>Christmas 2025</td>
+              <td>Percentage</td>
+              <td style="font-weight: 600;">30%</td>
+              <td>All Plans</td>
+              <td>Dec 20, 2025</td>
+              <td>Dec 31, 2025</td>
+              <td>200</td>
+              <td>156</td>
+              <td><span class="badge badge-expired">Expired</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm">View</button>
+              </td>
+            </tr>
+            <!-- BETA50 -->
+            <tr>
+              <td><span class="coupon-code">BETA50</span></td>
+              <td>Beta Testers</td>
+              <td>Fixed</td>
+              <td style="font-weight: 600;">$50.00</td>
+              <td>Platinum Pro</td>
+              <td>Jan 1, 2026</td>
+              <td>Jun 30, 2026</td>
+              <td>50</td>
+              <td>50</td>
+              <td><span class="badge badge-exhausted">Exhausted</span></td>
+              <td>
+                <button class="btn btn-outline btn-sm">View</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Create Coupon Form -->
+      <div class="card" id="create-coupon-form" style="margin-top: 24px;">
+        <div class="card-title">Create Coupon</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Campaign Name</label>
+            <input type="text" class="form-control" placeholder="e.g. Summer Sale 2026" maxlength="100">
+            <div class="form-note">Max 100 characters.</div>
+          </div>
+          <div class="form-group">
+            <label>Coupon Code</label>
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="e.g. SUMMER2026" style="text-transform: uppercase; font-family: monospace; font-weight: 700; letter-spacing: 1px;">
+              <button class="btn btn-outline btn-sm">Auto Generate</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Discount Type</label>
+            <div class="radio-group">
+              <label><input type="radio" name="discount-type" checked> Percentage %</label>
+              <label><input type="radio" name="discount-type"> Fixed Amount $</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Discount Value</label>
+            <input type="number" class="form-control" placeholder="e.g. 25">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Maximum Discount Cap ($)</label>
+          <input type="number" class="form-control" placeholder="Optional &mdash; leave blank for no cap" style="max-width: 400px;">
+          <div class="form-note">Optional. Caps the maximum discount amount for percentage-based coupons.</div>
+        </div>
+
+        <div class="form-group">
+          <label>Applicable Plans</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox"> All Plans</label>
+            <label><input type="checkbox"> Starter</label>
+            <label><input type="checkbox"> Basic</label>
+            <label><input type="checkbox"> Super</label>
+            <label><input type="checkbox"> Gold</label>
+            <label><input type="checkbox"> Platinum</label>
+            <label><input type="checkbox"> Platinum Pro</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Applicable Add-ons</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox"> All Add-ons</label>
+            <label><input type="checkbox"> AI Lead Analysis</label>
+            <label><input type="checkbox"> Floor Plan</label>
+            <label><input type="checkbox"> Virtual Assistant</label>
+            <label><input type="checkbox"> Storage</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Valid From</label>
+            <input type="date" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Valid Until</label>
+            <input type="date" class="form-control">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Max Uses</label>
+            <input type="number" class="form-control" placeholder="0 = unlimited" value="0">
+            <div class="form-note">Set to 0 for unlimited uses.</div>
+          </div>
+          <div class="form-group" style="display: flex; flex-direction: column; justify-content: center; gap: 10px; padding-top: 18px;">
+            <label class="checkbox-inline"><input type="checkbox"> Single Use Per Tenant</label>
+            <label class="checkbox-inline"><input type="checkbox"> New Tenants Only</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Campaign Notes</label>
+          <textarea class="form-control" placeholder="Internal notes about this campaign..."></textarea>
+          <div class="form-note">Internal only &mdash; not visible to tenants.</div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button class="btn btn-primary">Save Coupon</button>
+          <button class="btn btn-outline">Cancel</button>
+        </div>
+      </div>
+
+      <!-- Wireframe Note -->
+      <div class="wireframe-note">
+        <strong>Wireframe Note:</strong> Validation rules &mdash; coupon code must be unique, expired/exhausted coupons are rejected at checkout, plan-restricted coupons are checked against selected plan, discount cannot reduce price below $0.
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html"><strong>SA-7. Coupons</strong></a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

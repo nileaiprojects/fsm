@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Create Appointment</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .form-section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+
+    .form-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-section-title .section-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .toggle-group {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+    }
+
+    .toggle-btn {
+      padding: 8px 24px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn:first-child { border-radius: 6px 0 0 6px; }
+    .toggle-btn:last-child { border-radius: 0 6px 6px 0; }
+    .toggle-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .lov-input {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .lov-input input {
+      border: none;
+      padding: 8px 12px;
+      font-size: 13px;
+      outline: none;
+      flex: 1;
+    }
+
+    .lov-input .lov-icon {
+      padding: 8px 12px;
+      background: #f8f9fa;
+      color: var(--primary);
+      border-left: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .form-info-text {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    .tenant-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .header-storage {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ==========================================
+       CREW GANTT AVAILABILITY CHART
+       ========================================== */
+    .crew-gantt-section { margin-top: 8px; }
+    .crew-gantt-subheader { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .crew-gantt-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); }
+    .crew-gantt-grid {
+      display: grid;
+      grid-template-columns: 180px repeat(15, minmax(52px, 1fr)) 120px;
+      min-width: 1080px;
+    }
+
+    /* Header row */
+    .crew-gantt-corner {
+      padding: 10px 12px; font-size: 11px; font-weight: 600; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa;
+      border-bottom: 2px solid var(--border); border-right: 1px solid #eee;
+      display: flex; align-items: center;
+    }
+    .crew-gantt-date-header {
+      padding: 8px 4px; text-align: center; font-size: 11px; font-weight: 600;
+      color: var(--text); background: #f8f9fa; border-bottom: 2px solid var(--border);
+      border-right: 1px solid #eee; line-height: 1.3;
+    }
+    .crew-gantt-date-header.appt-date { background: #e3f2fd; border-bottom-color: #4a90d9; }
+    .crew-gantt-day { font-size: 9px; font-weight: 400; color: var(--text-light); text-transform: uppercase; }
+    .crew-gantt-status-header {
+      padding: 10px 8px; font-size: 11px; font-weight: 600; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa;
+      border-bottom: 2px solid var(--border); text-align: center;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Staff name column */
+    .crew-gantt-name {
+      padding: 10px 12px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;
+      background: #fff; display: flex; align-items: center; gap: 10px;
+    }
+    .crew-gantt-name input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+    .crew-gantt-name-info { display: flex; flex-direction: column; justify-content: center; }
+    .crew-gantt-name-text { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
+    .crew-gantt-role-text { font-size: 11px; color: var(--text-light); }
+    .crew-gantt-selected-badge {
+      display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 9px;
+      font-weight: 600; background: #dbeafe; color: #1d4ed8;
+    }
+
+    /* Date cells */
+    .crew-gantt-cell {
+      padding: 8px 3px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;
+      font-size: 9px; font-weight: 600; text-align: center; display: flex;
+      align-items: center; justify-content: center; min-height: 44px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .crew-gantt-available { background: #f0faf0; }
+    .crew-gantt-busy-job { background: #8e44ad; color: #fff; border-radius: 3px; margin: 3px 2px; }
+    .crew-gantt-busy-appt { background: #4a90d9; color: #fff; border-radius: 3px; margin: 3px 2px; }
+    .crew-gantt-busy-training { background: #e67e22; color: #fff; border-radius: 3px; margin: 3px 2px; }
+
+    /* Status badge column */
+    .crew-gantt-status {
+      padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 11px;
+      font-weight: 600; display: flex; align-items: center; justify-content: center; text-align: center;
+    }
+    .crew-gantt-status-ok { color: #2e7d32; background: #f0faf0; }
+    .crew-gantt-status-warning { color: #e65100; background: #fff8e1; }
+    .crew-gantt-status-danger { color: #c62828; background: #ffebee; }
+
+    /* Legend */
+    .crew-gantt-legend {
+      display: flex; align-items: center; gap: 20px; padding: 10px 16px; margin-top: 10px;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+      font-size: 12px; flex-wrap: wrap;
+    }
+    .crew-gantt-legend-item { display: flex; align-items: center; gap: 6px; }
+    .crew-gantt-legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+    .crew-gantt-legend-available { background: #f0faf0; border: 1px solid #c8e6c9; }
+    .crew-gantt-legend-job { background: #8e44ad; }
+    .crew-gantt-legend-appt { background: #4a90d9; }
+    .crew-gantt-legend-training { background: #e67e22; }
+
+    /* Multi-select LOV dropdown */
+    .crew-lov-container { margin-bottom: 16px; }
+    .crew-lov-input {
+      display: flex; align-items: center; gap: 0;
+      border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
+    }
+    .crew-lov-input input {
+      border: none; padding: 8px 12px; font-size: 13px; outline: none; flex: 1;
+    }
+    .crew-lov-input .crew-lov-icon {
+      padding: 8px 12px; background: #f8f9fa; color: var(--primary);
+      border-left: 1px solid var(--border); cursor: pointer; font-size: 14px;
+    }
+    .crew-selected-chips {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;
+    }
+    .crew-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 10px 5px 12px; border-radius: 16px;
+      background: #e8f0fe; border: 1px solid #bbd0f7;
+      font-size: 12px; font-weight: 500; color: var(--text);
+    }
+    .crew-chip .chip-role { color: var(--text-light); font-weight: 400; }
+    .crew-chip .chip-remove {
+      width: 16px; height: 16px; border-radius: 50%; background: #c5cdd8;
+      color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      line-height: 1; border: none;
+    }
+    .crew-chip .chip-remove:hover { background: #e74c3c; }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TF</div>
+        <span>TurboFSM</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html">
+          <span class="nav-icon">&#9632;</span> Dashboard
+        </a>
+        <a href="screen6-leads.html">
+          <span class="nav-icon">&#9672;</span> Lead Manager
+        </a>
+        <a href="screen8-appointments.html" class="active">
+          <span class="nav-icon">&#128197;</span> Appointments
+        </a>
+        <a href="screen9-schedule.html">
+          <span class="nav-icon">&#128339;</span> Schedule
+        </a>
+        <a href="screen10-estimates.html">
+          <span class="nav-icon">&#128196;</span> Estimation
+        </a>
+        <a href="screen12-floorplan.html">
+          <span class="nav-icon">&#9633;</span> Floor Plan
+        </a>
+        <a href="screen13-jobs.html">
+          <span class="nav-icon">&#128736;</span> Job Creation
+        </a>
+        <a href="screen14-crew.html">
+          <span class="nav-icon">&#128101;</span> Assign Crew
+        </a>
+        <a href="screen14a-invoicing.html">
+          <span class="nav-icon">&#128176;</span> Invoicing
+        </a>
+        <a href="screen15-management.html">
+          <span class="nav-icon">&#9881;</span> Management Master
+        </a>
+        <a href="screen16-settings.html">
+          <span class="nav-icon">&#128295;</span> Client Settings
+        </a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <div class="header-storage">
+            <div class="storage-bar">
+              <span>2.1 GB / 5 GB</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 42%;"></div>
+              </div>
+            </div>
+            <a href="screen5-pricing.html" class="btn-sm" style="text-decoration:none;">Buy More Space</a>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="tenant-name">ABC Plumbing Co.</div>
+          <div class="notification-bell">
+            &#128276;
+            <div class="badge">3</div>
+          </div>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <!-- BACK LINK -->
+        <div style="margin-bottom: 12px;">
+          <a href="screen8-appointments.html" class="btn btn-link" style="font-size: 13px;">&larr; Back to Appointments</a>
+        </div>
+
+        <!-- PAGE TITLE -->
+        <div class="page-title">Create New Appointment</div>
+        <div class="page-subtitle">Schedule a site survey or profile presentation with a customer</div>
+
+        <!-- FORM -->
+        <form>
+
+          <!-- SECTION 1: Customer Information -->
+          <div class="form-section-card">
+            <div class="form-section-title">
+              <span class="section-num">1</span>
+              Customer Information
+            </div>
+
+            <!-- Customer Type Toggle -->
+            <div class="form-group">
+              <label>Customer Type</label>
+              <div class="toggle-group">
+                <button type="button" class="toggle-btn active">Lead</button>
+                <button type="button" class="toggle-btn">Existing Customer</button>
+              </div>
+              <div class="form-info-text">For leads, search from the lead manager. For existing customers, select from the list to auto-fill contact details.</div>
+            </div>
+
+            <!-- Customer Name (with LOV) -->
+            <div class="form-group">
+              <label><span class="required">Customer Name</span></label>
+              <div class="lov-input">
+                <input type="text" placeholder="Search or enter customer name...">
+                <span class="lov-icon" title="Search Customers">&#128269;</span>
+              </div>
+            </div>
+
+            <!-- Email + Phone -->
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control" placeholder="john@example.com">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" class="form-control" placeholder="(555) 123-4567">
+              </div>
+            </div>
+
+            <!-- Service Site Selection -->
+            <div class="form-group">
+              <label><span class="required">Service Site</span></label>
+              <select class="form-control">
+                <option value="">-- Select Service Site --</option>
+                <option value="site-1" selected>Downtown Office — 456 Commerce Blvd, Springfield, IL 62704</option>
+                <option value="site-2">Warehouse B — 789 Industrial Park, Springfield, IL 62705</option>
+                <option value="billing">Same as Billing Address — 123 Main St, Springfield, IL 62701</option>
+                <option value="new">+ Add New Site...</option>
+              </select>
+              <div class="form-info-text">Select the site where this appointment will take place. Sites are managed on the Lead/Customer record.</div>
+            </div>
+
+            <!-- Site Address Display (auto-filled from selection) -->
+            <div style="padding: 12px 16px; background: #f8f9fa; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span style="font-size: 14px;">&#128205;</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text);">Downtown Office</span>
+                <span style="display: inline-block; padding: 1px 8px; background: #e8f0fe; color: #1565c0; border-radius: 10px; font-size: 10px; font-weight: 600;">Primary</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-light); padding-left: 22px;">
+                456 Commerce Blvd, Springfield, IL 62704<br>
+                <span style="font-size: 12px;">Contact: Mike Johnson &middot; (555) 111-2222</span><br>
+                <span style="font-size: 12px;">Notes: Gate code: 4455</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECTION 2: Appointment Details -->
+          <div class="form-section-card">
+            <div class="form-section-title">
+              <span class="section-num">2</span>
+              Appointment Details
+            </div>
+
+            <!-- Appointment Type -->
+            <div class="form-group">
+              <label><span class="required">Appointment Type</span></label>
+              <select class="form-control">
+                <option value="">-- Select Type --</option>
+                <option value="introduction">Introduction</option>
+                <option value="site-survey">Site Survey</option>
+                <option value="assessment">Assessment</option>
+                <option value="follow-up">Follow Up</option>
+                <option value="negotiation">Negotiation</option>
+                <option value="profile-presentation">Profile Presentation</option>
+              </select>
+            </div>
+
+            <!-- Date & Time -->
+            <div class="form-row">
+              <div class="form-group">
+                <label><span class="required">Date &amp; Time</span></label>
+                <input type="datetime-local" class="form-control" value="2026-03-05T10:00">
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <select class="form-control">
+                  <option value="30">30 minutes</option>
+                  <option value="60" selected>1 hour</option>
+                  <option value="90">1.5 hours</option>
+                  <option value="120">2 hours</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Assign Staff with Multi-Select LOV + Gantt Schedule -->
+            <div class="form-group">
+              <label><span class="required">Assign To</span></label>
+              <div class="form-info-text" style="margin-bottom: 12px;">Search and select one or more crew members. The Gantt chart below shows their availability.</div>
+
+              <!-- Multi-select LOV dropdown -->
+              <div class="crew-lov-container">
+                <div class="crew-lov-input">
+                  <input type="text" placeholder="Search crew members...">
+                  <span class="crew-lov-icon" title="Search Crew">&#128269;</span>
+                </div>
+                <!-- Selected crew chips -->
+                <div class="crew-selected-chips">
+                  <div class="crew-chip">
+                    John Smith <span class="chip-role">&middot; Master Plumber</span>
+                    <button class="chip-remove" title="Remove">&times;</button>
+                  </div>
+                  <div class="crew-chip">
+                    James Rodriguez <span class="chip-role">&middot; Master Plumber</span>
+                    <button class="chip-remove" title="Remove">&times;</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="crew-gantt-section">
+                <div class="crew-gantt-subheader">&#128197; Crew Availability &mdash; Mar 1 &ndash; 15, 2026</div>
+
+                <div class="crew-gantt-container">
+                  <div class="crew-gantt-grid">
+                    <!-- HEADER ROW -->
+                    <div class="crew-gantt-corner">Crew Member</div>
+                    <div class="crew-gantt-date-header">1<br><span class="crew-gantt-day">Sun</span></div>
+                    <div class="crew-gantt-date-header">2<br><span class="crew-gantt-day">Mon</span></div>
+                    <div class="crew-gantt-date-header">3<br><span class="crew-gantt-day">Tue</span></div>
+                    <div class="crew-gantt-date-header">4<br><span class="crew-gantt-day">Wed</span></div>
+                    <div class="crew-gantt-date-header appt-date" title="Appointment date">5<br><span class="crew-gantt-day">Thu &#9733;</span></div>
+                    <div class="crew-gantt-date-header">6<br><span class="crew-gantt-day">Fri</span></div>
+                    <div class="crew-gantt-date-header">7<br><span class="crew-gantt-day">Sat</span></div>
+                    <div class="crew-gantt-date-header">8<br><span class="crew-gantt-day">Sun</span></div>
+                    <div class="crew-gantt-date-header">9<br><span class="crew-gantt-day">Mon</span></div>
+                    <div class="crew-gantt-date-header">10<br><span class="crew-gantt-day">Tue</span></div>
+                    <div class="crew-gantt-date-header">11<br><span class="crew-gantt-day">Wed</span></div>
+                    <div class="crew-gantt-date-header">12<br><span class="crew-gantt-day">Thu</span></div>
+                    <div class="crew-gantt-date-header">13<br><span class="crew-gantt-day">Fri</span></div>
+                    <div class="crew-gantt-date-header">14<br><span class="crew-gantt-day">Sat</span></div>
+                    <div class="crew-gantt-date-header">15<br><span class="crew-gantt-day">Sun</span></div>
+                    <div class="crew-gantt-status-header">Status</div>
+
+                    <!-- ROW 1: John Smith — selected, Job #14 on Mar 3, Appt on Mar 9 -->
+                    <div class="crew-gantt-name">
+                      <input type="checkbox" checked>
+                      <div class="crew-gantt-name-info">
+                        <span class="crew-gantt-name-text">John Smith <span class="crew-gantt-selected-badge">Assigned</span></span>
+                        <span class="crew-gantt-role-text">Master Plumber</span>
+                      </div>
+                    </div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #14: Bathroom Refit">Job #14</div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Follow Up">Appt</div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 2 Conflicts</div>
+
+                    <!-- ROW 2: Sarah Lee — fully available -->
+                    <div class="crew-gantt-name">
+                      <input type="checkbox">
+                      <div class="crew-gantt-name-info">
+                        <span class="crew-gantt-name-text">Sarah Lee</span>
+                        <span class="crew-gantt-role-text">Office Manager</span>
+                      </div>
+                    </div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-status crew-gantt-status-ok">&#10003; Available</div>
+
+                    <!-- ROW 3: James Rodriguez — selected, Job #12 on Mar 3-5, Appt on Mar 8 -->
+                    <div class="crew-gantt-name">
+                      <input type="checkbox" checked>
+                      <div class="crew-gantt-name-info">
+                        <span class="crew-gantt-name-text">James Rodriguez <span class="crew-gantt-selected-badge">Assigned</span></span>
+                        <span class="crew-gantt-role-text">Master Plumber</span>
+                      </div>
+                    </div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #12: Water Heater Install">Job #12</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #12: Water Heater Install">Job #12</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #12: Water Heater Install">Job #12</div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Site Survey">Appt</div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 4 Conflicts</div>
+
+                    <!-- ROW 4: Carlos Mendez — Job #11 on Mar 1-6 -->
+                    <div class="crew-gantt-name">
+                      <input type="checkbox">
+                      <div class="crew-gantt-name-info">
+                        <span class="crew-gantt-name-text">Carlos Mendez</span>
+                        <span class="crew-gantt-role-text">Journeyman Plumber</span>
+                      </div>
+                    </div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-busy-job" title="Job #11: Full Re-pipe">Job #11</div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-cell crew-gantt-available"></div>
+                    <div class="crew-gantt-status crew-gantt-status-danger">&#9888; 6 Conflicts</div>
+                  </div>
+                </div>
+
+                <!-- Legend -->
+                <div class="crew-gantt-legend">
+                  <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-available"></div><span>Available</span></div>
+                  <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-job"></div><span>Assigned Job</span></div>
+                  <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-appt"></div><span>Appointment</span></div>
+                  <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-training"></div><span>Training</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="form-group">
+              <label>Additional Notes</label>
+              <textarea class="form-control" placeholder="Any special instructions or notes for this appointment..."></textarea>
+            </div>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div class="form-actions">
+            <a href="screen8-appointments.html" class="btn btn-primary" style="text-decoration:none;">Save Appointment</a>
+            <a href="screen8-appointments.html" class="btn btn-outline" style="text-decoration:none;">Cancel</a>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html"><strong>8a. Appt Form</strong></a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html">11. Est Step 1</a>
+        <a href="screen11-step2.html">11-S2. Est Builder</a>
+        <a href="screen11-step3.html">11-S3. Terms</a>
+        <a href="screen11-step4.html">11-S4. Review</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html">12. Floor Plan</a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

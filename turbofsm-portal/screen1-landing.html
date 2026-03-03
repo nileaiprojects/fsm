@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Field Service Management Made Simple</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Landing-page-specific overrides */
+    .landing-page { min-height: 100vh; }
+
+    .hero-buttons { display: flex; gap: 14px; justify-content: center; margin-top: 10px; }
+    .hero-buttons .btn { padding: 14px 32px; font-size: 15px; border-radius: 8px; }
+    .hero-buttons .btn-outline { border: 2px solid var(--primary); color: var(--primary); font-weight: 600; }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .section-subtitle {
+      font-size: 15px;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .pricing-teaser {
+      background: linear-gradient(135deg, #e8f0fe 0%, #f5f5f5 100%);
+      padding: 60px 24px;
+      text-align: center;
+    }
+    .pricing-teaser .price-highlight {
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .pricing-teaser p { font-size: 15px; color: var(--text-light); margin-bottom: 20px; }
+
+    .testimonials { max-width: 1100px; margin: 0 auto; padding: 60px 24px; }
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 28px;
+    }
+    .testimonial-card .stars { color: #f0ad4e; font-size: 16px; margin-bottom: 12px; }
+    .testimonial-card .quote { font-size: 14px; color: var(--text); line-height: 1.6; margin-bottom: 16px; font-style: italic; }
+    .testimonial-card .author { font-size: 13px; font-weight: 600; }
+    .testimonial-card .role { font-size: 12px; color: var(--text-light); }
+
+    .features-section { padding: 60px 24px 20px; }
+
+    .landing-footer {
+      background: var(--sidebar-bg);
+      color: var(--sidebar-text);
+      padding: 40px 24px;
+    }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-inner h4 { font-size: 14px; margin-bottom: 12px; }
+    .footer-inner p, .footer-inner a { font-size: 13px; color: #bdc3c7; text-decoration: none; display: block; margin-bottom: 6px; }
+    .footer-inner a:hover { color: #fff; }
+    .footer-bottom { text-align: center; padding: 16px 24px; font-size: 12px; color: #7f8c8d; border-top: 1px solid rgba(255,255,255,0.1); }
+
+    @media (max-width: 768px) {
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .testimonial-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body class="landing-page">
+
+  <!-- TOP NAVIGATION -->
+  <nav class="landing-nav">
+    <div class="logo">TurboFSM</div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#pricing">Pricing</a>
+      <a href="screen3-signin.html">Sign In</a>
+      <a href="screen2-registration.html" class="btn btn-primary" style="padding:8px 20px; color:#fff; border-radius:6px;">Start Free Trial</a>
+    </div>
+  </nav>
+
+  <!-- HERO SECTION -->
+  <section class="landing-hero">
+    <h1>Field Service Management Made Simple</h1>
+    <p>All-in-one platform for CRM, Estimation, Job Management, Invoicing, Crew Management, and AI-Powered Insights &mdash; built for modern field service businesses.</p>
+    <div class="hero-buttons">
+      <a href="screen2-registration.html" class="btn btn-primary">Start Free Trial</a>
+      <a href="screen3-signin.html" class="btn btn-outline">Sign In</a>
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section id="features" class="features-section">
+    <div class="section-title">Everything You Need to Run Your Business</div>
+    <div class="section-subtitle">Six powerful modules working together seamlessly</div>
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="icon">&#128101;</div>
+        <h3>CRM &amp; Lead Management</h3>
+        <p>Track leads from first contact to closed deal. Manage customer relationships, schedule follow-ups, and never miss an opportunity.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">&#128196;</div>
+        <h3>Estimation &amp; Quoting</h3>
+        <p>Build professional estimates in minutes with customizable templates, material pricing, and one-click customer approval workflows.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">&#128736;</div>
+        <h3>Job Management</h3>
+        <p>Schedule, dispatch, and track jobs from start to finish. Real-time status updates keep your team and customers informed.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">&#128176;</div>
+        <h3>Invoicing &amp; Collections</h3>
+        <p>Generate invoices instantly from completed jobs, accept online payments, and automate follow-ups on overdue balances.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">&#128119;</div>
+        <h3>Crew Management</h3>
+        <p>Organize teams, assign skills, track availability and time logs. Give crew members mobile access to their daily schedules.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="icon">&#129302;</div>
+        <h3>AI-Powered Insights</h3>
+        <p>Smart recommendations for scheduling, pricing, and resource allocation. Predictive analytics help you grow revenue and cut waste.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PRICING TEASER SECTION -->
+  <section id="pricing" class="pricing-teaser">
+    <div class="section-title">Simple, Transparent Pricing</div>
+    <div class="price-highlight">Plans starting at $60/month</div>
+    <p>14-day free trial on every plan. No credit card required to get started.</p>
+    <a href="screen5-pricing.html" class="btn btn-primary" style="padding:12px 28px; font-size:15px;">View All Plans</a>
+  </section>
+
+  <!-- TESTIMONIALS SECTION -->
+  <section class="testimonials">
+    <div class="section-title">Trusted by Field Service Professionals</div>
+    <div class="section-subtitle">See what our customers have to say</div>
+    <div class="testimonial-grid">
+
+      <div class="testimonial-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="quote">"TurboFSM transformed how we manage our HVAC business. Scheduling and invoicing that used to take hours now takes minutes."</div>
+        <div class="author">James R.</div>
+        <div class="role">Owner, CoolAir HVAC Services</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="quote">"The crew management feature alone saved us 10 hours a week. Our technicians love the mobile access to their daily schedules."</div>
+        <div class="author">Maria L.</div>
+        <div class="role">Operations Manager, QuickFix Plumbing</div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <div class="quote">"We went from spreadsheets to a fully automated workflow in one week. Customer follow-ups and estimates are now seamless."</div>
+        <div class="author">David K.</div>
+        <div class="role">Founder, GreenScape Landscaping</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="landing-footer">
+    <div class="footer-inner">
+      <div>
+        <h4>TurboFSM</h4>
+        <p>The all-in-one field service management platform for growing businesses. CRM, estimation, job management, invoicing, crew management, and AI insights in one place.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="screen5-pricing.html">Pricing</a>
+        <a href="screen2-registration.html">Free Trial</a>
+        <a href="screen3-signin.html">Sign In</a>
+      </div>
+      <div>
+        <h4>Modules</h4>
+        <a href="#">CRM</a>
+        <a href="#">Estimates</a>
+        <a href="#">Jobs</a>
+        <a href="#">Invoicing</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#">About Us</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2026 TurboFSM. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- SCREEN NAVIGATION -->
+  <div class="screen-nav">
+    <strong>Wireframe Screen Navigation:</strong><br><br>
+    <a href="screen1-landing.html"><strong>1. Landing</strong></a>
+    <a href="screen2-registration.html">2. Registration</a>
+    <a href="screen3-signin.html">3. Sign In</a>
+    <a href="screen4-dashboard.html">4. Dashboard</a>
+    <a href="screen5-pricing.html">5. Pricing</a>
+    <a href="screen5a-payment.html">5a. Payment</a>
+    <a href="screen6-leads.html">6. Lead Manager</a>
+    <a href="screen7-lead-form.html">7. Lead Form</a>
+    <a href="screen8-appointments.html">8. Appointments</a>
+    <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+    <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+    <a href="screen9-schedule.html">9. Schedule</a>
+    <a href="screen10-estimates.html">10. Estimates</a>
+    <a href="screen11-estimate-form.html">11. Est Step 1</a>
+    <a href="screen11-step2.html">11-S2. Est Builder</a>
+    <a href="screen11-step3.html">11-S3. Terms</a>
+    <a href="screen11-step4.html">11-S4. Review</a>
+    <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+    <a href="screen12-floorplan.html">12. Floor Plan</a>
+    <a href="screen13-jobs.html">13. Jobs</a>
+    <a href="screen13a-job-form.html">13a. Job Form</a>
+    <a href="screen13b-job-detail.html">13b. Job Detail</a>
+    <a href="screen14-crew.html">14. Crew Assignment</a>
+    <a href="screen14a-invoicing.html">14a. Invoicing</a>
+    <a href="screen15-management.html">15. Management Master</a>
+    <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+    <a href="screen15b-materials.html">15b. Materials</a>
+    <a href="screen15c-services.html">15c. Services</a>
+    <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+    <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+    <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen16-settings.html">16. Settings</a>
+  </div>
+
+</body>
+</html>

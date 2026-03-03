@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-4: Tenant Detail | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .detail-grid .detail-item {
+      margin-bottom: 12px;
+    }
+    .detail-grid .detail-item .detail-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 2px;
+    }
+    .detail-grid .detail-item .detail-value {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .logo-placeholder {
+      width: 80px;
+      height: 80px;
+      background: #f0f0f0;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-light);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .addon-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .addon-row:last-child { border-bottom: none; }
+    .addon-status-active { color: var(--success); font-weight: 600; font-size: 12px; }
+    .addon-status-inactive { color: var(--text-light); font-size: 12px; }
+    .stats-grid-7 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+      margin-bottom: 16px;
+    }
+    .mini-stat {
+      text-align: center;
+      padding: 12px 8px;
+      background: #f8f9fb;
+      border-radius: 8px;
+      border: 1px solid #eee;
+    }
+    .mini-stat .mini-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    .mini-stat .mini-stat-label {
+      font-size: 10px;
+      color: var(--text-light);
+      margin-top: 2px;
+    }
+    .feature-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+    }
+    .feature-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+    }
+    .feature-table td:first-child {
+      font-weight: 500;
+      width: 60%;
+    }
+    .feature-yes { color: var(--success); font-weight: 600; }
+    .feature-no { color: var(--text-light); }
+    .admin-notes-area {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+    }
+    .admin-notes-area:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html" class="active"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a href="sa3-tenants.html">Tenant Management</a> &gt; BrightFlow HVAC
+      </div>
+
+      <h1 class="page-title">BrightFlow HVAC</h1>
+      <p class="page-subtitle">Tenant ID: T-001 &nbsp;|&nbsp; Status: <span class="badge badge-active">Active</span></p>
+
+      <!-- Action Buttons Row -->
+      <div class="action-bar">
+        <button class="btn btn-danger">Suspend Account</button>
+        <button class="btn btn-warning">Override Suspension</button>
+        <button class="btn btn-info">Impersonate Tenant</button>
+        <button class="btn btn-primary">Change Plan</button>
+        <button class="btn btn-outline">Increase Storage</button>
+        <button class="btn btn-outline">Send Email</button>
+        <button class="btn btn-outline">Reset MFA/OTP</button>
+        <button class="btn btn-outline" style="color:var(--danger);border-color:var(--danger);">Delete Account</button>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">Profile</div>
+        <div class="tab">Subscription</div>
+        <div class="tab">Billing &amp; Payments</div>
+        <div class="tab">Usage &amp; Storage</div>
+        <div class="tab">Support Tickets</div>
+        <div class="tab">Activity Log</div>
+        <div class="tab">Admin Notes</div>
+      </div>
+
+      <!-- PROFILE TAB CONTENT -->
+      <div class="card">
+        <div class="card-title">Company Profile</div>
+        <div class="detail-grid">
+          <div>
+            <div class="detail-item">
+              <div class="detail-label">Company Name</div>
+              <div class="detail-value">BrightFlow HVAC</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Owner</div>
+              <div class="detail-value">Mark Thompson</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Email</div>
+              <div class="detail-value">mark@brightflow.com</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Phone</div>
+              <div class="detail-value">(555) 111-2222</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Business Type</div>
+              <div class="detail-value">HVAC</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Registered</div>
+              <div class="detail-value">Jan 15, 2026</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Tenant URL</div>
+              <div class="detail-value"><a href="#" style="color:var(--primary);text-decoration:none;">brightflow.turbofsm.com</a></div>
+            </div>
+          </div>
+          <div>
+            <div class="logo-placeholder">LOGO</div>
+            <div class="detail-item">
+              <div class="detail-label">Address</div>
+              <div class="detail-value">456 Commerce Blvd, Suite 200<br>Dallas, TX 75201</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTION TAB CONTENT -->
+      <div class="card">
+        <div class="card-title">Subscription</div>
+        <div class="detail-grid">
+          <div>
+            <div class="detail-item">
+              <div class="detail-label">Current Plan</div>
+              <div class="detail-value"><span class="plan-badge plan-gold">Gold</span> &nbsp;$130/mo</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Status</div>
+              <div class="detail-value"><span class="badge badge-active">Active</span></div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Start Date</div>
+              <div class="detail-value">Jan 15, 2026</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-item">
+              <div class="detail-label">Next Renewal</div>
+              <div class="detail-value">Apr 15, 2026</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Users</div>
+              <div class="detail-value">8 / 15</div>
+            </div>
+            <div class="detail-item">
+              <div class="detail-label">Storage</div>
+              <div class="detail-value">3.2 GB / 5 GB</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add-ons -->
+        <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee;">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Add-ons</div>
+          <div class="addon-row">
+            <span>AI Lead Analysis</span>
+            <span><span class="addon-status-active">Active</span> &mdash; $30/mo</span>
+          </div>
+          <div class="addon-row">
+            <span>Floor Plan Creation</span>
+            <span class="addon-status-inactive">Inactive</span>
+          </div>
+          <div class="addon-row">
+            <span>Virtual Assistant</span>
+            <span class="addon-status-inactive">Inactive</span>
+          </div>
+          <div class="addon-row">
+            <span>Additional Storage</span>
+            <span class="addon-status-inactive">Inactive</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; display: flex; gap: 8px;">
+          <a href="sa5-subscription.html" class="btn btn-primary btn-sm">Change Plan</a>
+          <a href="sa5-subscription.html" class="btn btn-outline btn-sm">Manage Add-ons</a>
+        </div>
+      </div>
+
+      <!-- USAGE & STORAGE TAB CONTENT -->
+      <div class="card">
+        <div class="card-title">Usage &amp; Storage</div>
+
+        <!-- Storage Progress Bar -->
+        <div style="margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px;">
+            <span style="font-weight: 600;">Storage</span>
+            <span>3.2 GB / 5 GB (64%)</span>
+          </div>
+          <div class="progress-bar">
+            <div class="fill fill-primary" style="width: 64%;"></div>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid-7">
+          <div class="mini-stat">
+            <div class="mini-stat-value">8/15</div>
+            <div class="mini-stat-label">Active Users</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">234</div>
+            <div class="mini-stat-label">Leads Created</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">89</div>
+            <div class="mini-stat-label">Estimates Created</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">45</div>
+            <div class="mini-stat-label">Jobs Created</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">67</div>
+            <div class="mini-stat-label">Invoices Raised</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">312</div>
+            <div class="mini-stat-label">Files in S3 (1.8 GB)</div>
+          </div>
+          <div class="mini-stat">
+            <div class="mini-stat-value">2h ago</div>
+            <div class="mini-stat-label">Last Activity</div>
+          </div>
+        </div>
+
+        <!-- Feature Adoption Table -->
+        <div style="font-size: 13px; font-weight: 600; margin-top: 16px; margin-bottom: 6px;">Feature Adoption</div>
+        <table class="feature-table">
+          <tr>
+            <td>Lead Management</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Estimation</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Job Management</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Invoicing</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Floor Plans</td>
+            <td class="feature-no">No</td>
+          </tr>
+          <tr>
+            <td>AI Analysis</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+          <tr>
+            <td>Crew Management</td>
+            <td class="feature-yes">Yes</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- ADMIN NOTES -->
+      <div class="card">
+        <div class="card-title">Admin Notes <span style="font-size: 11px; color: var(--text-light); font-weight: 400;">(Internal only &mdash; NOT visible to tenant)</span></div>
+        <textarea class="admin-notes-area">Premium customer. Considering upgrade to Platinum. Follow up in April. - Admin, Feb 28</textarea>
+        <div style="margin-top: 10px;">
+          <button class="btn btn-primary btn-sm">Save Note</button>
+        </div>
+      </div>
+
+      <div class="wireframe-note">
+        <strong>Wireframe Note:</strong> Admin Notes are NOT visible to the tenant. All tabs (Profile, Subscription, Billing &amp; Payments, Usage &amp; Storage, Support Tickets, Activity Log, Admin Notes) load their respective content. Impersonation opens the tenant's portal in a new tab with an admin banner.
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html"><strong>SA-4. Tenant Detail</strong></a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

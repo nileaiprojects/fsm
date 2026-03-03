@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-11: Plans &amp; Pricing Configuration | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .feature-list {
+      font-size: 12px;
+      color: var(--text-light);
+      max-width: 220px;
+    }
+    .addon-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html" class="active"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Plans &amp; Pricing Configuration</h1>
+      <p class="page-subtitle">Configure subscription plans and add-ons</p>
+
+      <!-- Wireframe Note -->
+      <div class="wireframe-note">
+        <strong>Note:</strong> Changes here affect all new subscriptions. Existing tenants retain their current pricing until renewal.
+      </div>
+
+      <!-- ==================== SUBSCRIPTION PLANS ==================== -->
+
+      <div class="card">
+        <div class="card-title">Subscription Plans</div>
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Plan Name</th>
+                <th>Monthly Price</th>
+                <th>Annual Price</th>
+                <th>User Limit</th>
+                <th>Storage (GB)</th>
+                <th>Features</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="plan-badge plan-starter">Starter</span></td>
+                <td>$0</td>
+                <td>$0</td>
+                <td>10</td>
+                <td>5</td>
+                <td><span class="feature-list">Leads, Scheduling, Estimation, Jobs, Basic Invoicing</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-basic">Basic</span></td>
+                <td>$60</td>
+                <td>$600</td>
+                <td>5</td>
+                <td>5</td>
+                <td><span class="feature-list">All Starter + Invoice Reports</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-super">Super</span></td>
+                <td>$100</td>
+                <td>$1,000</td>
+                <td>10</td>
+                <td>5</td>
+                <td><span class="feature-list">All Basic + Reports</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr style="background: #fffde7;">
+                <td><span class="plan-badge plan-gold">Gold</span></td>
+                <td>$130</td>
+                <td>$1,300</td>
+                <td>15</td>
+                <td>5</td>
+                <td><span class="feature-list">All Super</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-primary btn-sm">Editing</button></td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-platinum">Platinum</span></td>
+                <td>$200</td>
+                <td>$2,000</td>
+                <td>25</td>
+                <td>5</td>
+                <td><span class="feature-list">All Gold</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td><span class="plan-badge plan-platinumpro">Platinum Pro</span></td>
+                <td>$400</td>
+                <td>$4,000</td>
+                <td>50</td>
+                <td>20</td>
+                <td><span class="feature-list">All Platinum + AI</span></td>
+                <td><span class="badge badge-active">Active</span></td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== EDIT PLAN FORM ==================== -->
+
+      <div class="card">
+        <div class="card-title">Edit Plan &mdash; <span class="plan-badge plan-gold">Gold</span></div>
+
+        <div class="form-group">
+          <label>Plan Name</label>
+          <input type="text" class="form-control" value="Gold" readonly style="background: #f3f4f6; max-width: 300px;">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Monthly Price ($)</label>
+            <input type="number" class="form-control" value="130">
+          </div>
+          <div class="form-group">
+            <label>Annual Price ($)</label>
+            <input type="number" class="form-control" value="1300">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>User Limit</label>
+            <input type="number" class="form-control" value="15">
+          </div>
+          <div class="form-group">
+            <label>Storage Limit (GB)</label>
+            <input type="number" class="form-control" value="5">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Feature Toggles</label>
+          <div class="checkbox-group">
+            <label><input type="checkbox" checked> Lead Management</label>
+            <label><input type="checkbox" checked> Estimation</label>
+            <label><input type="checkbox" checked> Job Management</label>
+            <label><input type="checkbox" checked> Invoicing</label>
+            <label><input type="checkbox" checked> Reports</label>
+            <label><input type="checkbox" checked> Crew Management</label>
+            <label><input type="checkbox"> Floor Plans</label>
+            <label><input type="checkbox"> AI Analysis</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Description</label>
+          <textarea class="form-control" placeholder="Plan description visible to tenants...">Our most popular plan for growing field service businesses. Includes all Super features with expanded user limits.</textarea>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 8px;">
+          <button class="btn btn-primary">Save Changes</button>
+          <button class="btn btn-outline">Cancel</button>
+        </div>
+      </div>
+
+      <!-- ==================== ADD-ON CONFIGURATION ==================== -->
+
+      <div class="card">
+        <div class="card-title">Add-on Configuration</div>
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Add-on Name</th>
+                <th>Monthly Price</th>
+                <th>Description</th>
+                <th>Available</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 500;">AI Lead Analysis</td>
+                <td>$30</td>
+                <td>AI-powered lead scoring</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                  </div>
+                </td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Floor Plan Creation</td>
+                <td>$40</td>
+                <td>Interactive floor plan builder</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                  </div>
+                </td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Virtual Assistant</td>
+                <td>$60</td>
+                <td>AI virtual assistant</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                  </div>
+                </td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Additional Storage</td>
+                <td>$10 <span style="font-size: 11px; color: var(--text-light);">per 10GB</span></td>
+                <td>Extra cloud storage</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                  </div>
+                </td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Single User Add-on</td>
+                <td>$10 <span style="font-size: 11px; color: var(--text-light);">per user</span></td>
+                <td>Additional user seat</td>
+                <td>
+                  <div class="toggle">
+                    <div class="toggle-switch on"></div>
+                  </div>
+                </td>
+                <td><button class="btn btn-outline btn-sm">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html">SA-10. Broadcast</a>
+      <a href="sa11-plans-config.html"><strong>SA-11. Plans Config</strong></a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

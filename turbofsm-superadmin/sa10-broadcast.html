@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SA-10: Broadcast &amp; Email | TurboFSM Super Admin</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 4px;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .editor-toolbar {
+      display: flex;
+      gap: 6px;
+      padding: 8px 10px;
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-bottom: none;
+      border-radius: 6px 6px 0 0;
+    }
+    .editor-toolbar button {
+      padding: 4px 10px;
+      font-size: 12px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .editor-toolbar button:hover {
+      background: #e5e7eb;
+    }
+    .editor-area {
+      width: 100%;
+      min-height: 200px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 0 0 6px 6px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+    }
+    .editor-area:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .merge-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .merge-tags .merge-tag {
+      cursor: pointer;
+    }
+    .merge-tags .merge-tag:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .filter-controls {
+      padding: 14px;
+      background: #f8f9fb;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+    .filter-controls .form-row {
+      margin-bottom: 10px;
+    }
+    .recipient-count {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .schedule-section {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #eee;
+    }
+    .schedule-section .datetime-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .schedule-section .datetime-row input {
+      padding: 7px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">SA</div>
+      <div>TurboFSM<br><span style="font-size:11px;font-weight:400;color:var(--sidebar-text);">Super Admin</span></div>
+    </div>
+
+    <div class="sidebar-section">MAIN</div>
+    <nav class="sidebar-nav">
+      <a href="sa2-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+      <a href="sa3-tenants.html"><span class="nav-icon">&#9632;</span> Tenant Management</a>
+      <a href="sa6-payments.html"><span class="nav-icon">&#9632;</span> Payment &amp; Billing</a>
+    </nav>
+
+    <div class="sidebar-section">BUSINESS</div>
+    <nav class="sidebar-nav">
+      <a href="sa11-plans-config.html"><span class="nav-icon">&#9632;</span> Plans &amp; Pricing</a>
+      <a href="sa7-coupons.html"><span class="nav-icon">&#9632;</span> Coupons &amp; Promotions</a>
+      <a href="sa8-revenue.html"><span class="nav-icon">&#9632;</span> Revenue &amp; Analytics</a>
+    </nav>
+
+    <div class="sidebar-section">OPERATIONS</div>
+    <nav class="sidebar-nav">
+      <a href="sa9-support.html"><span class="nav-icon">&#9632;</span> Support Tickets</a>
+      <a href="sa10-broadcast.html" class="active"><span class="nav-icon">&#9632;</span> Broadcast &amp; Email</a>
+    </nav>
+
+    <div class="sidebar-section">SYSTEM</div>
+    <nav class="sidebar-nav">
+      <a href="sa12-settings.html"><span class="nav-icon">&#9632;</span> Settings &amp; Audit Log</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> My Profile</a>
+      <a href="#"><span class="nav-icon">&#9632;</span> Sign Out</a>
+    </nav>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <span class="header-title">admin.turbofsm.com</span>
+      </div>
+      <div class="header-right">
+        <div class="notification-bell">
+          &#128276;
+          <span class="badge">5</span>
+        </div>
+        <div class="user-info">
+          <span>Admin User</span>
+          <div class="user-avatar">AU</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="content">
+
+      <h1 class="page-title">Broadcast &amp; Email</h1>
+      <p class="page-subtitle">Send targeted emails and manage campaigns</p>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">Send Broadcast</div>
+        <div class="tab">Email Log</div>
+        <div class="tab">System Templates</div>
+      </div>
+
+      <!-- ==================== SEND BROADCAST TAB ==================== -->
+
+      <div class="card">
+        <div class="card-title">Compose Broadcast</div>
+
+        <!-- Recipient Selection -->
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Recipient Selection</div>
+          <div class="radio-group">
+            <label><input type="radio" name="recipients" value="all"> All Tenants</label>
+            <label><input type="radio" name="recipients" value="filtered" checked> Filtered Recipients</label>
+          </div>
+
+          <!-- Filter Controls (shown when Filtered selected) -->
+          <div class="filter-controls">
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Status</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" checked> Active</label>
+                <label><input type="checkbox" checked> Trial</label>
+                <label><input type="checkbox"> Suspended</label>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 12px;">
+              <label>Plan</label>
+              <div class="checkbox-group">
+                <label><input type="checkbox" checked> Starter</label>
+                <label><input type="checkbox" checked> Basic</label>
+                <label><input type="checkbox" checked> Super</label>
+                <label><input type="checkbox" checked> Gold</label>
+                <label><input type="checkbox" checked> Platinum</label>
+                <label><input type="checkbox" checked> Platinum Pro</label>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Business Type</label>
+                <select class="form-control">
+                  <option>All Types</option>
+                  <option>HVAC</option>
+                  <option>Plumbing</option>
+                  <option>Electrical</option>
+                  <option>Roofing</option>
+                  <option>Landscaping</option>
+                  <option>General Contracting</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Dunning Stage</label>
+                <select class="form-control">
+                  <option>All</option>
+                  <option>None</option>
+                  <option>Day 1</option>
+                  <option>Day 3</option>
+                  <option>Day 5</option>
+                  <option>Day 7</option>
+                  <option>Day 15</option>
+                  <option>Day 30</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date Joined From</label>
+                <input type="date" class="form-control">
+              </div>
+              <div class="form-group">
+                <label>Date Joined To</label>
+                <input type="date" class="form-control">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Storage Usage Min (%)</label>
+                <input type="number" class="form-control" placeholder="0" min="0" max="100">
+              </div>
+              <div class="form-group">
+                <label>Storage Usage Max (%)</label>
+                <input type="number" class="form-control" placeholder="100" min="0" max="100">
+              </div>
+            </div>
+            <div class="recipient-count">&#9989; Matching recipients: 285 tenants</div>
+          </div>
+        </div>
+
+        <!-- Email Content -->
+        <div style="margin-bottom: 20px;">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px;">Email Content</div>
+
+          <div class="form-row" style="margin-bottom: 12px;">
+            <div class="form-group">
+              <label>Subject Line <span style="font-size: 10px; color: var(--text-light);">(max 200 chars)</span></label>
+              <input type="text" class="form-control" placeholder="Enter email subject..." maxlength="200">
+            </div>
+            <div class="form-group">
+              <label>From Address</label>
+              <input type="email" class="form-control" value="noreply@turbofsm.com">
+            </div>
+          </div>
+
+          <!-- Rich Text Editor -->
+          <div class="form-group">
+            <label>Email Body</label>
+            <div class="editor-toolbar">
+              <button><strong>B</strong></button>
+              <button><em>I</em></button>
+              <button style="text-decoration: underline;">U</button>
+              <button>Link</button>
+              <button>Image</button>
+              <button>HTML</button>
+            </div>
+            <textarea class="editor-area" placeholder="Compose your email content here..."></textarea>
+          </div>
+
+          <!-- Merge Tags -->
+          <div style="margin-top: 6px;">
+            <span style="font-size: 11px; font-weight: 600; color: var(--text-light);">Available Merge Tags (click to insert):</span>
+            <div class="merge-tags">
+              <span class="merge-tag">{{tenant_name}}</span>
+              <span class="merge-tag">{{plan}}</span>
+              <span class="merge-tag">{{renewal_date}}</span>
+              <span class="merge-tag">{{owner_name}}</span>
+              <span class="merge-tag">{{company_name}}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="schedule-section">
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">Schedule</div>
+          <div class="radio-group">
+            <label><input type="radio" name="schedule" value="now" checked> Send Now</label>
+            <label><input type="radio" name="schedule" value="later"> Schedule for later</label>
+          </div>
+          <div class="datetime-row">
+            <input type="date" title="Schedule Date">
+            <input type="time" title="Schedule Time">
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button class="btn btn-outline">Preview Email</button>
+          <button class="btn btn-outline">Send Test Email</button>
+          <button class="btn btn-primary">Send Broadcast</button>
+        </div>
+      </div>
+
+      <!-- ==================== EMAIL LOG ==================== -->
+
+      <div class="card">
+        <div class="card-title">Email Log</div>
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Campaign</th>
+                <th>Date</th>
+                <th>Recipients</th>
+                <th>Status</th>
+                <th>Delivered</th>
+                <th>Bounced</th>
+                <th>Opens</th>
+                <th>Clicks</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 500;">March Newsletter</td>
+                <td>Mar 1</td>
+                <td>285</td>
+                <td><span class="badge badge-success">Sent</span></td>
+                <td>278</td>
+                <td>7</td>
+                <td>142 <span style="color: var(--text-light); font-size: 11px;">(51%)</span></td>
+                <td>38 <span style="color: var(--text-light); font-size: 11px;">(14%)</span></td>
+                <td><button class="btn btn-outline btn-sm">View Details</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Payment Reminder</td>
+                <td>Feb 28</td>
+                <td>12</td>
+                <td><span class="badge badge-success">Sent</span></td>
+                <td>12</td>
+                <td>0</td>
+                <td>10 <span style="color: var(--text-light); font-size: 11px;">(83%)</span></td>
+                <td>8 <span style="color: var(--text-light); font-size: 11px;">(67%)</span></td>
+                <td><button class="btn btn-outline btn-sm">View Details</button></td>
+              </tr>
+              <tr>
+                <td style="font-weight: 500;">Feature Update v2.5</td>
+                <td>Feb 15</td>
+                <td>310</td>
+                <td><span class="badge badge-inprogress">Partially Failed</span></td>
+                <td>295</td>
+                <td>15</td>
+                <td>180 <span style="color: var(--text-light); font-size: 11px;">(61%)</span></td>
+                <td>52 <span style="color: var(--text-light); font-size: 11px;">(18%)</span></td>
+                <td><button class="btn btn-outline btn-sm">View Details</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ==================== SYSTEM TEMPLATES ==================== -->
+
+      <div class="card">
+        <div class="card-title">System Templates</div>
+        <div class="table-container" style="border: none;">
+          <table>
+            <thead>
+              <tr>
+                <th>Template Name</th>
+                <th>Description</th>
+                <th>Last Modified</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">WELCOME</span></td>
+                <td>Welcome email for new tenants</td>
+                <td>Feb 15, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">TRIAL_WARNING</span></td>
+                <td>Day 12 trial expiry warning</td>
+                <td>Feb 10, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">PAYMENT_FAILED</span></td>
+                <td>Payment failure notification</td>
+                <td>Jan 20, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">PAYMENT_REMINDER</span></td>
+                <td>Dunning day 3 reminder</td>
+                <td>Jan 20, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">SUSPENSION</span></td>
+                <td>Account suspension notice</td>
+                <td>Jan 15, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span style="font-family: monospace; font-weight: 600; background: #f3f4f6; padding: 2px 8px; border-radius: 4px;">PLAN_CHANGE</span></td>
+                <td>Plan upgrade/downgrade confirmation</td>
+                <td>Jan 10, 2026</td>
+                <td>
+                  <div style="display: flex; gap: 4px;">
+                    <button class="btn btn-outline btn-sm">Edit</button>
+                    <button class="btn btn-outline btn-sm">Preview</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+
+    <!-- Screen Navigation Footer -->
+    <div class="screen-nav">
+      <strong>Super Admin Wireframe Navigation:</strong><br><br>
+      <a href="sa1-login.html">SA-1. Login</a>
+      <a href="sa2-dashboard.html">SA-2. Dashboard</a>
+      <a href="sa3-tenants.html">SA-3. Tenants</a>
+      <a href="sa4-tenant-detail.html">SA-4. Tenant Detail</a>
+      <a href="sa5-subscription.html">SA-5. Subscription</a>
+      <a href="sa6-payments.html">SA-6. Payments</a>
+      <a href="sa7-coupons.html">SA-7. Coupons</a>
+      <a href="sa8-revenue.html">SA-8. Revenue</a>
+      <a href="sa9-support.html">SA-9. Support</a>
+      <a href="sa10-broadcast.html"><strong>SA-10. Broadcast</strong></a>
+      <a href="sa11-plans-config.html">SA-11. Plans Config</a>
+      <a href="sa12-settings.html">SA-12. Settings</a>
+    </div>
+
+  </div><!-- /main-area -->
+</div><!-- /layout -->
+
+</body>
+</html>

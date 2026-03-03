@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Create Estimate (Step 1: Cover Page)</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="estimate-wizard">
+
+  <div class="layout">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">&#9889;</div><span>Turbo<span style="color:#818CF8;">FSM</span></span></div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
+        <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Leads</a>
+        <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
+        <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
+        <a href="screen10-estimates.html" class="active"><span class="nav-icon">&#128196;</span> Estimates</a>
+        <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
+        <a href="screen13-jobs.html"><span class="nav-icon">&#128736;</span> Jobs Board</a>
+        <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
+        <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoices</a>
+        <a href="screen15-management.html"><span class="nav-icon">&#9881;</span> Management Master</a>
+        <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- ESTIMATE HEADER BAR -->
+      <div class="est-header-bar">
+        <div class="est-header-left">
+          <a href="screen10-estimates.html" class="est-back-btn">&larr;</a>
+          <div>
+            <div class="est-title-group">
+              <span class="est-title">New Estimate <span class="est-id">#EST-208</span></span>
+              <span class="est-badge-draft">Draft</span>
+            </div>
+            <div class="est-meta">
+              <span><span class="meta-icon">&#128100;</span> James Wilson</span>
+              <span>&middot;</span>
+              <span><span class="meta-icon">&#128205;</span> 123 Maple St, Springfield, IL</span>
+            </div>
+          </div>
+        </div>
+        <div class="est-header-actions">
+          <button class="est-save-draft-btn">Save as Draft</button>
+          <a href="screen10-estimates.html" class="est-close-btn">&times;</a>
+        </div>
+      </div>
+
+      <!-- WIZARD PROGRESS: Step 1 Active -->
+      <div class="est-wizard">
+        <div class="est-wizard-step active">
+          <div class="est-step-circle">1</div>
+          <div class="est-step-label">Cover Page</div>
+        </div>
+        <div class="est-wizard-connector"></div>
+        <div class="est-wizard-step">
+          <div class="est-step-circle">2</div>
+          <div class="est-step-label">Services &amp; Pricing</div>
+        </div>
+        <div class="est-wizard-connector"></div>
+        <div class="est-wizard-step">
+          <div class="est-step-circle">3</div>
+          <div class="est-step-label">Notes &amp; Terms</div>
+        </div>
+        <div class="est-wizard-connector"></div>
+        <div class="est-wizard-step">
+          <div class="est-step-circle">4</div>
+          <div class="est-step-label">Preview &amp; Send</div>
+        </div>
+      </div>
+
+      <!-- CONTENT: Two-Panel Layout -->
+      <div class="content">
+        <div class="est-panels est-panels--55-45">
+
+          <!-- LEFT PANEL: Customer & Template -->
+          <div class="est-panel-left">
+
+            <!-- Customer Section -->
+            <div class="est-card">
+              <div class="est-card-header">
+                <div class="est-card-title"><span class="card-icon">&#128100;</span> Customer</div>
+                <button class="est-btn-add-customer">+ Add New Customer</button>
+              </div>
+              <div class="est-customer-search">
+                <input type="text" class="est-search-input" placeholder="Search customers by name, phone, or email..." value="James">
+                <div class="est-search-results">
+                  <div class="est-search-result-item" style="background: #F8FAFC;">
+                    <div>
+                      <div class="est-result-name">James Wilson</div>
+                      <div class="est-result-address">123 Maple St, Springfield</div>
+                    </div>
+                    <span class="est-customer-tag existing">Existing</span>
+                  </div>
+                  <div class="est-search-result-item">
+                    <div>
+                      <div class="est-result-name">Jameson Property Mgmt</div>
+                      <div class="est-result-address">Various Locations (5)</div>
+                    </div>
+                    <span class="est-customer-tag commercial">Commercial</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Service Sites Selection (Multi-Select) -->
+            <div class="est-card">
+              <div class="est-card-header">
+                <div class="est-card-title"><span class="card-icon">&#128205;</span> Service Sites</div>
+                <button class="est-btn-add-customer" style="font-size: 11px;">+ Add New Site</button>
+              </div>
+              <div style="font-size: 12px; color: var(--est-text-medium); margin-bottom: 12px;">
+                Select one or more sites where work will be performed. Each site can generate a separate job when the estimate is approved.
+              </div>
+              <!-- Sites Checkboxes -->
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1px solid var(--est-border); border-radius: 8px; background: #F8FAFC; cursor: pointer;">
+                  <input type="checkbox" checked style="width: 16px; height: 16px; margin-top: 2px; accent-color: var(--est-primary);">
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 600; color: var(--est-text-dark); display: flex; align-items: center; gap: 6px;">
+                      Downtown Office
+                      <span style="display: inline-block; padding: 1px 8px; background: #dbeafe; color: #1d4ed8; border-radius: 10px; font-size: 10px; font-weight: 600;">Primary</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--est-text-medium);">456 Commerce Blvd, Springfield, IL 62704</div>
+                    <div style="font-size: 11px; color: var(--est-text-medium);">Contact: Mike Johnson &middot; (555) 111-2222</div>
+                  </div>
+                </label>
+                <label style="display: flex; align-items: flex-start; gap: 10px; padding: 10px 14px; border: 1px solid var(--est-border); border-radius: 8px; background: #fff; cursor: pointer;">
+                  <input type="checkbox" checked style="width: 16px; height: 16px; margin-top: 2px; accent-color: var(--est-primary);">
+                  <div style="flex: 1;">
+                    <div style="font-size: 13px; font-weight: 600; color: var(--est-text-dark);">Warehouse B</div>
+                    <div style="font-size: 12px; color: var(--est-text-medium);">789 Industrial Park, Springfield, IL 62705</div>
+                    <div style="font-size: 11px; color: var(--est-text-medium);">Contact: Same as customer</div>
+                  </div>
+                </label>
+              </div>
+              <div style="margin-top: 8px; font-size: 11px; color: var(--est-text-medium); font-style: italic;">
+                2 sites selected &mdash; line items on the next step can be grouped by site. Each site will create a separate job on approval.
+              </div>
+            </div>
+
+            <!-- Select Template -->
+            <div class="est-card">
+              <div class="est-card-title"><span class="card-icon">&#128196;</span> Select Template</div>
+              <div class="est-template-grid">
+                <div class="est-template-card selected">
+                  <div class="checkmark">&#10003;</div>
+                  <div class="est-template-thumb">
+                    <span style="opacity:0.4;">&#9776; Modern Layout</span>
+                  </div>
+                  <div class="est-template-name">Modern Clean</div>
+                </div>
+                <div class="est-template-card">
+                  <div class="est-template-thumb">
+                    <span style="opacity:0.4;">&#9776; Letter Format</span>
+                  </div>
+                  <div class="est-template-name" style="color: var(--est-text-medium);">Professional Letter</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step Navigation -->
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+              <a href="screen11-step2.html" class="est-btn-next" style="text-decoration:none;">Next: Services &amp; Pricing &rarr;</a>
+            </div>
+
+          </div>
+
+          <!-- RIGHT PANEL: Live Preview -->
+          <div class="est-panel-right">
+            <div class="est-card" style="position: sticky; top: 140px;">
+              <!-- Preview Toggle -->
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div class="est-preview-toggle">
+                  <button class="est-preview-toggle-btn active">&#128187; Desktop</button>
+                  <button class="est-preview-toggle-btn">&#128241; Mobile</button>
+                </div>
+              </div>
+
+              <!-- Estimate Document Preview -->
+              <div class="est-preview-document">
+                <div class="est-preview-watermark">ESTIMATE</div>
+
+                <!-- Company Header -->
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 20px;">
+                  <div style="width: 48px; height: 48px; background: var(--est-primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px;">&#9889;</div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 16px; font-weight: 700; color: var(--est-text-dark);">TurboFSM Services</div>
+                    <div style="font-size: 11px; color: var(--est-text-medium);">100 Enterprise Way</div>
+                    <div style="font-size: 11px; color: var(--est-text-medium);">Silicon Valley, CA 94025</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 13px; font-weight: 700; color: var(--est-text-dark);">#EST-208</div>
+                    <div style="font-size: 11px; color: var(--est-text-medium);">Date: Oct 24, 2023</div>
+                  </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid var(--est-border); margin-bottom: 20px;">
+
+                <!-- Prepared For -->
+                <div style="margin-bottom: 24px;">
+                  <div style="font-size: 11px; font-weight: 600; color: var(--est-primary); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;">Prepared For</div>
+                  <div style="font-size: 16px; font-weight: 700; color: var(--est-text-dark);">James Wilson</div>
+                  <div style="font-size: 12px; color: var(--est-text-medium); margin-top: 4px;">123 Maple St</div>
+                  <div style="font-size: 12px; color: var(--est-text-medium);">Springfield, IL 62704</div>
+                  <div style="font-size: 12px; color: var(--est-text-medium); margin-top: 6px;">james.wilson@example.com</div>
+                </div>
+
+                <!-- Project Estimate Text -->
+                <div style="text-align: center; padding: 20px 0;">
+                  <div style="font-size: 18px; font-weight: 700; color: var(--est-text-dark);">Project Estimate</div>
+                  <div style="font-size: 12px; color: var(--est-text-medium); margin-top: 8px; line-height: 1.6; max-width: 340px; margin-left: auto; margin-right: auto;">
+                    Dear James,<br>
+                    Thank you for the opportunity to estimate your project. Based on our assessment visit, we have put together the following proposal for your review.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html"><strong>11. Est Step 1</strong></a>
+        <a href="screen11-step2.html">11-S2. Services</a>
+        <a href="screen11-step3.html">11-S3. Notes</a>
+        <a href="screen11-step4.html">11-S4. Preview</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html">12. Floor Plan</a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

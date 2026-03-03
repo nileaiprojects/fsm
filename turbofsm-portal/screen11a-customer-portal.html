@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Estimate Portal</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      background: #f0f2f5;
+    }
+
+    .portal-topbar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .portal-topbar .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .portal-topbar .portal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .portal-container {
+      max-width: 800px;
+      margin: 32px auto;
+      padding: 0 20px;
+    }
+
+    .estimate-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .estimate-card-header {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+    }
+
+    .company-logo-placeholder {
+      width: 64px;
+      height: 64px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: var(--text-light);
+      background: #fafafa;
+      flex-shrink: 0;
+    }
+
+    .company-info h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .company-info .estimate-id {
+      font-size: 14px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .estimate-meta {
+      padding: 20px 32px;
+      background: #f8f9fa;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      font-size: 13px;
+    }
+
+    .estimate-meta .meta-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-light);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .estimate-meta .meta-value {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .estimate-body {
+      padding: 28px 32px;
+    }
+
+    .estimate-body .intro-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      padding: 14px 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .estimate-table-section {
+      margin-bottom: 24px;
+    }
+
+    .estimate-table-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .customer-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .customer-table th,
+    .customer-table td {
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+
+    .customer-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .customer-table tr:last-child td { border-bottom: none; }
+
+    .customer-table .total-row {
+      background: #f0f4ff;
+      font-weight: 700;
+    }
+
+    .customer-table .total-row td {
+      border-top: 2px solid var(--primary);
+      font-size: 14px;
+    }
+
+    .terms-section {
+      margin-bottom: 24px;
+    }
+
+    .terms-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .terms-section .terms-content {
+      font-size: 13px;
+      color: var(--text-light);
+      line-height: 1.7;
+      padding: 14px 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    .payment-section h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .payment-table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .payment-table th,
+    .payment-table td {
+      padding: 10px 16px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+    }
+
+    .payment-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .payment-table tr:last-child td { border-bottom: none; }
+
+    .portal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      padding: 28px 32px;
+      border-top: 1px solid var(--border);
+      background: #fafafa;
+    }
+
+    .portal-actions .btn {
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .wireframe-notes-portal {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR (External Portal - No Sidebar) -->
+  <div class="portal-topbar">
+    <div class="logo-icon">TF</div>
+    <div class="portal-title">Estimate Portal</div>
+  </div>
+
+  <!-- PORTAL CONTENT -->
+  <div class="portal-container">
+
+    <!-- WIREFRAME NOTES -->
+    <div class="wireframe-note">
+      &#128221; <strong>Note:</strong> Customer does NOT see Cost Price. Only Quote Price visible.
+    </div>
+    <div class="wireframe-note">
+      &#128221; <strong>Note:</strong> Accept &rarr; auto-creates job (Screen 13), contractor notified. Reject &rarr; contractor notified for re-submission.
+    </div>
+
+    <!-- ESTIMATE CARD -->
+    <div class="estimate-card">
+
+      <!-- Header: Company + Estimate ID -->
+      <div class="estimate-card-header">
+        <div class="company-logo-placeholder">Company<br>Logo</div>
+        <div class="company-info">
+          <h2>ABC Plumbing Co.</h2>
+          <div class="estimate-id">Estimate #EST-20260215-0001</div>
+        </div>
+      </div>
+
+      <!-- Metadata -->
+      <div class="estimate-meta">
+        <div>
+          <div class="meta-label">Customer</div>
+          <div class="meta-value">John Smith</div>
+          <div class="meta-value" style="font-size: 12px; color: var(--text-light);">123 Oak St, Austin TX</div>
+        </div>
+        <div>
+          <div class="meta-label">Date</div>
+          <div class="meta-value">Feb 15, 2026</div>
+          <div class="meta-label" style="margin-top: 8px;">Valid Until</div>
+          <div class="meta-value">Mar 15, 2026</div>
+        </div>
+      </div>
+
+      <!-- Estimate Body -->
+      <div class="estimate-body">
+
+        <!-- Intro Text -->
+        <div class="intro-text">
+          Thank you for the opportunity to provide this estimate. Based on our site assessment and discussion, we are pleased to present the following scope of work for your plumbing project. This estimate covers all materials and labor required for the agreed-upon scope.
+        </div>
+
+        <!-- Estimate Table (NO Cost Price - only Quote Price) -->
+        <div class="estimate-table-section">
+          <h3>Estimate Details</h3>
+          <table class="customer-table">
+            <thead>
+              <tr>
+                <th>Item Name</th>
+                <th>Type</th>
+                <th style="text-align: right;">Quote Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Copper Pipes 1/2"</td>
+                <td>Material</td>
+                <td style="text-align: right;">$180.00</td>
+              </tr>
+              <tr>
+                <td>PVC Fittings Pack</td>
+                <td>Material</td>
+                <td style="text-align: right;">$75.00</td>
+              </tr>
+              <tr>
+                <td>Water Heater 50gal</td>
+                <td>Material</td>
+                <td style="text-align: right;">$950.00</td>
+              </tr>
+              <tr class="total-row">
+                <td colspan="2" style="text-align: right;">Total</td>
+                <td style="text-align: right;">$1,205.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Terms & Conditions -->
+        <div class="terms-section">
+          <h3>Terms &amp; Conditions</h3>
+          <div class="terms-content">
+            All work will be performed in accordance with local plumbing codes and regulations. Materials are covered under manufacturer warranty. Labor warranty of 12 months from date of completion. Any changes to scope will require a revised estimate and approval before proceeding.
+          </div>
+        </div>
+
+        <!-- Payment Terms -->
+        <div class="payment-section">
+          <h3>Payment Terms</h3>
+          <table class="payment-table">
+            <thead>
+              <tr>
+                <th>Milestone</th>
+                <th>Percentage</th>
+                <th style="text-align: right;">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>50% upfront</td>
+                <td>50%</td>
+                <td style="text-align: right;">$602.50</td>
+              </tr>
+              <tr>
+                <td>50% on completion</td>
+                <td>50%</td>
+                <td style="text-align: right;">$602.50</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="portal-actions">
+        <button class="btn btn-success">Accept Estimate</button>
+        <button class="btn btn-danger">Reject Estimate</button>
+        <button class="btn btn-outline">Ask More Questions</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SCREEN NAVIGATION -->
+  <div class="screen-nav">
+    <strong>Wireframe Screen Navigation:</strong><br><br>
+    <a href="screen1-landing.html">1. Landing</a>
+    <a href="screen2-registration.html">2. Registration</a>
+    <a href="screen3-signin.html">3. Sign In</a>
+    <a href="screen4-dashboard.html">4. Dashboard</a>
+    <a href="screen5-pricing.html">5. Pricing</a>
+    <a href="screen5a-payment.html">5a. Payment</a>
+    <a href="screen6-leads.html">6. Lead Manager</a>
+    <a href="screen7-lead-form.html">7. Lead Form</a>
+    <a href="screen8-appointments.html">8. Appointments</a>
+    <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+    <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+    <a href="screen9-schedule.html">9. Schedule</a>
+    <a href="screen10-estimates.html">10. Estimates</a>
+    <a href="screen11-estimate-form.html">11. Est Step 1</a>
+    <a href="screen11-step2.html">11-S2. Est Builder</a>
+    <a href="screen11-step3.html">11-S3. Terms</a>
+    <a href="screen11-step4.html">11-S4. Review</a>
+    <a href="screen11a-customer-portal.html"><strong>11a. Customer Portal</strong></a>
+    <a href="screen12-floorplan.html">12. Floor Plan</a>
+    <a href="screen13-jobs.html">13. Jobs</a>
+    <a href="screen13a-job-form.html">13a. Job Form</a>
+    <a href="screen13b-job-detail.html">13b. Job Detail</a>
+    <a href="screen14-crew.html">14. Crew Assignment</a>
+    <a href="screen14a-invoicing.html">14a. Invoicing</a>
+    <a href="screen15-management.html">15. Management Master</a>
+    <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+    <a href="screen15b-materials.html">15b. Materials</a>
+    <a href="screen15c-services.html">15c. Services</a>
+    <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+    <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+    <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+                <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen16-settings.html">16. Settings</a>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Schedule (Day)</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .calendar-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .calendar-controls-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .calendar-controls-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cal-nav-btn {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cal-nav-btn:hover { background: #f5f5f5; }
+
+    .cal-month-title {
+      font-size: 20px;
+      font-weight: 600;
+      min-width: 280px;
+      text-align: center;
+    }
+
+    .cal-today-btn {
+      padding: 6px 16px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: #fff;
+      font-size: 13px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .cal-today-btn:hover { background: #f5f5f5; }
+
+    .view-toggle {
+      display: flex;
+      gap: 0;
+    }
+
+    .view-toggle-btn {
+      padding: 6px 16px;
+      font-size: 13px;
+      border: 1px solid var(--border);
+      background: #fff;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .view-toggle-btn:first-child { border-radius: 6px 0 0 6px; }
+    .view-toggle-btn:last-child { border-radius: 0 6px 6px 0; }
+    .view-toggle-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+    .legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 10px 16px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }
+
+    .legend-dot.appointment { background: #4a90d9; }
+    .legend-dot.survey { background: #e67e22; }
+    .legend-dot.presentation { background: #27ae60; }
+    .legend-dot.job-scheduled { background: #8e44ad; }
+    .legend-dot.job-start { background: #e74c3c; }
+
+    .event-appointment { background: #4a90d9; }
+    .event-survey { background: #e67e22; }
+    .event-presentation { background: #27ae60; }
+    .event-job-scheduled { background: #8e44ad; }
+    .event-job-start { background: #e74c3c; }
+
+    /* Toggle buttons as links */
+    a.view-toggle-btn {
+      text-decoration: none;
+      text-align: center;
+    }
+
+    .tenant-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .header-storage {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Day View Timeline */
+    .day-timeline {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--card-bg);
+    }
+
+    .day-time-label {
+      padding: 0 12px;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-light);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: flex-start;
+      padding-top: 8px;
+      background: #f8f9fa;
+      min-height: 80px;
+    }
+
+    .day-time-slot {
+      position: relative;
+      border-bottom: 1px solid #eee;
+      min-height: 80px;
+    }
+
+    .day-time-slot:last-child,
+    .day-time-label:last-of-type {
+      border-bottom: none;
+    }
+
+    /* Day Event Blocks */
+    .day-event-block {
+      position: absolute;
+      left: 8px;
+      right: 8px;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #fff;
+      font-size: 12px;
+      overflow: hidden;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    .day-event-block:hover {
+      opacity: 0.9;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .day-event-block.col-1of2 { right: 52%; }
+    .day-event-block.col-2of2 { left: 52%; }
+
+    .event-block-time {
+      font-size: 11px;
+      font-weight: 600;
+      opacity: 0.9;
+    }
+
+    .event-block-type {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      opacity: 0.85;
+    }
+
+    .event-block-customer {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .event-block-crew {
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0.9;
+    }
+
+    .crew-initial {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .event-block-address {
+      font-size: 10px;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TF</div>
+        <span>TurboFSM</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="screen4-dashboard.html">
+          <span class="nav-icon">&#9632;</span> Dashboard
+        </a>
+        <a href="screen6-leads.html">
+          <span class="nav-icon">&#9672;</span> Lead Manager
+        </a>
+        <a href="screen8-appointments.html">
+          <span class="nav-icon">&#128197;</span> Appointments
+        </a>
+        <a href="screen9-schedule.html" class="active">
+          <span class="nav-icon">&#128339;</span> Schedule
+        </a>
+        <a href="screen10-estimates.html">
+          <span class="nav-icon">&#128196;</span> Estimation
+        </a>
+        <a href="screen12-floorplan.html">
+          <span class="nav-icon">&#9633;</span> Floor Plan
+        </a>
+        <a href="screen13-jobs.html">
+          <span class="nav-icon">&#128736;</span> Job Creation
+        </a>
+        <a href="screen14-crew.html">
+          <span class="nav-icon">&#128101;</span> Assign Crew
+        </a>
+        <a href="screen14a-invoicing.html">
+          <span class="nav-icon">&#128176;</span> Invoicing
+        </a>
+        <a href="screen15-management.html">
+          <span class="nav-icon">&#9881;</span> Management Master
+        </a>
+        <a href="screen16-settings.html">
+          <span class="nav-icon">&#128295;</span> Client Settings
+        </a>
+        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
+          <span class="nav-icon">&#10140;</span> Log Out
+        </a>
+      </nav>
+    </aside>
+
+    <!-- MAIN AREA -->
+    <div class="main-area">
+
+      <!-- HEADER -->
+      <header class="header">
+        <div class="header-left">
+          <div class="header-storage">
+            <div class="storage-bar">
+              <span>2.1 GB / 5 GB</span>
+              <div class="bar">
+                <div class="bar-fill" style="width: 42%;"></div>
+              </div>
+            </div>
+            <button class="btn-sm">Buy More Space</button>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="tenant-name">ABC Plumbing Co.</div>
+          <div class="notification-bell">
+            &#128276;
+            <div class="badge">3</div>
+          </div>
+          <div class="user-avatar">JS</div>
+        </div>
+      </header>
+
+      <!-- CONTENT -->
+      <div class="content">
+
+        <!-- PAGE TITLE -->
+        <div class="page-title">Schedule</div>
+        <div class="page-subtitle">Unified calendar view of all activities</div>
+
+        <!-- CALENDAR CONTROLS -->
+        <div class="calendar-controls">
+          <div class="calendar-controls-left">
+            <button class="cal-nav-btn" title="Previous Day">&#9664;</button>
+            <div class="cal-month-title">Tuesday, March 3, 2026</div>
+            <button class="cal-nav-btn" title="Next Day">&#9654;</button>
+            <button class="cal-today-btn">Today</button>
+          </div>
+          <div class="calendar-controls-right">
+            <div class="view-toggle">
+              <a href="screen9a-schedule-day.html" class="view-toggle-btn active">Day</a>
+              <a href="screen9b-schedule-week.html" class="view-toggle-btn">Week</a>
+              <a href="screen9-schedule.html" class="view-toggle-btn">Month</a>
+            </div>
+            <select class="filter-select">
+              <option value="all">All Staff</option>
+              <option value="john-smith">John Smith</option>
+              <option value="sarah-lee">Sarah Lee</option>
+              <option value="mike-jones">Mike Jones</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- COLOR LEGEND -->
+        <div class="legend-bar">
+          <div class="legend-item">
+            <div class="legend-dot appointment"></div>
+            <span>Appointments</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot survey"></div>
+            <span>Site Surveys</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot presentation"></div>
+            <span>Profile Presentations</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot job-scheduled"></div>
+            <span>Job Schedule</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot job-start"></div>
+            <span>Job Start</span>
+          </div>
+          <div class="legend-item" style="margin-left: 10px; padding-left: 10px; border-left: 1px solid #ddd;">
+            <span style="font-size: 14px;">🔄</span>
+            <span>Recurring Job</span>
+          </div>
+        </div>
+
+        <!-- WIREFRAME NOTE -->
+        <div class="wireframe-note">
+          &#128221; <strong>Schedule — Day View Features:</strong>
+          <ul style="margin: 6px 0 0 16px; line-height: 1.8;">
+            <li><strong>Vertical Timeline:</strong> Shows hours from 7:00 AM to 7:00 PM with 1-hour slots (80px each).</li>
+            <li><strong>Event Blocks:</strong> Colored blocks span their time duration, showing time range, type badge, customer name, assigned crew member with initials avatar, and address.</li>
+            <li><strong>Overlapping Events:</strong> When events overlap, they display side-by-side in columns.</li>
+            <li><strong>Clickable:</strong> Click any event block to navigate to its detail page (Appointment Detail or Job Detail).</li>
+            <li><strong>Navigation:</strong> Use &#9664;/&#9654; arrows to move between days. Use Day/Week/Month toggle to switch views.</li>
+            <li><strong>Recurring Jobs:</strong> Event blocks for recurring jobs show a 🔄 prefix in the type label (e.g., "🔄 Job Schedule") to distinguish them from one-time jobs. Each visit within a billing period appears as an individual event on the calendar.</li>
+          </ul>
+        </div>
+
+        <!-- DAY TIMELINE - Tuesday, March 3, 2026 -->
+        <div class="day-timeline">
+
+          <!-- 7:00 AM -->
+          <div class="day-time-label">7:00 AM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 8:00 AM -->
+          <div class="day-time-label">8:00 AM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 9:00 AM -->
+          <div class="day-time-label">9:00 AM</div>
+          <div class="day-time-slot">
+            <a href="screen8b-appointment-detail.html" class="day-event-block event-appointment" style="top: 0; height: 76px;">
+              <div class="event-block-time">9:00 AM – 10:00 AM</div>
+              <div class="event-block-type">&#128197; Appointment</div>
+              <div class="event-block-customer">Robert Smith</div>
+              <div class="event-block-crew">
+                <span class="crew-initial">JS</span> John Smith
+              </div>
+              <div class="event-block-address">123 Oak St, San Antonio TX</div>
+            </a>
+          </div>
+
+          <!-- 10:00 AM -->
+          <div class="day-time-label">10:00 AM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 11:00 AM -->
+          <div class="day-time-label">11:00 AM</div>
+          <div class="day-time-slot">
+            <a href="screen8b-appointment-detail.html" class="day-event-block event-survey" style="top: 40px; height: 76px;">
+              <div class="event-block-time">11:30 AM – 12:30 PM</div>
+              <div class="event-block-type">&#128269; Site Survey</div>
+              <div class="event-block-customer">Sandra Lee</div>
+              <div class="event-block-crew">
+                <span class="crew-initial">SL</span> Sarah Lee
+              </div>
+              <div class="event-block-address">456 Pine Ave, San Antonio TX</div>
+            </a>
+          </div>
+
+          <!-- 12:00 PM -->
+          <div class="day-time-label">12:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 1:00 PM -->
+          <div class="day-time-label">1:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 2:00 PM -->
+          <div class="day-time-label">2:00 PM</div>
+          <div class="day-time-slot">
+            <a href="screen13b-job-detail.html" class="day-event-block event-job-scheduled" style="top: 0; height: 116px;">
+              <div class="event-block-time">2:00 PM – 3:30 PM</div>
+              <div class="event-block-type">&#128736; Job Schedule</div>
+              <div class="event-block-customer">Job #13: Lisa Brown</div>
+              <div class="event-block-crew">
+                <span class="crew-initial">MJ</span> Mike Jones
+              </div>
+              <div class="event-block-address">321 Maple Ln, San Antonio TX</div>
+            </a>
+          </div>
+
+          <!-- 3:00 PM -->
+          <div class="day-time-label">3:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 4:00 PM -->
+          <div class="day-time-label">4:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 5:00 PM -->
+          <div class="day-time-label">5:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 6:00 PM -->
+          <div class="day-time-label">6:00 PM</div>
+          <div class="day-time-slot"></div>
+
+          <!-- 7:00 PM -->
+          <div class="day-time-label">7:00 PM</div>
+          <div class="day-time-slot"></div>
+
+        </div>
+
+      </div>
+
+      <!-- SCREEN NAVIGATION -->
+      <div class="screen-nav">
+        <strong>Wireframe Screen Navigation:</strong><br><br>
+        <a href="screen1-landing.html">1. Landing</a>
+        <a href="screen2-registration.html">2. Registration</a>
+        <a href="screen3-signin.html">3. Sign In</a>
+        <a href="screen4-dashboard.html">4. Dashboard</a>
+        <a href="screen5-pricing.html">5. Pricing</a>
+        <a href="screen5a-payment.html">5a. Payment</a>
+        <a href="screen6-leads.html">6. Lead Manager</a>
+        <a href="screen7-lead-form.html">7. Lead Form</a>
+        <a href="screen8-appointments.html">8. Appointments</a>
+        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+        <a href="screen9-schedule.html">9. Schedule (Month)</a>
+        <a href="screen9a-schedule-day.html"><strong>9a. Schedule (Day)</strong></a>
+        <a href="screen9b-schedule-week.html">9b. Schedule (Week)</a>
+        <a href="screen10-estimates.html">10. Estimates</a>
+        <a href="screen11-estimate-form.html">11. Est Step 1</a>
+        <a href="screen11-step2.html">11-S2. Est Builder</a>
+        <a href="screen11-step3.html">11-S3. Terms</a>
+        <a href="screen11-step4.html">11-S4. Review</a>
+        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+        <a href="screen12-floorplan.html">12. Floor Plan</a>
+        <a href="screen13-jobs.html">13. Jobs</a>
+        <a href="screen13a-job-form.html">13a. Job Form</a>
+        <a href="screen13b-job-detail.html">13b. Job Detail</a>
+        <a href="screen14-crew.html">14. Crew Assignment</a>
+        <a href="screen14a-invoicing.html">14a. Invoicing</a>
+        <a href="screen15-management.html">15. Management Master</a>
+        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+        <a href="screen15b-materials.html">15b. Materials</a>
+        <a href="screen15c-services.html">15c. Services</a>
+        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+        <a href="screen15g-currency-settings.html">15g. Currency</a>
+                <a href="screen15h-sites-management.html">15h. Sites</a>
+        <a href="screen16-settings.html">16. Settings</a>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>
