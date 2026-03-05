@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS (Estimate-derived system)
+   ═══════════════════════════════════════════ */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-hover: #f8f9fb;
+  --border: #e2e5ea;
+  --border-light: #eef0f3;
+  --text-primary: #1a1d23;
+  --text-secondary: #5f6880;
+  --text-muted: #8e96a8;
+  --accent: #0f6fde;
+  --accent-light: #e8f1fc;
+  --accent-hover: #0b5bb8;
+  --teal: #0d9488;
+  --teal-light: #e6f7f5;
+  --orange: #e67e22;
+  --orange-light: #fef3e2;
+  --red: #dc3545;
+  --red-light: #fde8ea;
+  --green: #16a34a;
+  --green-light: #e8f8ee;
+  --purple: #7c3aed;
+  --purple-light: #f0ebfe;
+  --sidebar-bg: #1a1d23;
+  --sidebar-text: #8a92a6;
+  --sidebar-active: #ffffff;
+  --sidebar-active-bg: rgba(255,255,255,0.07);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --transition: 180ms ease;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text-primary);
+  font-size: 14px; line-height: 1.55; display: flex; min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; cursor: pointer; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  width: 244px; min-height: 100vh; background: var(--sidebar-bg);
+  display: flex; flex-direction: column;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+}
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-brand .logo {
+  width: 33px; height: 33px;
+  background: linear-gradient(135deg, var(--accent), var(--teal));
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff; font-size: 14px; flex-shrink: 0;
+}
+.sidebar-brand .brand-name { color: #fff; font-weight: 600; font-size: 15px; }
+
+.sidebar-nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+.nav-group { margin-bottom: 20px; }
+.nav-group-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.2px; color: rgba(255,255,255,0.25);
+  padding: 0 12px; margin-bottom: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; color: var(--sidebar-text);
+  border-radius: 8px; cursor: pointer;
+  transition: all var(--transition); font-size: 13px;
+  position: relative; text-decoration: none;
+}
+.nav-item:hover {
+  background: var(--sidebar-active-bg); color: #c8cdd8;
+}
+.nav-item.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active); font-weight: 500;
+}
+.nav-item.active::before {
+  content: ''; position: absolute; left: -10px; top: 50%;
+  transform: translateY(-50%); width: 3px; height: 20px;
+  background: var(--accent); border-radius: 0 3px 3px 0;
+}
+.nav-item .ni { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; opacity: 0.65; }
+.nav-item.active .ni { opacity: 1; }
+.nav-item .badge {
+  margin-left: auto; background: var(--accent); color: #fff;
+  font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 600;
+}
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.storage-bar { margin-bottom: 12px; }
+.storage-bar .sl { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+.storage-bar .st { height: 3px; background: rgba(255,255,255,0.08); border-radius: 3px; }
+.storage-bar .sf { height: 100%; width: 42%; background: var(--accent); border-radius: 3px; }
+.storage-bar a {
+  font-size: 11px; color: var(--accent); display: inline-block; margin-top: 4px;
+}
+.sidebar-user {
+  display: flex; align-items: center; gap: 10px; padding: 4px 0;
+}
+.sidebar-user .avatar {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: 12px; font-weight: 600; flex-shrink: 0;
+}
+.sidebar-user .uname { color: #fff; font-size: 12px; font-weight: 500; }
+.sidebar-user .urole { color: rgba(255,255,255,0.35); font-size: 11px; }
+.sidebar-logout {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; color: var(--sidebar-text);
+  font-size: 12px; cursor: pointer; border-radius: 6px;
+  transition: all var(--transition); margin-top: 8px;
+}
+.sidebar-logout:hover { background: rgba(220,53,69,0.15); color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   MAIN AREA
+   ═══════════════════════════════════════════ */
+.main {
+  margin-left: 244px; flex: 1; min-height: 100vh;
+}
+
+/* ═══════════════════════════════════════════
+   TOP BAR (Estimate-style compact header)
+   ═══════════════════════════════════════════ */
+.topbar {
+  height: 54px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; position: sticky; top: 0; z-index: 50;
+}
+.topbar-left { display: flex; align-items: center; gap: 16px; }
+.topbar-left h1 { font-size: 16px; font-weight: 600; }
+.topbar-left .subtitle { font-size: 13px; color: var(--text-muted); }
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text-secondary); font-size: 13px;
+  transition: all var(--transition);
+}
+.topbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+.notif-btn {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; font-size: 16px; transition: all var(--transition);
+}
+.notif-btn:hover { border-color: var(--accent); }
+.notif-btn .dot {
+  position: absolute; top: 6px; right: 6px;
+  width: 8px; height: 8px; background: var(--red);
+  border-radius: 50%; border: 2px solid var(--surface);
+}
+.notif-btn .count {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--surface);
+}
+.user-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 6px; border: 1px solid var(--border);
+  border-radius: 20px; transition: all var(--transition);
+}
+.user-pill:hover { border-color: var(--accent); }
+.user-pill .up-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.user-pill span { font-size: 12px; font-weight: 500; }
+
+/* ═══════════════════════════════════════════
+   CONTENT AREA
+   ═══════════════════════════════════════════ */
+.content { padding: 24px 28px; }
+
+/* ── Welcome Strip ── */
+.welcome {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 28px;
+}
+.welcome h2 { font-size: 22px; font-weight: 700; }
+.welcome p { color: var(--text-secondary); font-size: 13px; margin-top: 3px; }
+
+/* ── KPI Section ── */
+.kpi-section { margin-bottom: 28px; }
+.kpi-header {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+}
+.kpi-header .kh-dot { width: 8px; height: 8px; border-radius: 50%; }
+.kpi-header h3 {
+  font-size: 12px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(188px, 1fr));
+  gap: 12px;
+}
+.kpi-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px;
+  cursor: pointer; transition: all var(--transition);
+  position: relative; overflow: hidden;
+  text-decoration: none; display: block; color: inherit;
+}
+.kpi-card:hover {
+  border-color: var(--accent); transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.kpi-card .kpi-value {
+  font-size: 28px; font-weight: 700; line-height: 1.15; margin-bottom: 4px;
+}
+.kpi-card .kpi-label {
+  font-size: 12px; color: var(--text-secondary); font-weight: 400;
+}
+.kpi-card .kpi-trend {
+  position: absolute; top: 14px; right: 16px;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px;
+}
+.kpi-trend.up { background: var(--green-light); color: var(--green); }
+.kpi-trend.down { background: var(--red-light); color: var(--red); }
+.kpi-card .kpi-accent {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+}
+
+/* ── Quick Actions ── */
+.quick-panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); margin-bottom: 28px; overflow: hidden;
+}
+.quick-panel .qp-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-bottom: 1px solid var(--border-light);
+}
+.quick-panel .qp-header h3 { font-size: 14px; font-weight: 600; }
+.quick-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: 0; padding: 0;
+}
+.quick-card {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 22px 14px;
+  cursor: pointer; transition: all var(--transition);
+  text-align: center; border-right: 1px solid var(--border-light);
+  text-decoration: none; color: inherit;
+}
+.quick-card:last-child { border-right: none; }
+.quick-card:hover { background: var(--accent-light); }
+.quick-card .qc-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.quick-card .qc-label { font-size: 12px; font-weight: 500; }
+.quick-card .qc-shortcut {
+  font-size: 10px; color: var(--text-muted);
+  background: var(--bg); padding: 2px 8px;
+  border-radius: 4px; font-weight: 500;
+}
+
+/* ── Two Column Layout ── */
+.two-col {
+  display: grid; grid-template-columns: 1.6fr 1fr;
+  gap: 16px; margin-bottom: 28px;
+}
+
+/* ── Panel ── */
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border-light);
+}
+.panel-header h3 { font-size: 14px; font-weight: 600; }
+.panel-header .view-all {
+  font-size: 12px; color: var(--accent); font-weight: 500;
+  cursor: pointer; text-decoration: none;
+}
+.panel-header .view-all:hover { text-decoration: underline; }
+
+/* ── Activity Feed ── */
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 13px 20px; border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition); cursor: pointer;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-item:hover { background: var(--surface-hover); }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  margin-top: 6px; flex-shrink: 0;
+}
+.activity-content { flex: 1; min-width: 0; }
+.activity-text { font-size: 13px; }
+.activity-text strong { font-weight: 600; }
+.activity-meta { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.activity-action {
+  font-size: 11px; color: var(--accent); font-weight: 500;
+  white-space: nowrap; padding: 4px 10px;
+  border: 1px solid var(--accent-light); border-radius: 5px;
+  background: var(--accent-light); flex-shrink: 0;
+  text-decoration: none; margin-left: auto; align-self: center;
+  transition: all var(--transition);
+}
+.activity-action:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ── Upcoming Schedule ── */
+.sched-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 20px; border-bottom: 1px solid var(--border-light);
+  transition: background var(--transition); cursor: pointer;
+  text-decoration: none; color: inherit;
+}
+.sched-item:last-child { border-bottom: none; }
+.sched-item:hover { background: var(--surface-hover); }
+.sched-date {
+  width: 44px; height: 44px; background: var(--bg);
+  border-radius: var(--radius-sm); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sched-date .sd-day { font-size: 16px; font-weight: 700; line-height: 1; }
+.sched-date .sd-month { font-size: 9px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+.sched-info { flex: 1; }
+.sched-info .si-title { font-size: 13px; font-weight: 500; }
+.sched-info .si-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.sched-tag {
+  font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px;
+}
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.kpi-card { animation: fadeUp 0.4s ease both; }
+.kpi-card:nth-child(1) { animation-delay: 0.04s; }
+.kpi-card:nth-child(2) { animation-delay: 0.08s; }
+.kpi-card:nth-child(3) { animation-delay: 0.12s; }
+.kpi-card:nth-child(4) { animation-delay: 0.16s; }
+.kpi-card:nth-child(5) { animation-delay: 0.20s; }
+.quick-card { animation: fadeUp 0.4s ease both; }
+.quick-card:nth-child(1) { animation-delay: 0.25s; }
+.quick-card:nth-child(2) { animation-delay: 0.29s; }
+.quick-card:nth-child(3) { animation-delay: 0.33s; }
+.quick-card:nth-child(4) { animation-delay: 0.37s; }
+.quick-card:nth-child(5) { animation-delay: 0.41s; }
+.two-col { animation: fadeUp 0.4s ease 0.45s both; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item active"><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR (matching original nav items)
+     ═══════════════════════════════════════════ -->
+
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Dashboard</h1>
+      <span class="subtitle">ABC Plumbing Co.</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn">📅 Mar 4, 2026</button>
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <div class="user-pill">
+        <div class="up-avatar">JS</div>
+        <span>John Smith</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Welcome -->
+    <div class="welcome">
+      <div>
+        <h2>Welcome back, John</h2>
+        <p>You have 5 follow-ups required and 2 jobs scheduled today</p>
+      </div>
+    </div>
+
+    <!-- ── Pre-Sales KPIs ── -->
+    <div class="kpi-section">
+      <div class="kpi-header">
+        <div class="kh-dot" style="background: var(--accent);"></div>
+        <h3>📈 Pre-Sales KPIs</h3>
+      </div>
+      <div class="kpi-grid">
+        <a href="dashboard.html" class="kpi-card" title="View all sent estimates">
+          <div class="kpi-value" style="color: var(--accent);">24</div>
+          <div class="kpi-label">Estimates Sent</div>
+          <span class="kpi-trend up">↑ 8%</span>
+          <div class="kpi-accent" style="background: var(--accent);"></div>
+        </a>
+        <a href="dashboard.html" class="kpi-card" title="View leads with New status">
+          <div class="kpi-value" style="color: var(--orange);">8</div>
+          <div class="kpi-label">Leads Pending</div>
+          <div class="kpi-accent" style="background: var(--orange);"></div>
+        </a>
+        <a href="dashboard.html" class="kpi-card" title="View leads with Follow Up status">
+          <div class="kpi-value" style="color: var(--purple);">5</div>
+          <div class="kpi-label">Follow-ups Required</div>
+          <div class="kpi-accent" style="background: var(--purple);"></div>
+        </a>
+        <a href="dashboard.html" class="kpi-card" title="View all leads">
+          <div class="kpi-value" style="color: var(--teal);">156</div>
+          <div class="kpi-label">Total Leads</div>
+          <span class="kpi-trend up">↑ 12%</span>
+          <div class="kpi-accent" style="background: var(--teal);"></div>
+        </a>
+        <a href="dashboard.html" class="kpi-card" title="View leads created this month">
+          <div class="kpi-value" style="color: var(--green);">12</div>
+          <div class="kpi-label">Leads MTD</div>
+          <div class="kpi-accent" style="background: var(--green);"></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Operations KPIs ── -->
+    <div class="kpi-section">
+      <div class="kpi-header">
+        <div class="kh-dot" style="background: var(--teal);"></div>
+        <h3>🛠 Operations KPIs</h3>
+      </div>
+      <div class="kpi-grid">
+        <a href="jobs-board.html" class="kpi-card" title="View jobs under progress">
+          <div class="kpi-value" style="color: var(--teal);">7</div>
+          <div class="kpi-label">Jobs Under Progress</div>
+          <div class="kpi-accent" style="background: var(--teal);"></div>
+        </a>
+        <a href="estimates.html" class="kpi-card" title="View estimates awaiting approval">
+          <div class="kpi-value" style="color: var(--orange);">3</div>
+          <div class="kpi-label">Estimates Awaiting Approval</div>
+          <div class="kpi-accent" style="background: var(--orange);"></div>
+        </a>
+        <a href="schedule.html" class="kpi-card" title="View today's schedule">
+          <div class="kpi-value" style="color: var(--accent);">2</div>
+          <div class="kpi-label">Jobs Scheduled Today</div>
+          <div class="kpi-accent" style="background: var(--accent);"></div>
+        </a>
+        <a href="appointments.html" class="kpi-card" title="View upcoming appointments">
+          <div class="kpi-value" style="color: var(--purple);">4</div>
+          <div class="kpi-label">Appointments Next 3 Days</div>
+          <div class="kpi-accent" style="background: var(--purple);"></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Billing KPIs ── -->
+    <div class="kpi-section">
+      <div class="kpi-header">
+        <div class="kh-dot" style="background: var(--green);"></div>
+        <h3>💰 Billing KPIs</h3>
+      </div>
+      <div class="kpi-grid">
+        <a href="invoicing.html" class="kpi-card" title="View invoicing details">
+          <div class="kpi-value" style="color: var(--green);">$45,200</div>
+          <div class="kpi-label">Total Invoices Raised MTD</div>
+          <span class="kpi-trend up">↑ 15%</span>
+          <div class="kpi-accent" style="background: var(--green);"></div>
+        </a>
+        <a href="invoicing.html" class="kpi-card" title="View collections">
+          <div class="kpi-value" style="color: var(--teal);">$38,500</div>
+          <div class="kpi-label">Total Collections MTD</div>
+          <div class="kpi-accent" style="background: var(--teal);"></div>
+        </a>
+        <a href="invoicing.html" class="kpi-card" title="View pending collections">
+          <div class="kpi-value" style="color: var(--red);">$12,800</div>
+          <div class="kpi-label">Pending Collections</div>
+          <span class="kpi-trend down">↑ 5%</span>
+          <div class="kpi-accent" style="background: var(--red);"></div>
+        </a>
+        <a href="invoicing.html" class="kpi-card" title="View pending invoices">
+          <div class="kpi-value" style="color: var(--orange);">6</div>
+          <div class="kpi-label">Pending Invoices</div>
+          <div class="kpi-accent" style="background: var(--orange);"></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Quick Actions ── -->
+    <div class="quick-panel">
+      <div class="qp-header"><h3>Quick Actions</h3></div>
+      <div class="quick-grid">
+        <a href="lead-form.html" class="quick-card">
+          <div class="qc-icon" style="background: var(--accent-light); color: var(--accent);">◈</div>
+          <span class="qc-label">+ Create New Lead</span>
+          <span class="qc-shortcut">⌘ L</span>
+        </a>
+        <a href="create-estimate.html" class="quick-card">
+          <div class="qc-icon" style="background: var(--teal-light); color: var(--teal);">📄</div>
+          <span class="qc-label">+ Create New Estimate</span>
+          <span class="qc-shortcut">⌘ E</span>
+        </a>
+        <a href="create-appointment.html" class="quick-card">
+          <div class="qc-icon" style="background: var(--purple-light); color: var(--purple);">📅</div>
+          <span class="qc-label">+ Create New Appointment</span>
+          <span class="qc-shortcut">⌘ A</span>
+        </a>
+        <a href="invoicing.html" class="quick-card">
+          <div class="qc-icon" style="background: var(--green-light); color: var(--green);">💰</div>
+          <span class="qc-label">+ Create New Invoice</span>
+          <span class="qc-shortcut">⌘ I</span>
+        </a>
+        <a href="create-job.html" class="quick-card">
+          <div class="qc-icon" style="background: var(--orange-light); color: var(--orange);">🛠</div>
+          <span class="qc-label">+ Create New Job</span>
+          <span class="qc-shortcut">⌘ J</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- ── Two-Column: Activity + Upcoming ── -->
+    <div class="two-col">
+
+      <!-- Recent Activity -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Recent Activity</h3>
+          <span class="view-all">View All →</span>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--green);"></div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>Lisa Brown</strong> — Estimate #EST-0004 approved ($22,000)</div>
+            <div class="activity-meta">2 hours ago · Job auto-created</div>
+          </div>
+          <a href="job-detail.html" class="activity-action">View Job →</a>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--accent);"></div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>Sarah Johnson</strong> — Site Survey completed</div>
+            <div class="activity-meta">3 hours ago · Follow-up scheduled Mar 10</div>
+          </div>
+          <a href="create-estimate.html" class="activity-action">Create Estimate →</a>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--orange);"></div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>Mike Williams</strong> — Estimate awaiting approval</div>
+            <div class="activity-meta">5 hours ago · $5,750 · Water Heater Installation</div>
+          </div>
+          <a href="dashboard.html" class="activity-action">Follow Up →</a>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--teal);"></div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>JOB-0007</strong> — Visit #2 completed (Lawn Service)</div>
+            <div class="activity-meta">Yesterday · David Park · James Rodriguez</div>
+          </div>
+          <a href="job-detail.html" class="activity-action">View Detail →</a>
+        </div>
+        <div class="activity-item">
+          <div class="activity-dot" style="background: var(--purple);"></div>
+          <div class="activity-content">
+            <div class="activity-text"><strong>Tom Davis</strong> — New lead from website</div>
+            <div class="activity-meta">Yesterday · Emergency leak repair · Fort Worth TX</div>
+          </div>
+          <a href="create-appointment.html" class="activity-action">Schedule Appt →</a>
+        </div>
+      </div>
+
+      <!-- Coming Up -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3>Coming Up</h3>
+          <a href="schedule.html" class="view-all">Full Schedule →</a>
+        </div>
+        <a href="appointment-details.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">5</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">Survey: Johnson</div>
+            <div class="si-meta">10:00 AM · 456 Pine Ave, Dallas TX</div>
+          </div>
+          <span class="sched-tag" style="background: var(--purple-light); color: var(--purple);">Survey</span>
+        </a>
+        <a href="appointment-details.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">8</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">Assessment: Williams</div>
+            <div class="si-meta">9:30 AM · 789 Elm Dr, Houston TX</div>
+          </div>
+          <span class="sched-tag" style="background: var(--accent-light); color: var(--accent);">Appt</span>
+        </a>
+        <a href="job-detail.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">10</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">Job #13: Brown — Full Re-pipe</div>
+            <div class="si-meta">8:00 AM · 321 Maple Ln, San Antonio TX</div>
+          </div>
+          <span class="sched-tag" style="background: var(--teal-light); color: var(--teal);">Job</span>
+        </a>
+        <a href="job-detail.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">10</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">🔄 Lawn Service: Park</div>
+            <div class="si-meta">10:00 AM · Weekly visit · 123 Green St</div>
+          </div>
+          <span class="sched-tag" style="background: var(--teal-light); color: var(--teal);">Recurring</span>
+        </a>
+        <a href="job-detail.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">12</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">Job Start: Davis — Pipe Replace</div>
+            <div class="si-meta">7:00 AM · 654 Cedar Ct, Fort Worth TX</div>
+          </div>
+          <span class="sched-tag" style="background: var(--teal-light); color: var(--teal);">Job</span>
+        </a>
+        <a href="appointment-details.html" class="sched-item">
+          <div class="sched-date">
+            <span class="sd-day">12</span>
+            <span class="sd-month">Mar</span>
+          </div>
+          <div class="sched-info">
+            <div class="si-title">Presentation: Wilson</div>
+            <div class="si-meta">1:00 PM · 234 Walnut Ave, Irving TX</div>
+          </div>
+          <span class="sched-tag" style="background: var(--orange-light); color: var(--orange);">Pres</span>
+        </a>
+      </div>
+
+    </div>
+    <!-- end two-col -->
+
+  </div>
+  <!-- end content -->
+
+</div>
+<!-- end main -->
+
+
+<script>
+
+</script>
+</body>
+</html>

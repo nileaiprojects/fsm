@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Plans & Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ═══ PRICING PAGE STYLES ═══ */
+
+/* Plan cards grid */
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:32px}
+
+.plan-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);padding:28px 24px;display:flex;flex-direction:column;position:relative;transition:all var(--transition)}
+.plan-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
+.plan-card.current{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+
+.plan-badge{display:inline-block;background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:4px 14px;border-radius:20px;margin-bottom:10px;width:fit-content}
+
+.plan-name{font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px}
+.plan-price{font-size:40px;font-weight:700;color:var(--accent);line-height:1.1}
+.plan-price .period{font-size:14px;font-weight:400;color:var(--text-secondary)}
+.plan-price .free-label{font-size:14px;color:var(--text-secondary);font-weight:400;display:block;margin-top:2px}
+
+.plan-limits{margin-top:8px;margin-bottom:6px}
+.plan-limits div{font-size:13px;color:var(--text-primary);font-weight:500;line-height:1.5}
+.plan-limits .storage{font-size:13px;color:var(--text-secondary);font-weight:400}
+
+.plan-divider{height:1px;background:var(--border);margin:16px 0}
+
+.plan-features{list-style:none;padding:0;margin:0 0 20px;flex:1}
+.plan-features li{font-size:13.5px;color:var(--text-secondary);padding:4px 0;display:flex;align-items:flex-start;gap:8px;line-height:1.45}
+.plan-features li .check{color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px}
+
+.plan-btn{display:block;width:100%;padding:12px;text-align:center;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);border:none;text-decoration:none}
+.plan-btn.primary{background:var(--accent);color:#fff}
+.plan-btn.primary:hover{background:var(--accent-hover)}
+.plan-btn.current-btn{background:var(--green-light);color:var(--green);border:1px solid var(--green);cursor:default}
+.plan-btn.outline{background:var(--surface);color:var(--accent);border:1px solid var(--accent)}
+.plan-btn.outline:hover{background:var(--accent);color:#fff}
+
+/* ═══ FEATURE COMPARISON TABLE ═══ */
+.section-heading{font-size:18px;font-weight:700;margin-bottom:16px;color:var(--text-primary)}
+
+.compare-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px}
+.compare-table thead{background:var(--sidebar-bg);color:#fff}
+.compare-table thead th{padding:14px 12px;font-size:12px;font-weight:600;text-align:center;border-right:1px solid rgba(255,255,255,0.08)}
+.compare-table thead th:first-child{text-align:left;text-transform:uppercase;letter-spacing:.5px;width:220px}
+.compare-table thead th:last-child{border-right:none}
+.compare-table thead .th-plan{font-size:13px;font-weight:700}
+.compare-table thead .th-price{font-size:12px;font-weight:600;color:var(--accent);display:block}
+.compare-table thead .th-users{font-size:10px;font-weight:400;color:rgba(255,255,255,0.5);display:block;margin-top:1px}
+
+.compare-table tbody tr{border-bottom:1px solid var(--border-light)}
+.compare-table tbody tr:last-child{border-bottom:none}
+.compare-table tbody tr:hover{background:var(--surface-hover,#f8f9fb)}
+.compare-table tbody tr.highlight{background:#fef3f4}
+.compare-table tbody td{padding:12px;font-size:13.5px;text-align:center;border-right:1px solid var(--border-light)}
+.compare-table tbody td:first-child{text-align:left;font-weight:500;color:var(--text-primary);border-right:1px solid var(--border)}
+.compare-table tbody td:last-child{border-right:none}
+
+.icon-yes{color:var(--green);font-size:16px}
+.icon-no{color:var(--red);font-size:14px}
+
+/* ═══ ADD-ON TABLE ═══ */
+.addon-header{font-size:18px;font-weight:700;margin-bottom:4px;color:var(--text-primary)}
+.addon-sub{font-size:13px;color:var(--text-secondary);margin-bottom:16px}
+
+.addon-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:32px}
+.addon-table thead{background:var(--bg)}
+.addon-table thead th{padding:12px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)}
+.addon-table thead th:last-child{text-align:center}
+.addon-table tbody tr{border-bottom:1px solid var(--border-light)}
+.addon-table tbody tr:last-child{border-bottom:none}
+.addon-table tbody td{padding:14px 16px;font-size:14px;color:var(--text-primary)}
+.addon-table tbody td:last-child{text-align:center}
+
+.purchase-btn{display:inline-flex;align-items:center;padding:6px 18px;border:1px solid var(--accent);border-radius:var(--radius-sm);background:var(--surface);color:var(--accent);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.purchase-btn:hover{background:var(--accent);color:#fff}
+
+/* ═══ PROCEED BUTTON ═══ */
+.proceed-wrap{text-align:center;padding:20px 0 10px}
+.proceed-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:16px 48px;background:var(--accent);color:#fff;font-size:16px;font-weight:700;border:none;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);box-shadow:var(--shadow-md)}
+.proceed-btn:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 6px 20px rgba(15,111,222,0.25)}
+
+@media (max-width:1100px){.plan-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:700px){.plan-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Overview</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item active"><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Plans & Pricing</h1><span class="t-sub">Choose the plan that fits your business</span></div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">2</span></button>
+      <div style="display:flex;align-items:center;gap:8px;margin-left:8px">
+        <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600">JS</div>
+        <span style="font-size:13px;font-weight:600">John Smith</span>
+      </div>
+    </div>
+  </header>
+  <div class="content">
+
+    <!-- ═══ PLAN CARDS ═══ -->
+    <div class="plan-grid">
+
+      <!-- Starter -->
+      <div class="plan-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$0<span class="free-label">14-day free trial</span></div>
+        <div class="plan-limits">
+          <div>Up to 10 users</div>
+          <div class="storage">5 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Lead Creation &amp; Management</li>
+          <li><span class="check">✓</span> AI-Based Lead Analysis</li>
+          <li><span class="check">✓</span> Schedule Follow-up &amp; Site Inspection</li>
+          <li><span class="check">✓</span> Create &amp; Send Estimate</li>
+          <li><span class="check">✓</span> Create Job &amp; Assign Crew</li>
+          <li><span class="check">✓</span> Track Job Closure</li>
+          <li><span class="check">✓</span> Raise &amp; Track Invoice</li>
+          <li><span class="check">✓</span> Reports</li>
+        </ul>
+        <a href="registration.html" class="plan-btn primary">Start Free Trial</a>
+      </div>
+
+      <!-- Basic (Current Plan) -->
+      <div class="plan-card current">
+        <div class="plan-badge">Your Current Plan</div>
+        <div class="plan-name">Basic</div>
+        <div class="plan-price">$60<span class="period">/month</span></div>
+        <div class="plan-limits">
+          <div>Up to 5 users</div>
+          <div class="storage">5 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> Lead Creation &amp; Management</li>
+          <li><span class="check">✓</span> Schedule Follow-up &amp; Site Inspection</li>
+          <li><span class="check">✓</span> Create &amp; Send Estimate</li>
+          <li><span class="check">✓</span> Create Job &amp; Assign Crew</li>
+          <li><span class="check">✓</span> Track Job Closure</li>
+        </ul>
+        <span class="plan-btn current-btn">Current Plan</span>
+      </div>
+
+      <!-- Super -->
+      <div class="plan-card">
+        <div class="plan-name">Super</div>
+        <div class="plan-price">$100<span class="period">/month</span></div>
+        <div class="plan-limits">
+          <div>Up to 10 users</div>
+          <div class="storage">5 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> All Basic features</li>
+          <li><span class="check">✓</span> Raise &amp; Track Invoice</li>
+          <li><span class="check">✓</span> Reports</li>
+        </ul>
+        <a href="#" class="plan-btn outline">Select Plan</a>
+      </div>
+
+      <!-- Gold -->
+      <div class="plan-card">
+        <div class="plan-name">Gold</div>
+        <div class="plan-price">$130<span class="period">/month</span></div>
+        <div class="plan-limits">
+          <div>Up to 15 users</div>
+          <div class="storage">5 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> All Super features</li>
+        </ul>
+        <a href="#" class="plan-btn outline">Select Plan</a>
+      </div>
+
+      <!-- Platinum -->
+      <div class="plan-card">
+        <div class="plan-name">Platinum</div>
+        <div class="plan-price">$200<span class="period">/month</span></div>
+        <div class="plan-limits">
+          <div>Up to 25 users</div>
+          <div class="storage">5 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> All Super features</li>
+        </ul>
+        <a href="#" class="plan-btn outline">Select Plan</a>
+      </div>
+
+      <!-- Platinum Pro -->
+      <div class="plan-card">
+        <div class="plan-name">Platinum Pro</div>
+        <div class="plan-price">$400<span class="period">/month</span></div>
+        <div class="plan-limits">
+          <div>Up to 50 users</div>
+          <div class="storage">20 GB storage</div>
+        </div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check">✓</span> All Platinum features</li>
+          <li><span class="check">✓</span> AI-Based Lead Analysis</li>
+          <li><span class="check">✓</span> 20 GB storage</li>
+        </ul>
+        <a href="#" class="plan-btn outline">Select Plan</a>
+      </div>
+
+    </div>
+
+    <!-- ═══ FEATURE COMPARISON TABLE ═══ -->
+    <div class="section-heading">Feature Comparison</div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th><span class="th-plan">Starter</span><span class="th-price">$0</span><span class="th-users">14-Day Free Trial · Up to 10 Users</span></th>
+          <th><span class="th-plan">Basic</span><span class="th-price">$60/mo</span><span class="th-users">Up to 5 Users</span></th>
+          <th><span class="th-plan">Super</span><span class="th-price">$100/mo</span><span class="th-users">Up to 10 Users</span></th>
+          <th><span class="th-plan">Gold</span><span class="th-price">$130/mo</span><span class="th-users">Up to 15 Users</span></th>
+          <th><span class="th-plan">Platinum</span><span class="th-price">$200/mo</span><span class="th-users">Up to 25 Users</span></th>
+          <th><span class="th-plan">Platinum Pro</span><span class="th-price">$400/mo</span><span class="th-users">Up to 50 Users</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Lead Creation &amp; Management</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr class="highlight">
+          <td>AI-Based Lead Analysis</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Schedule Follow-up</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Schedule Site Inspection</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Create Estimate</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr class="highlight">
+          <td>Floor Plan Creation</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+        </tr>
+        <tr>
+          <td>Send Estimate</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Create Job</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Assign Crew</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Track Job Closure</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Raise &amp; Track Invoice</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Reports</td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Storage Space</td>
+          <td>5 GB</td>
+          <td>5 GB</td>
+          <td>5 GB</td>
+          <td>5 GB</td>
+          <td>5 GB</td>
+          <td>20 GB</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═══ ADD-ON FEATURES ═══ -->
+    <div class="addon-header">Add-on Features</div>
+    <div class="addon-sub">Available with any paid plan</div>
+    <table class="addon-table">
+      <thead>
+        <tr>
+          <th>Add-On</th>
+          <th>Price</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Single User Add-on</td>
+          <td>$10/mo per additional user</td>
+          <td><button class="purchase-btn">Purchase</button></td>
+        </tr>
+        <tr>
+          <td>AI-Based Lead Analysis</td>
+          <td>$30/mo</td>
+          <td><button class="purchase-btn">Purchase</button></td>
+        </tr>
+        <tr>
+          <td>Floor Plan Creation</td>
+          <td>$40/mo</td>
+          <td><button class="purchase-btn">Purchase</button></td>
+        </tr>
+        <tr>
+          <td>Virtual Assistant</td>
+          <td>$60/mo</td>
+          <td><button class="purchase-btn">Purchase</button></td>
+        </tr>
+        <tr>
+          <td>Additional Storage</td>
+          <td>$10/mo per 10 GB</td>
+          <td><button class="purchase-btn">Purchase</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ═══ PROCEED BUTTON ═══ -->
+    <div class="proceed-wrap">
+      <button class="proceed-btn">Proceed to Payment</button>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

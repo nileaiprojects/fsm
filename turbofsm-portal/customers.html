@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Customers</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item active"><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Customers</h1><span class="t-sub">All customer records and contact history</span></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button><a href="lead-form.html" class="topbar-btn primary-lg">+ Add Customer</a></div>
+  </header>
+  <div class="content">
+    <div class="kpi-strip kpi-4">
+      <div class="kpi-card"><div class="kv" style="color:var(--accent)">8</div><div class="kl">Total Customers</div><div class="kdate">👥 All records</div><div class="ka" style="background:var(--accent)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--green)">5</div><div class="kl">Active Jobs</div><div class="kdate">🔧 In progress</div><div class="ka" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--teal)">$92,650</div><div class="kl">Lifetime Value</div><div class="kdate">💰 Total billed</div><div class="ka" style="background:var(--teal)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--orange)">3</div><div class="kl">Pending Follow-ups</div><div class="kdate">📞 Need attention</div><div class="ka" style="background:var(--orange)"></div></div>
+    </div>
+    <div class="filter-bar">
+      <div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchCust" placeholder="Search by name, email, phone, address..."></div>
+      <button class="chip active" onclick="filterCust('all',this)">All <span class="cnt">8</span></button>
+      <button class="chip" onclick="filterCust('active',this)">Active <span class="cnt">5</span></button>
+      <button class="chip" onclick="filterCust('inactive',this)">Inactive <span class="cnt">3</span></button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <colgroup><col style="width:22%"><col style="width:16%"><col style="width:16%"><col style="width:12%"><col style="width:10%"><col style="width:10%"><col style="width:14%"></colgroup>
+        <thead><tr><th>Customer</th><th>Contact</th><th>Address</th><th>Total Billed</th><th>Jobs</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="custBody">
+          <tr data-status="active" data-search="john smith austin oak"><td><div style="font-weight:600;font-size:14px">John Smith</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 123-4567</div><div style="font-size:12px;color:var(--text-muted)">john@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">123 Oak St, Austin TX</td><td style="font-weight:700">$8,500</td><td style="font-weight:600">2</td><td><span class="status-pill st-active">● Active</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a><a href="customer-jobs.html" class="ab ab-teal" data-tip="Jobs">🛠</a><a href="customer-invoices.html" class="ab ab-green" data-tip="Invoices">💰</a></div></td></tr>
+          <tr data-status="active" data-search="sarah johnson dallas pine"><td><div style="font-weight:600;font-size:14px">Sarah Johnson</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 234-5678</div><div style="font-size:12px;color:var(--text-muted)">sarah@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">456 Pine Ave, Dallas TX</td><td style="font-weight:700">$12,300</td><td style="font-weight:600">1</td><td><span class="status-pill st-active">● Active</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a><a href="customer-jobs.html" class="ab ab-teal" data-tip="Jobs">🛠</a><a href="customer-invoices.html" class="ab ab-green" data-tip="Invoices">💰</a></div></td></tr>
+          <tr data-status="active" data-search="lisa brown san antonio maple"><td><div style="font-weight:600;font-size:14px">Lisa Brown</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 456-7890</div><div style="font-size:12px;color:var(--text-muted)">lisa@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">321 Maple Ln, San Antonio TX</td><td style="font-weight:700">$22,000</td><td style="font-weight:600">1</td><td><span class="status-pill st-active">● Active</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a><a href="customer-jobs.html" class="ab ab-teal" data-tip="Jobs">🛠</a><a href="customer-invoices.html" class="ab ab-green" data-tip="Invoices">💰</a></div></td></tr>
+          <tr data-status="active" data-search="tom davis fort worth cedar"><td><div style="font-weight:600;font-size:14px">Tom Davis</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 567-8901</div><div style="font-size:12px;color:var(--text-muted)">tom@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">654 Cedar Ct, Fort Worth TX</td><td style="font-weight:700">$3,200</td><td style="font-weight:600">1</td><td><span class="status-pill st-active">● Active</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a><a href="customer-jobs.html" class="ab ab-teal" data-tip="Jobs">🛠</a><a href="customer-invoices.html" class="ab ab-green" data-tip="Invoices">💰</a></div></td></tr>
+          <tr data-status="active" data-search="mike williams houston elm"><td><div style="font-weight:600;font-size:14px">Mike Williams</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 345-6789</div><div style="font-size:12px;color:var(--text-muted)">mike@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">789 Elm Dr, Houston TX</td><td style="font-weight:700">$5,750</td><td style="font-weight:600">1</td><td><span class="status-pill st-active">● Active</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a><a href="customer-jobs.html" class="ab ab-teal" data-tip="Jobs">🛠</a><a href="customer-invoices.html" class="ab ab-green" data-tip="Invoices">💰</a></div></td></tr>
+          <tr data-status="inactive" data-search="amy wilson plano birch"><td><div style="font-weight:600;font-size:14px">Amy Wilson</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 678-9012</div><div style="font-size:12px;color:var(--text-muted)">amy@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">890 Birch St, Plano TX</td><td style="font-weight:700">$15,800</td><td style="font-weight:600">1</td><td><span class="status-pill st-inactive">● Inactive</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a></div></td></tr>
+          <tr data-status="inactive" data-search="rachel green austin park"><td><div style="font-weight:600;font-size:14px">Rachel Green</div><div style="font-size:12px;color:var(--text-muted)">Since Feb 2026</div></td><td><div style="font-size:13px">(555) 789-0123</div><div style="font-size:12px;color:var(--text-muted)">rachel@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">220 Park Ave, Austin TX</td><td style="font-weight:700">$3,600</td><td style="font-weight:600">1</td><td><span class="status-pill st-inactive">● Inactive</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a></div></td></tr>
+          <tr data-status="inactive" data-search="david kim austin oak ridge"><td><div style="font-weight:600;font-size:14px">David Kim</div><div style="font-size:12px;color:var(--text-muted)">Since Jan 2026</div></td><td><div style="font-size:13px">(555) 890-1234</div><div style="font-size:12px;color:var(--text-muted)">david@email.com</div></td><td style="font-size:13px;color:var(--text-secondary)">112 Oak Ridge, Austin TX</td><td style="font-weight:700">$8,900</td><td style="font-weight:600">1</td><td><span class="status-pill st-inactive">● Inactive</span></td><td><div class="action-row"><a href="customer-edit.html" class="ab" data-tip="Edit Details">✎</a><a href="customer-estimates.html" class="ab" data-tip="Estimates">📄</a></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+<script>
+function filterCust(s,btn){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#custBody tr').forEach(r=>{r.style.display=(s==='all'||r.dataset.status===s)?'':'none'})}
+document.getElementById('searchCust').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#custBody tr').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});</script>
+</body>
+</html>

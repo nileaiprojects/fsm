@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Jobs Board</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.12);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}.nav-group{margin-bottom:20px}.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}.topbar-left h1{font-size:17px;font-weight:600}.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;transition:all var(--transition);font-family:inherit;text-decoration:none}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;padding:9px 20px;font-size:14px;border-radius:var(--radius)}.topbar-btn.primary:hover{background:var(--accent-hover)}
+.notif-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;cursor:pointer}
+.notif-btn .count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.content{padding:22px 28px}
+
+/* KPI */
+.kpi-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:all var(--transition);cursor:pointer}
+.kpi-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi-card .kv{font-size:28px;font-weight:700;line-height:1.2}.kpi-card .kl{font-size:13px;color:var(--text-secondary);margin-top:2px}.kpi-card .kdate{font-size:11px;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px}.kpi-card .ka{position:absolute;bottom:0;left:0;right:0;height:3px}
+
+/* ═══ COLLAPSIBLE SECTION ═══ */
+.section-block{margin-bottom:20px}
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:all var(--transition);user-select:none}
+.section-header:hover{border-color:var(--accent)}
+.section-header.collapsed{border-radius:var(--radius-lg);margin-bottom:0}
+.section-header:not(.collapsed){border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:transparent}
+.sh-left{display:flex;align-items:center;gap:10px}
+.sh-title{font-size:15px;font-weight:600}
+.sh-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px}
+.sh-sub{font-size:12px;color:var(--text-muted);margin-left:6px}
+.sh-right{display:flex;align-items:center;gap:8px}
+.sh-chevron{font-size:14px;color:var(--text-muted);transition:transform .25s ease;display:flex;align-items:center;justify-content:center;width:24px;height:24px}
+.section-header.collapsed .sh-chevron{transform:rotate(-90deg)}
+.section-body{overflow:hidden;transition:max-height .35s ease,opacity .25s ease;max-height:2000px;opacity:1}
+.section-body.collapsed{max-height:0;opacity:0}
+
+/* Filter chips inside section */
+.chip{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:inherit}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.chip .cnt{background:var(--bg);padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600}.chip.active .cnt{background:var(--accent);color:#fff}
+
+/* Search */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:300px;transition:border-color var(--transition)}
+.search-box:focus-within{border-color:var(--accent)}
+.search-box input{border:none;outline:none;font-family:inherit;font-size:14px;flex:1;background:transparent;width:100%;color:var(--text-primary)}
+
+/* Table */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius-lg) var(--radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{padding:10px 14px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);text-align:left;background:var(--bg);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border-light);transition:background var(--transition)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-hover)}
+tbody td{padding:12px 14px;font-size:13.5px;vertical-align:middle;overflow:hidden}
+
+/* ═══ JOB CELL — Merged name + site + desc ═══ */
+.job-cell .jc-top{display:flex;align-items:center;gap:6px}
+.job-cell .jc-name{font-weight:600;font-size:14px}
+.job-type-tag{display:inline-block;font-size:9px;font-weight:600;padding:1px 6px;border-radius:10px;vertical-align:middle}
+.jt-one{background:var(--accent-light);color:var(--accent)}.jt-recurring{background:var(--teal-light);color:var(--teal)}
+.job-cell .jc-site{font-size:12px;color:var(--text-secondary);margin-top:2px;display:flex;align-items:center;gap:4px}
+.job-cell .jc-site .pin{color:var(--text-muted);font-size:11px}
+.job-cell .jc-id{font-size:10.5px;color:var(--text-muted);margin-top:1px;max-height:0;overflow:hidden;opacity:0;transition:all .2s ease}
+tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
+
+/* Status */
+.status-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.st-unscheduled{background:#f1f3f5;color:#495057}
+.st-scheduled{background:var(--accent-light);color:var(--accent)}
+.st-in-progress{background:var(--orange-light);color:var(--orange)}
+.st-completed{background:var(--green-light);color:var(--green)}
+
+/* Invoice pill */
+.inv-pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:var(--radius-sm);font-size:10.5px;font-weight:600}
+.inv-sent{background:var(--green-light);color:var(--green)}.inv-partial{background:var(--orange-light);color:var(--orange)}.inv-none{background:var(--bg);color:var(--text-muted);border:1px dashed var(--border)}.inv-paid{background:var(--teal-light);color:var(--teal)}.inv-due{background:var(--accent-light);color:var(--accent)}
+
+/* Crew */
+.crew-stack{display:flex;align-items:center}
+.crew-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#fff;border:2px solid var(--surface);margin-left:-5px}
+.crew-av:first-child{margin-left:0}
+.crew-av.c1{background:var(--accent)}.crew-av.c2{background:var(--teal)}.crew-av.c3{background:var(--orange)}.crew-av.c4{background:var(--purple)}
+
+/* ═══ ACTIONS — Single-line icon buttons with tooltips ═══ */
+.action-row{display:flex;align-items:center;gap:3px;flex-wrap:nowrap}
+.ab{position:relative;width:30px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all var(--transition);color:var(--text-secondary);text-decoration:none;flex-shrink:0}
+.ab:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.ab.ab-teal:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
+.ab.ab-green:hover{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.ab.ab-orange:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-light)}
+.ab.ab-red:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+/* Tooltip */
+.ab[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);padding:4px 8px;background:var(--sidebar-bg);color:#fff;font-size:10px;font-weight:500;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:10}
+/* Separator dot */
+.act-sep{width:1px;height:16px;background:var(--border);margin:0 2px;flex-shrink:0}
+
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar-bg);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:700;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all 300ms ease;pointer-events:none}.toast.show{transform:translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kpi-card{animation:fadeUp .3s ease both}.kpi-card:nth-child(1){animation-delay:.04s}.kpi-card:nth-child(2){animation-delay:.08s}.kpi-card:nth-child(3){animation-delay:.12s}.kpi-card:nth-child(4){animation-delay:.16s}.kpi-card:nth-child(5){animation-delay:.20s}
+.section-block{animation:fadeUp .35s ease .24s both}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item active"><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Jobs Board</h1><span class="t-sub">Manage all jobs from estimate approval to completion</span></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">3</span></button><a href="create-job.html" class="topbar-btn primary">+ Create New Job</a></div>
+  </header>
+
+  <div class="content">
+    <div class="kpi-strip">
+      <div class="kpi-card"><div class="kv" style="color:var(--accent)">9</div><div class="kl">Total Jobs</div><div class="kdate">📋 All time</div><div class="ka" style="background:var(--accent)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:#495057">4</div><div class="kl">Yet to Start</div><div class="kdate">⏳ From estimates</div><div class="ka" style="background:#868e96"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--orange)">2</div><div class="kl">In Progress</div><div class="kdate">🔧 Active now</div><div class="ka" style="background:var(--orange)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--green)">2</div><div class="kl">Completed</div><div class="kdate">✓ This month</div><div class="ka" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--teal)">$61,450</div><div class="kl">Total Value</div><div class="kdate">💰 Active pipeline</div><div class="ka" style="background:var(--teal)"></div></div>
+    </div>
+
+    <div class="filter-bar"><div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchInput" placeholder="Search by customer, job ID, address..."></div></div>
+
+    <!-- ══════════ SECTION 1: JOBS YET TO START ══════════ -->
+    <div class="section-block">
+      <div class="section-header" onclick="toggleSection('s1')">
+        <div class="sh-left">
+          <span style="font-size:16px">⏳</span>
+          <span class="sh-title">Jobs Yet to Start</span>
+          <span class="sh-badge" style="background:#f1f3f5;color:#495057">4</span>
+          <span class="sh-sub">Approved estimates awaiting scheduling</span>
+        </div>
+        <div class="sh-right"><div class="sh-chevron" id="chev-s1">▼</div></div>
+      </div>
+      <div class="section-body" id="body-s1">
+        <div class="table-wrap">
+          <table>
+            <colgroup><col style="width:30%"><col style="width:11%"><col style="width:9%"><col style="width:12%"><col style="width:12%"><col style="width:16%"></colgroup>
+            <thead><tr><th>Job / Customer / Site</th><th>Value</th><th>Estimate</th><th>Invoice</th><th>Schedule</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody>
+              <tr data-search="job-001 lisa brown maple san antonio re-piping">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Lisa Brown</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 321 Maple Ln, San Antonio TX</div><div class="jc-id">JOB-20260301-001 · Approved Feb 12</div></td>
+                <td style="font-weight:700">$22,000</td>
+                <td><a href="estimates.html" style="font-size:12px;color:var(--accent);font-weight:500">EST-0004</a></td>
+                <td><span class="inv-pill inv-none">No Invoice</span></td>
+                <td><span class="status-pill st-unscheduled">● Unscheduled</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="create-job.html" class="ra ra-primary">📅 Schedule</a><button class="ra ra-danger" onclick="cancelJob(this,'Lisa Brown')">✕ Cancel</button></div></td>
+              </tr>
+              <tr data-search="job-002 mike williams elm houston water heater">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Mike Williams</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 789 Elm Dr, Houston TX</div><div class="jc-id">JOB-20260302-002 · Approved Feb 14</div></td>
+                <td style="font-weight:700">$5,750</td>
+                <td><a href="estimates.html" style="font-size:12px;color:var(--accent);font-weight:500">EST-0003</a></td>
+                <td><span class="inv-pill inv-none">No Invoice</span></td>
+                <td><span class="status-pill st-unscheduled">● Unscheduled</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="create-job.html" class="ra ra-primary">📅 Schedule</a><button class="ra ra-danger" onclick="cancelJob(this,'Mike Williams')">✕ Cancel</button></div></td>
+              </tr>
+              <tr data-search="job-003 rachel green park austin hvac" style="background:rgba(22,163,74,0.04)">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Rachel Green</span><span class="job-type-tag jt-recurring">Recurring</span></div><div class="jc-site"><span class="pin">📍</span> 220 Park Ave, Austin TX</div><div class="jc-id">JOB-20260303-003 · Approved Feb 16</div></td>
+                <td style="font-weight:700">$3,600</td>
+                <td><a href="estimates.html" style="font-size:12px;color:var(--accent);font-weight:500">EST-0007</a></td>
+                <td><span class="inv-pill inv-sent">✓ Sent</span></td>
+                <td><span class="status-pill st-unscheduled">● Unscheduled</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="create-invoice.html" class="ra">👁 Invoice</a><a href="create-job.html" class="ra ra-primary">📅 Schedule</a><button class="ra ra-danger" onclick="cancelJob(this,'Rachel Green')">✕ Cancel</button></div></td>
+              </tr>
+              <tr data-search="job-008 amy wilson birch plano restroom">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Amy Wilson</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 890 Birch St, Plano TX</div><div class="jc-id">JOB-20260304-008 · Approved Feb 18</div></td>
+                <td style="font-weight:700">$15,800</td>
+                <td><a href="estimates.html" style="font-size:12px;color:var(--accent);font-weight:500">EST-0006</a></td>
+                <td><span class="inv-pill inv-due">$7.9k Rcvd</span></td>
+                <td><span class="status-pill st-unscheduled">● Unscheduled</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="create-invoice.html" class="ra">👁 Invoice</a><a href="create-job.html" class="ra ra-primary">📅 Schedule</a><button class="ra ra-danger" onclick="cancelJob(this,'Amy Wilson')">✕ Cancel</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ SECTION 2: JOBS SCHEDULED ══════════ -->
+    <div class="section-block">
+      <div class="section-header" onclick="toggleSection('s2')">
+        <div class="sh-left">
+          <span style="font-size:16px">🔧</span>
+          <span class="sh-title">Jobs Scheduled</span>
+          <span class="sh-badge" style="background:var(--teal-light);color:var(--teal)">5</span>
+          <span class="sh-sub">Scheduled, ongoing, and completed</span>
+        </div>
+        <div class="sh-right">
+          <div style="display:flex;gap:4px" onclick="event.stopPropagation()">
+            <button class="chip active" data-sf="all">All <span class="cnt">5</span></button>
+            <button class="chip" data-sf="scheduled">Scheduled <span class="cnt">1</span></button>
+            <button class="chip" data-sf="in-progress">In Progress <span class="cnt">2</span></button>
+            <button class="chip" data-sf="completed">Completed <span class="cnt">2</span></button>
+          </div>
+          <div class="sh-chevron" id="chev-s2">▼</div>
+        </div>
+      </div>
+      <div class="section-body" id="body-s2">
+        <div class="table-wrap">
+          <table>
+            <colgroup><col style="width:27%"><col style="width:11%"><col style="width:9%"><col style="width:10%"><col style="width:10%"><col style="width:15%"></colgroup>
+            <thead><tr><th>Job / Customer / Site</th><th>Schedule</th><th>Crew</th><th>Status</th><th>Invoice</th><th style="text-align:right">Actions</th></tr></thead>
+            <tbody id="scheduledBody">
+              <!-- Scheduled (new status) -->
+              <tr data-sf="scheduled" data-search="job-009 mark taylor elm houston hvac install">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Mark Taylor</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 55 Elm St, Houston TX</div><div class="jc-id">JOB-20260305-009</div></td>
+                <td><div style="font-weight:500;font-size:13px">Mar 15 – 16</div><div style="font-size:11px;color:var(--text-muted)">2 days</div></td>
+                <td><div class="crew-stack"><div class="crew-av c2">CM</div><div class="crew-av c3">KP</div></div></td>
+                <td><span class="status-pill st-scheduled">● Scheduled</span></td>
+                <td><span class="inv-pill inv-sent">✓ Sent</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+              </tr>
+              <!-- In Progress 1 -->
+              <tr data-sf="in-progress" data-search="job-004 john smith oak austin kitchen pipe">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">John Smith</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 123 Oak St, Austin TX</div><div class="jc-id">JOB-20260210-004</div></td>
+                <td><div style="font-weight:500;font-size:13px">Mar 5 – 7</div><div style="font-size:11px;color:var(--text-muted)">3 days</div></td>
+                <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c2">CM</div></div></td>
+                <td><span class="status-pill st-in-progress">● In Progress</span></td>
+                <td><span class="inv-pill inv-sent">✓ Sent</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+              </tr>
+              <!-- In Progress 2 -->
+              <tr data-sf="in-progress" data-search="job-005 sarah johnson pine dallas bathroom">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Sarah Johnson</span><span class="job-type-tag jt-recurring">Recurring</span></div><div class="jc-site"><span class="pin">📍</span> 456 Pine Ave, Dallas TX</div><div class="jc-id">JOB-20260215-005</div></td>
+                <td><div style="font-weight:500;font-size:13px">Mar 3 – 14</div><div style="font-size:11px;color:var(--text-muted)">Tue & Thu</div></td>
+                <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c3">KP</div><div class="crew-av c4">DC</div></div></td>
+                <td><span class="status-pill st-in-progress">● In Progress</span></td>
+                <td><span class="inv-pill inv-partial">◐ Partial</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+              </tr>
+              <!-- Completed 1 -->
+              <tr data-sf="completed" data-search="job-006 tom davis cedar fort worth slab leak">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">Tom Davis</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 654 Cedar Ct, Fort Worth TX</div><div class="jc-id">JOB-20260120-006</div></td>
+                <td><div style="font-weight:500;font-size:13px">Feb 20 – 21</div><div style="font-size:11px;color:var(--text-muted)">2 days</div></td>
+                <td><div class="crew-stack"><div class="crew-av c2">CM</div></div></td>
+                <td><span class="status-pill st-completed">● Completed</span></td>
+                <td><span class="inv-pill inv-paid">✓ Paid</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a></div></td>
+              </tr>
+              <!-- Completed 2 -->
+              <tr data-sf="completed" data-search="job-007 david kim oak austin emergency">
+                <td class="job-cell"><div class="jc-top"><span class="jc-name">David Kim</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 112 Oak Ridge, Austin TX</div><div class="jc-id">JOB-20260105-007</div></td>
+                <td><div style="font-weight:500;font-size:13px">Feb 1 – 3</div><div style="font-size:11px;color:var(--text-muted)">3 days</div></td>
+                <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c3">KP</div></div></td>
+                <td><span class="status-pill st-completed">● Completed</span></td>
+                <td><span class="inv-pill inv-paid">✓ Paid</span></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+<script>
+// Collapse toggle
+function toggleSection(id){
+  const header=document.querySelector('#chev-'+id).closest('.section-header');
+  const body=document.getElementById('body-'+id);
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('[data-search]').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});
+
+// Section 2 filter
+document.querySelectorAll('[data-sf].chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('[data-sf].chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const f=c.dataset.sf;document.querySelectorAll('#scheduledBody tr').forEach(r=>{r.style.display=(f==='all'||r.dataset.sf===f)?'':'none'})})});
+
+// Cancel
+function cancelJob(btn,name){if(!confirm('Cancel job for '+name+'?'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
+
+// Toast
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
+</script>
+
+<script>
+
+// Collapse toggle
+function toggleSection(id){
+  const header=document.querySelector('#chev-'+id).closest('.section-header');
+  const body=document.getElementById('body-'+id);
+  header.classList.toggle('collapsed');
+  body.classList.toggle('collapsed');
+}
+
+// Search
+document.getElementById('searchInput').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('[data-search]').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});
+
+// Section 2 filter
+document.querySelectorAll('[data-sf].chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('[data-sf].chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const f=c.dataset.sf;document.querySelectorAll('#scheduledBody tr').forEach(r=>{r.style.display=(f==='all'||r.dataset.sf===f)?'':'none'})})});
+
+// Cancel
+function cancelJob(btn,name){if(!confirm('Cancel job for '+name+'?'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
+
+// Toast
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
+
+</script>
+</body>
+</html>

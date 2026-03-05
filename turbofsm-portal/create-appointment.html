@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Create Appointment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:15px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-group{margin-bottom:20px}
+.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}
+.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}
+.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}
+.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}
+.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}
+.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}
+.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}
+.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-left h1{font-size:17px;font-weight:600}
+.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;cursor:pointer;transition:all var(--transition);font-family:inherit}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.topbar-btn.primary:hover{background:var(--accent-hover)}
+.notif-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;cursor:pointer}
+.notif-btn .count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+
+.content{padding:22px 28px}
+
+/* ═══ FORM LAYOUT ═══ */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.form-full{grid-column:1/-1}
+.section-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;margin-right:8px}
+.form-section-title{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center}
+.form-section-subtitle{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.form-group{margin-bottom:14px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:border-color var(--transition);background:var(--surface);color:var(--text-primary)}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-select{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e96a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-textarea{min-height:80px;resize:vertical;width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);color:var(--text-primary)}
+.form-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* Customer type toggle */
+.toggle-group{display:flex;gap:6px;margin-bottom:12px}
+.toggle-btn{padding:8px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);color:var(--text-secondary)}
+.toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.toggle-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+.hint{font-size:12px;color:var(--text-muted);margin-top:4px}
+
+/* Site preview */
+.site-preview{padding:14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);margin-top:10px;display:flex;gap:10px;align-items:flex-start}
+.site-preview .site-pin{font-size:20px;flex-shrink:0}
+.site-preview .site-info{flex:1}
+.site-preview .site-name{font-weight:600;font-size:14px;display:flex;align-items:center;gap:6px}
+.site-preview .site-primary{font-size:9px;font-weight:600;background:var(--teal-light);color:var(--teal);padding:1px 6px;border-radius:10px}
+.site-preview .site-address{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.site-preview .site-contact{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Crew tags */
+.crew-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.crew-tag{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--accent-light);border:1px solid rgba(15,111,222,0.15);border-radius:20px;font-size:13px;color:var(--accent);font-weight:500}
+.crew-tag .remove{cursor:pointer;font-size:14px;opacity:.6;transition:opacity var(--transition)}
+.crew-tag .remove:hover{opacity:1}
+.crew-search{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px}
+.crew-search input{border:none;outline:none;font-size:14px;flex:1;background:transparent}
+
+/* ═══ AVAILABILITY CALENDAR ═══ */
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.cal-title{font-size:14px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;gap:6px}
+.cal-nav{display:flex;align-items:center;gap:6px}
+.cal-nav-btn{width:32px;height:32px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all var(--transition)}
+.cal-nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+.cal-date-label{font-size:14px;font-weight:600;min-width:180px;text-align:center}
+.cal-controls{display:flex;align-items:center;gap:6px}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.view-toggle button{padding:6px 14px;font-size:12px;font-weight:600;border:none;background:var(--surface);color:var(--text-secondary);cursor:pointer;transition:all var(--transition)}
+.view-toggle button.active{background:var(--accent);color:#fff}
+.view-toggle button:hover:not(.active){background:var(--accent-light);color:var(--accent)}
+
+/* DAY VIEW grid */
+.day-grid{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.day-grid-header{display:grid;background:var(--bg);border-bottom:1px solid var(--border)}
+.day-grid-header .dg-corner{padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;border-right:1px solid var(--border);display:flex;align-items:center}
+.day-grid-header .dg-hours{display:flex;flex:1;overflow:hidden}
+.day-grid-header .dg-hour{flex:1;min-width:0;padding:8px 2px;text-align:center;font-size:11px;font-weight:600;color:var(--text-muted);border-right:1px solid var(--border-light);position:relative}
+.day-grid-header .dg-hour:last-child{border-right:none}
+.day-grid-header .dg-hour.now{color:var(--accent);font-weight:700}
+.day-grid-header .dg-hour.now::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:6px;height:3px;background:var(--accent);border-radius:2px 2px 0 0}
+
+/* Crew row */
+.day-row{display:grid;border-bottom:1px solid var(--border-light)}
+.day-row:last-child{border-bottom:none}
+.day-row .crew-cell{padding:12px 14px;border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:center}
+.day-row .crew-cell .cn{font-weight:600;font-size:13px}
+.day-row .crew-cell .cr{font-size:11px;color:var(--text-muted);margin-top:1px}
+.day-row .crew-cell .cs{font-size:10px;font-weight:600;padding:2px 6px;border-radius:10px;display:inline-block;margin-top:4px;width:fit-content}
+.day-row .hours-row{display:flex;flex:1}
+.day-row .hour-slot{flex:1;min-width:0;border-right:1px solid var(--border-light);position:relative;min-height:52px;transition:background var(--transition)}
+.day-row .hour-slot:last-child{border-right:none}
+.day-row .hour-slot:hover{background:var(--surface-hover)}
+
+/* Blocks inside hour slots */
+.block{position:absolute;top:4px;bottom:4px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;overflow:hidden;z-index:2;padding:0 3px;text-overflow:ellipsis;white-space:nowrap}
+.block-job{background:var(--teal-light);color:var(--teal);border:1px solid rgba(13,148,136,0.2)}
+.block-appt{background:var(--purple-light);color:var(--purple);border:1px solid rgba(124,58,237,0.2)}
+.block-training{background:var(--orange-light);color:var(--orange);border:1px solid rgba(230,126,34,0.2)}
+/* The "new appointment" indicator */
+.block-new{background:var(--accent-light);color:var(--accent);border:2px dashed var(--accent)}
+
+/* ═══ WEEK VIEW ═══ */
+.week-grid{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;display:none}
+.week-grid.active{display:block}
+.day-grid.active{display:block}
+
+/* Week grid table approach */
+.wk-table{width:100%;border-collapse:collapse}
+.wk-table thead th{padding:8px 4px;font-size:10px;font-weight:600;text-align:center;color:var(--text-muted);background:var(--bg);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.3px}
+.wk-table thead th:first-child{text-align:left;padding-left:14px;width:140px;border-right:1px solid var(--border)}
+.wk-table thead th .wk-day-name{display:block;font-size:10px;color:var(--text-muted);letter-spacing:.5px}
+.wk-table thead th .wk-day-num{display:block;font-size:14px;font-weight:700;color:var(--text-primary);margin-top:1px}
+.wk-table thead th.today .wk-day-num{color:var(--accent)}
+.wk-table thead th.today{background:var(--accent-light)}
+.wk-table tbody td{padding:0;border-bottom:1px solid var(--border-light);border-right:1px solid var(--border-light);height:52px;vertical-align:top;position:relative}
+.wk-table tbody td:first-child{border-right:1px solid var(--border);padding:10px 14px;vertical-align:middle;background:var(--surface)}
+.wk-table tbody td:last-child{border-right:none}
+.wk-table tbody tr:last-child td{border-bottom:none}
+
+/* Week cell content */
+.wk-cell{padding:3px}
+.wk-block{display:block;padding:3px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* Legend */
+.cal-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+
+/* ═══ FOOTER ═══ */
+.form-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px;padding:16px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.fb{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-primary)}
+.fb:hover{border-color:var(--accent);color:var(--accent)}
+.fb.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fb.primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.fb.cancel{color:var(--text-muted)}
+.fb.cancel:hover{color:var(--red);border-color:var(--red-light)}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.form-section{animation:fadeUp .3s ease both}
+.form-grid .form-section:nth-child(1){animation-delay:.04s}
+.form-grid .form-section:nth-child(2){animation-delay:.08s}
+.form-grid .form-section:nth-child(3){animation-delay:.12s}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item active"><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- ═══ SIDEBAR ═══ -->
+
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="appointments.html" class="topbar-btn" style="padding:7px 10px">← Back</a>
+      <h1>Create New Appointment</h1>
+      <span class="t-sub">Schedule an appointment with a customer</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <a href="appointments.html" class="topbar-btn">Cancel</a>
+      <a href="appointments.html" class="topbar-btn primary">Save Appointment</a>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="form-grid">
+
+      <!-- ═══ SECTION 1: Customer Information ═══ -->
+      <div class="form-section">
+        <div class="form-section-title"><span class="section-num">1</span> Customer Information</div>
+        <div class="form-section-subtitle">Select a lead or existing customer</div>
+
+        <div class="form-group">
+          <label class="form-label">Customer Type</label>
+          <div class="toggle-group">
+            <button class="toggle-btn active">Lead</button>
+            <button class="toggle-btn">Existing Customer</button>
+          </div>
+          <div class="hint">For leads, search from the lead manager. For existing customers, select from the list to auto-fill contact details.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Customer Name</label>
+          <div style="display:flex;gap:8px">
+            <input class="form-input" placeholder="Search customer..." style="flex:1">
+            <button style="width:38px;height:38px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px">🔍</button>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input class="form-input" type="email" placeholder="email@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input class="form-input" placeholder="(555) 000-0000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Service Site</label>
+          <select class="form-select">
+            <option>-- Select Service Site --</option>
+            <option selected>Downtown Office — 456 Commerce Blvd, Springfield, IL 62704</option>
+            <option>Warehouse B — 789 Industrial Park, Springfield, IL 62705</option>
+            <option>Same as Billing Address — 123 Main St, Springfield, IL 62701</option>
+            <option>+ Add New Site...</option>
+          </select>
+          <div class="hint">Select the site where this appointment will take place. Sites are managed on the Lead/Customer record.</div>
+        </div>
+
+        <div class="site-preview">
+          <div class="site-pin">📍</div>
+          <div class="site-info">
+            <div class="site-name">Downtown Office <span class="site-primary">Primary</span></div>
+            <div class="site-address">456 Commerce Blvd, Springfield, IL 62704</div>
+            <div class="site-contact">Contact: Mike Johnson · (555) 111-2222</div>
+            <div class="site-contact">Notes: Gate code: 4455</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ SECTION 2: Appointment Details ═══ -->
+      <div class="form-section">
+        <div class="form-section-title"><span class="section-num">2</span> Appointment Details</div>
+        <div class="form-section-subtitle">Type, schedule, and crew assignment</div>
+
+        <div class="form-group">
+          <label class="form-label">Appointment Type</label>
+          <select class="form-select">
+            <option>-- Select Type --</option>
+            <option>Introduction</option>
+            <option selected>Site Survey</option>
+            <option>Assessment</option>
+            <option>Follow Up</option>
+            <option>Negotiation</option>
+            <option>Profile Presentation</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Date & Time</label>
+            <input class="form-input" type="datetime-local" value="2026-03-05T10:00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duration</label>
+            <select class="form-select">
+              <option>30 minutes</option>
+              <option selected>1 hour</option>
+              <option>1.5 hours</option>
+              <option>2 hours</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Assign To</label>
+          <div class="hint" style="margin-bottom:8px">Search and select one or more crew members. Their availability is shown below.</div>
+          <div class="crew-search">
+            <span style="color:var(--text-muted)">🔍</span>
+            <input placeholder="Search crew members...">
+          </div>
+          <div class="crew-tags">
+            <span class="crew-tag">John Smith · Master Plumber <span class="remove">×</span></span>
+            <span class="crew-tag">James Rodriguez · Master Plumber <span class="remove">×</span></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Additional Notes</label>
+          <textarea class="form-textarea" placeholder="Any special instructions or notes for this appointment..."></textarea>
+        </div>
+      </div>
+
+      <!-- ═══ SECTION 3: Crew Availability Calendar (Full Width) ═══ -->
+      <div class="form-section form-full">
+
+        <!-- Calendar Header: title, date nav, day/week toggle -->
+        <div class="cal-header">
+          <div class="cal-title">📅 Crew Availability</div>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" id="navPrev">‹</button>
+            <div class="cal-date-label" id="calDateLabel">Thursday, March 5, 2026</div>
+            <button class="cal-nav-btn" id="navNext">›</button>
+          </div>
+          <div class="cal-controls">
+            <div class="view-toggle">
+              <button class="active" id="btnDay" onclick="switchView('day')">Day</button>
+              <button id="btnWeek" onclick="switchView('week')">Week</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ DAY VIEW ═══ -->
+        <div class="day-grid active" id="dayView">
+          <!-- Header row: corner + hour columns -->
+          <div class="day-grid-header" style="grid-template-columns:160px 1fr">
+            <div class="dg-corner">Crew Member</div>
+            <div class="dg-hours">
+              <div class="dg-hour">8–9</div>
+              <div class="dg-hour">9–10</div>
+              <div class="dg-hour now">10–11</div>
+              <div class="dg-hour">11–12</div>
+              <div class="dg-hour">12–1</div>
+              <div class="dg-hour">1–2</div>
+              <div class="dg-hour">2–3</div>
+              <div class="dg-hour">3–4</div>
+              <div class="dg-hour">4–5</div>
+              <div class="dg-hour">5–6</div>
+            </div>
+          </div>
+
+          <!-- John Smith row -->
+          <div class="day-row" style="display:grid;grid-template-columns:160px 1fr">
+            <div class="crew-cell">
+              <div class="cn">John Smith</div>
+              <div class="cr">Master Plumber</div>
+              <div class="cs" style="background:var(--accent-light);color:var(--accent)">Assigned</div>
+            </div>
+            <div class="hours-row">
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #14</div>
+              </div><!-- 8-9 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #14</div>
+              </div><!-- 9-10 -->
+              <div class="hour-slot">
+                <div class="block block-new" style="left:4px;right:4px">★ New Appt</div>
+              </div><!-- 10-11: selected time! -->
+              <div class="hour-slot"></div><!-- 11-12 -->
+              <div class="hour-slot"></div><!-- 12-1 -->
+              <div class="hour-slot">
+                <div class="block block-appt" style="left:4px;right:4px">Appt</div>
+              </div><!-- 1-2 -->
+              <div class="hour-slot"></div><!-- 2-3 -->
+              <div class="hour-slot"></div><!-- 3-4 -->
+              <div class="hour-slot"></div><!-- 4-5 -->
+              <div class="hour-slot"></div><!-- 5-6 -->
+            </div>
+          </div>
+
+          <!-- James Rodriguez row -->
+          <div class="day-row" style="display:grid;grid-template-columns:160px 1fr">
+            <div class="crew-cell">
+              <div class="cn">James Rodriguez</div>
+              <div class="cr">Master Plumber</div>
+              <div class="cs" style="background:var(--accent-light);color:var(--accent)">Assigned</div>
+            </div>
+            <div class="hours-row">
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #12</div>
+              </div><!-- 8-9 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #12</div>
+              </div><!-- 9-10 -->
+              <div class="hour-slot">
+                <div class="block block-new" style="left:4px;right:4px">★ New Appt</div>
+              </div><!-- 10-11: selected time — CONFLICT -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #12</div>
+              </div><!-- 11-12 -->
+              <div class="hour-slot"></div><!-- 12-1 -->
+              <div class="hour-slot"></div><!-- 1-2 -->
+              <div class="hour-slot"></div><!-- 2-3 -->
+              <div class="hour-slot">
+                <div class="block block-training" style="left:4px;right:4px">Training</div>
+              </div><!-- 3-4 -->
+              <div class="hour-slot"></div><!-- 4-5 -->
+              <div class="hour-slot"></div><!-- 5-6 -->
+            </div>
+          </div>
+
+          <!-- Sarah Lee row (not assigned but shown for reference) -->
+          <div class="day-row" style="display:grid;grid-template-columns:160px 1fr">
+            <div class="crew-cell">
+              <div class="cn">Sarah Lee</div>
+              <div class="cr">Office Manager</div>
+            </div>
+            <div class="hours-row">
+              <div class="hour-slot"></div><!-- 8-9 -->
+              <div class="hour-slot"></div><!-- 9-10 -->
+              <div class="hour-slot"></div><!-- 10-11 -->
+              <div class="hour-slot"></div><!-- 11-12 -->
+              <div class="hour-slot"></div><!-- 12-1 -->
+              <div class="hour-slot"></div><!-- 1-2 -->
+              <div class="hour-slot"></div><!-- 2-3 -->
+              <div class="hour-slot"></div><!-- 3-4 -->
+              <div class="hour-slot"></div><!-- 4-5 -->
+              <div class="hour-slot"></div><!-- 5-6 -->
+            </div>
+          </div>
+
+          <!-- Carlos Mendez row -->
+          <div class="day-row" style="display:grid;grid-template-columns:160px 1fr">
+            <div class="crew-cell">
+              <div class="cn">Carlos Mendez</div>
+              <div class="cr">Journeyman Plumber</div>
+            </div>
+            <div class="hours-row">
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 8-9 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 9-10 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 10-11 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 11-12 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 12-1 -->
+              <div class="hour-slot">
+                <div class="block block-job" style="left:4px;right:4px">Job #11</div>
+              </div><!-- 1-2 -->
+              <div class="hour-slot"></div><!-- 2-3 -->
+              <div class="hour-slot"></div><!-- 3-4 -->
+              <div class="hour-slot"></div><!-- 4-5 -->
+              <div class="hour-slot"></div><!-- 5-6 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ WEEK VIEW ═══ -->
+        <div class="week-grid" id="weekView">
+          <table class="wk-table">
+            <thead>
+              <tr>
+                <th>Crew Member</th>
+                <th><span class="wk-day-name">Mon</span><span class="wk-day-num">2</span></th>
+                <th><span class="wk-day-name">Tue</span><span class="wk-day-num">3</span></th>
+                <th><span class="wk-day-name">Wed</span><span class="wk-day-num">4</span></th>
+                <th class="today"><span class="wk-day-name">Thu</span><span class="wk-day-num">5 ★</span></th>
+                <th><span class="wk-day-name">Fri</span><span class="wk-day-num">6</span></th>
+                <th><span class="wk-day-name">Sat</span><span class="wk-day-num">7</span></th>
+                <th><span class="wk-day-name">Sun</span><span class="wk-day-num">8</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- John Smith -->
+              <tr>
+                <td>
+                  <div style="font-weight:600;font-size:13px">John Smith</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Master Plumber</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--accent);margin-top:3px">Assigned</div>
+                </td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #14 · 8a–10a</span></div></td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #14 · 8a–12p</span></div></td>
+                <td></td>
+                <td style="background:rgba(15,111,222,0.03)">
+                  <div class="wk-cell">
+                    <span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #14 · 8a–10a</span>
+                    <span class="wk-block" style="background:var(--accent-light);color:var(--accent);border:1px dashed var(--accent)">★ New · 10a–11a</span>
+                    <span class="wk-block" style="background:var(--purple-light);color:var(--purple)">Appt · 1p–2p</span>
+                  </div>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <!-- James Rodriguez -->
+              <tr>
+                <td>
+                  <div style="font-weight:600;font-size:13px">James Rodriguez</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Master Plumber</div>
+                  <div style="font-size:10px;font-weight:600;color:var(--accent);margin-top:3px">Assigned</div>
+                </td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #12 · 8a–5p</span></div></td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #12 · 8a–5p</span></div></td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #12 · 8a–12p</span></div></td>
+                <td style="background:rgba(15,111,222,0.03)">
+                  <div class="wk-cell">
+                    <span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #12 · 8a–10a</span>
+                    <span class="wk-block" style="background:var(--accent-light);color:var(--accent);border:1px dashed var(--accent)">★ New · 10a–11a</span>
+                    <span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #12 · 11a–12p</span>
+                    <span class="wk-block" style="background:var(--orange-light);color:var(--orange)">Training · 3p–4p</span>
+                  </div>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <!-- Sarah Lee -->
+              <tr>
+                <td>
+                  <div style="font-weight:600;font-size:13px">Sarah Lee</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Office Manager</div>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td style="background:rgba(15,111,222,0.03)"></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <!-- Carlos Mendez -->
+              <tr>
+                <td>
+                  <div style="font-weight:600;font-size:13px">Carlos Mendez</div>
+                  <div style="font-size:11px;color:var(--text-muted)">Journeyman Plumber</div>
+                </td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #11 · 8a–2p</span></div></td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #11 · 8a–2p</span></div></td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #11 · 8a–2p</span></div></td>
+                <td style="background:rgba(15,111,222,0.03)">
+                  <div class="wk-cell">
+                    <span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #11 · 8a–2p</span>
+                  </div>
+                </td>
+                <td><div class="wk-cell"><span class="wk-block" style="background:var(--teal-light);color:var(--teal)">Job #11 · 8a–2p</span></div></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Legend -->
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--green-light);border:1px solid var(--green)"></div> Available</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--teal-light);border:1px solid var(--teal)"></div> Assigned Job</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--purple-light);border:1px solid var(--purple)"></div> Appointment</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--orange-light);border:1px solid var(--orange)"></div> Training</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--accent-light);border:2px dashed var(--accent)"></div> New Appointment (selected)</div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="form-footer">
+      <a href="appointments.html" class="fb cancel">Cancel</a>
+      <a href="appointments.html" class="fb primary">Save Appointment</a>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchView(view) {
+  const dayView = document.getElementById('dayView');
+  const weekView = document.getElementById('weekView');
+  const btnDay = document.getElementById('btnDay');
+  const btnWeek = document.getElementById('btnWeek');
+  const label = document.getElementById('calDateLabel');
+
+  if (view === 'day') {
+    dayView.style.display = 'block';
+    weekView.style.display = 'none';
+    btnDay.classList.add('active');
+    btnWeek.classList.remove('active');
+    label.textContent = 'Thursday, March 5, 2026';
+  } else {
+    dayView.style.display = 'none';
+    weekView.style.display = 'block';
+    btnDay.classList.remove('active');
+    btnWeek.classList.add('active');
+    label.textContent = 'Mar 2 – 8, 2026';
+  }
+}
+</script>
+
+
+<script>
+
+function switchView(view) {
+  const dayView = document.getElementById('dayView');
+  const weekView = document.getElementById('weekView');
+  const btnDay = document.getElementById('btnDay');
+  const btnWeek = document.getElementById('btnWeek');
+  const label = document.getElementById('calDateLabel');
+
+  if (view === 'day') {
+    dayView.style.display = 'block';
+    weekView.style.display = 'none';
+    btnDay.classList.add('active');
+    btnWeek.classList.remove('active');
+    label.textContent = 'Thursday, March 5, 2026';
+  } else {
+    dayView.style.display = 'none';
+    weekView.style.display = 'block';
+    btnDay.classList.remove('active');
+    btnWeek.classList.add('active');
+    label.textContent = 'Mar 2 – 8, 2026';
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Appointment Details</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:15px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-group{margin-bottom:20px}
+.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}
+.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}
+.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}
+.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}
+.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}
+.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}
+.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}
+.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-left h1{font-size:17px;font-weight:600}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;cursor:pointer;transition:all var(--transition);font-family:inherit}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.topbar-btn.primary:hover{background:var(--accent-hover)}
+.status-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;background:var(--green-light);color:var(--green)}
+.notif-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;cursor:pointer}
+.notif-btn .count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+
+.content{padding:22px 28px}
+
+/* ═══ ACTIONS BAR — Prominent, right under topbar ═══ */
+.actions-bar{background:var(--sidebar-bg);border-radius:var(--radius-lg);padding:16px 22px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;position:relative;z-index:1}
+.actions-bar .ab-label{color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-right:6px}
+.actions-bar .ab{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;white-space:nowrap;width:auto;height:auto;position:static;text-decoration:none}
+.actions-bar .ab:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}
+.actions-bar .ab.ab-accent{background:var(--accent);border-color:var(--accent)}
+.actions-bar .ab.ab-accent:hover{background:var(--accent-hover)}
+.actions-bar .ab.ab-teal{background:var(--teal);border-color:var(--teal)}
+.actions-bar .ab.ab-teal:hover{background:#0b7f74}
+.actions-bar .ab.ab-orange{background:var(--orange);border-color:var(--orange)}
+.actions-bar .ab.ab-orange:hover{background:#cf6d13}
+.actions-bar .ab-divider{width:1px;height:28px;background:rgba(255,255,255,0.12);margin:0 4px;flex-shrink:0}
+
+/* ═══ CHAIN BREADCRUMB ═══ */
+.chain-bar{display:flex;align-items:center;gap:10px;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:16px;font-size:13px}
+.chain-step{padding:4px 12px;border-radius:20px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.chain-step.active{background:var(--accent-light);color:var(--accent)}
+.chain-step:not(.active){color:var(--text-muted)}
+.chain-step:not(.active):hover{color:var(--accent)}
+.chain-arrow{color:var(--text-muted);font-size:14px}
+.chain-count{margin-left:auto;font-size:11px;color:var(--text-muted)}
+
+/* ═══ DETAIL GRID ═══ */
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.card-full{grid-column:1/-1}
+.card-title{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+.card-subtitle{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+
+/* Edit button */
+.edit-btn{font-size:12px;color:var(--accent);cursor:pointer;padding:5px 12px;border:1px solid var(--accent-light);border-radius:var(--radius-sm);background:var(--accent-light);transition:all var(--transition);font-weight:600}
+.edit-btn:hover{background:var(--accent);color:#fff}
+.edit-btn.active-edit{background:var(--accent);color:#fff}
+.save-btn{font-size:12px;color:#fff;cursor:pointer;padding:5px 12px;border:none;border-radius:var(--radius-sm);background:var(--green);transition:all var(--transition);font-weight:600;display:none}
+.save-btn:hover{background:#128c3e}
+.cancel-edit{font-size:12px;color:var(--text-muted);cursor:pointer;padding:5px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);transition:all var(--transition);font-weight:500;display:none;margin-right:4px}
+.cancel-edit:hover{color:var(--red);border-color:var(--red-light)}
+
+/* Detail fields */
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field-label{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted);margin-bottom:3px}
+.field-value{font-size:14px;font-weight:500}
+.field-value.accent{color:var(--accent)}
+
+/* Site mini card */
+.site-mini{padding:10px 14px;background:var(--bg);border-radius:var(--radius-sm);margin-top:4px}
+.site-mini .sm-name{font-weight:600;font-size:13px}
+.site-mini .sm-addr{font-size:12px;color:var(--text-secondary);margin-top:2px}
+.site-mini .sm-contact{font-size:12px;color:var(--text-muted);margin-top:2px}
+
+/* Photos & notes in post-appointment */
+.photo-grid{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-thumb{width:76px;height:76px;border-radius:var(--radius-sm);background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-muted);text-align:center;padding:4px}
+.photo-upload{width:76px;height:76px;border-radius:var(--radius-sm);border:2px dashed var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:16px;color:var(--text-muted);cursor:pointer;transition:all var(--transition)}
+.photo-upload:hover{border-color:var(--accent);color:var(--accent)}
+.photo-upload span{font-size:10px;margin-top:2px}
+
+/* Site notes box */
+.site-notes-box{margin-top:12px;padding:12px 16px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);font-size:13px;color:var(--text-secondary);line-height:1.65}
+.site-notes-box .snb-header{font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted);margin-bottom:6px}
+
+/* ═══ EDIT MODE — form elements inside post-appointment ═══ */
+.edit-field{display:none}
+.view-field{display:block}
+.editing .edit-field{display:block}
+.editing .view-field{display:none}
+
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:border-color var(--transition);background:var(--surface);color:var(--text-primary)}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e96a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+
+/* Toggle switch */
+.toggle-row{display:flex;align-items:center;gap:8px}
+.toggle-switch{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.toggle-switch button{padding:6px 14px;font-size:12px;font-weight:600;border:none;background:var(--surface);color:var(--text-secondary);cursor:pointer;transition:all var(--transition)}
+.toggle-switch button.active{background:var(--accent);color:#fff}
+.toggle-switch button:hover:not(.active){background:var(--accent-light);color:var(--accent)}
+.followup-date-field{margin-top:8px;display:none}
+.followup-date-field.show{display:block}
+.no-followup-actions{margin-top:8px;display:none}
+.no-followup-actions.show{display:flex;gap:8px}
+.est-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;background:var(--teal);color:#fff;border:none;transition:all var(--transition)}
+.est-btn:hover{background:#0b7f74}
+
+/* Budget toggle */
+.budget-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:6px}
+.budget-toggle button{padding:5px 12px;font-size:11px;font-weight:600;border:none;background:var(--surface);color:var(--text-secondary);cursor:pointer;transition:all var(--transition)}
+.budget-toggle button.active{background:var(--accent);color:#fff}
+.budget-toggle button:hover:not(.active){background:var(--accent-light);color:var(--accent)}
+.budget-input-wrap{display:none}
+.budget-input-wrap.show{display:block}
+.budget-na{display:none;font-size:13px;color:var(--text-muted);font-weight:500;padding:6px 0}
+.budget-na.show{display:block}
+
+/* ═══ TIMELINE ═══ */
+.timeline{position:relative;padding-left:20px}
+.timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:var(--border)}
+.tl-entry{position:relative;margin-bottom:20px}
+.tl-entry:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-20px;top:4px;width:12px;height:12px;border-radius:50%;border:2px solid var(--surface)}
+.tl-dot.note{background:var(--accent)}
+.tl-dot.appt{background:var(--purple)}
+.tl-meta{font-size:12px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.tl-author{font-weight:600;color:var(--text-secondary)}
+.tl-content{font-size:14px;color:var(--text-secondary);padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);line-height:1.65}
+.tl-appt-card{padding:12px 16px;background:var(--purple-light);border-radius:var(--radius-sm);border-left:3px solid var(--purple)}
+.tl-appt-title{font-size:14px;font-weight:600;color:var(--purple);margin-bottom:6px}
+.tl-appt-status{display:inline-block;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:6px}
+.tl-appt-detail{font-size:13px;color:var(--text-secondary);line-height:1.6}
+
+/* ═══ FOLLOW-UP SECTION ═══ */
+.followup-section{background:var(--surface);border:1px solid var(--teal);border-radius:var(--radius-lg);padding:22px 24px;margin-top:16px;display:none}
+.fs-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.fs-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.fs-cancel{font-size:12px;color:var(--text-muted);cursor:pointer;transition:color var(--transition)}
+.fs-cancel:hover{color:var(--red)}
+.inherit-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--teal-light);border-radius:var(--radius-sm);margin-bottom:14px;font-size:13px;color:var(--teal)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-textarea{min-height:70px;resize:vertical;width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface)}
+.form-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.crew-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.crew-tag{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--teal-light);border:1px solid rgba(13,148,136,0.15);border-radius:20px;font-size:13px;color:var(--teal);font-weight:500}
+.crew-tag .remove{cursor:pointer;font-size:14px;opacity:.6}
+.crew-tag .remove:hover{opacity:1}
+.crew-search{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:12px}
+.crew-search input{border:none;outline:none;font-size:14px;flex:1;background:transparent}
+.followup-footer{display:flex;gap:8px;justify-content:flex-end;margin-top:14px}
+.ff-btn{padding:9px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-primary)}
+.ff-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ff-btn.primary{background:var(--teal);color:#fff;border-color:var(--teal)}
+.ff-btn.primary:hover{background:#0b7f74}
+
+/* ═══ PAGE FOOTER ═══ */
+.page-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px;padding:16px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.fb{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-primary)}
+.fb:hover{border-color:var(--accent);color:var(--accent)}
+.fb.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.fb.primary:hover{background:var(--accent-hover)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card,.actions-bar,.followup-section{animation:fadeUp .3s ease both}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Overview</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item active"><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- ═══ SIDEBAR ═══ -->
+
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="appointments.html" class="topbar-btn" style="padding:7px 10px">← Back</a>
+      <h1>Appointment Details</h1>
+      <span class="status-badge">● Completed</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <button class="topbar-btn">🖶 Export PDF</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Sub-header -->
+    <div style="margin-bottom:12px;font-size:13.5px;color:var(--text-secondary);padding:10px 0 0">
+      Site Survey · Feb 28, 2026 at 2:00 PM · Assigned to Sarah Lee
+    </div>
+
+    <!-- ═══ PROMINENT ACTIONS BAR ═══ -->
+    <div class="actions-bar">
+      <span class="ab-label">Quick Actions</span>
+      <a href="create-estimate.html" class="ab ab-accent">📄 Create Estimate</a>
+      <button class="ab ab-teal" onclick="document.getElementById('followupSection').style.display='block';this.closest('.actions-bar').nextElementSibling.scrollIntoView({behavior:'smooth'})">🔄 Create Follow-up</button>
+      <a href="jobs-board.html" class="ab ab-orange">🔧 Create Job</a>
+      <div class="ab-divider"></div>
+      <button class="ab">📥 Export as PDF</button>
+    </div>
+
+    <!-- Chain Breadcrumb -->
+    <div class="chain-bar">
+      <span style="font-size:14px;margin-right:4px">🔗</span>
+      <span class="chain-step active">Site Survey (Feb 28)</span>
+      <span class="chain-arrow">→</span>
+      <span class="chain-step">Follow-up #1 (Mar 10)</span>
+      <span class="chain-count">2 of 2 in chain</span>
+    </div>
+
+    <!-- ═══ 2-COL GRID ═══ -->
+    <div class="detail-grid">
+
+      <!-- LEFT: Appointment Information -->
+      <div class="card">
+        <div class="card-title">Appointment Information <span class="edit-btn">✎ Edit Details</span></div>
+        <div class="card-subtitle">Core details about this appointment</div>
+
+        <div class="field-grid">
+          <div class="field"><div class="field-label">Customer Type</div><div class="field-value">Existing Customer</div></div>
+          <div class="field"><div class="field-label">Customer Name</div><div class="field-value">Sarah Johnson</div></div>
+          <div class="field"><div class="field-label">Appointment Type</div><div class="field-value">Site Survey</div></div>
+          <div class="field"><div class="field-label">Status</div><div class="field-value"><span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--green-light);color:var(--green)">● Completed</span></div></div>
+          <div class="field"><div class="field-label">Email</div><div class="field-value accent">sarah@email.com</div></div>
+          <div class="field"><div class="field-label">Phone</div><div class="field-value">(555) 234-5678</div></div>
+          <div class="field"><div class="field-label">Date & Time</div><div class="field-value">February 28, 2026 at 2:00 PM</div></div>
+          <div class="field"><div class="field-label">Assigned To</div><div class="field-value">Sarah Lee</div></div>
+          <div class="field"><div class="field-label">Linked Lead</div><div class="field-value accent">LEAD-0042 · Sarah Johnson</div></div>
+        </div>
+
+        <div class="field" style="margin-top:12px">
+          <div class="field-label">Service Site</div>
+          <div class="site-mini">
+            <div class="sm-name">Downtown Office</div>
+            <div class="sm-addr">456 Pine Ave, Dallas TX 75201</div>
+            <div class="sm-contact">Contact: Mike Johnson · (555) 111-2222</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Post-Appointment Details (with interactive edit) -->
+      <div class="card" id="postApptCard">
+        <div class="card-title">
+          Post-Appointment Details
+          <div style="display:flex;gap:4px;align-items:center">
+            <button class="cancel-edit" id="cancelEditBtn" onclick="togglePostEdit(false)">Cancel</button>
+            <button class="save-btn" id="saveEditBtn" onclick="togglePostEdit(false)">✓ Save</button>
+            <button class="edit-btn" id="editPostBtn" onclick="togglePostEdit(true)">✎ Edit Details</button>
+          </div>
+        </div>
+        <div class="card-subtitle">Information captured after the appointment</div>
+
+        <!-- ── Follow-up Required ── -->
+        <div class="field" style="margin-bottom:14px">
+          <div class="field-label">Follow-up Required</div>
+          <!-- View mode -->
+          <div class="view-field field-value">Yes — March 10, 2026</div>
+          <!-- Edit mode -->
+          <div class="edit-field">
+            <div class="toggle-switch" style="margin-bottom:6px">
+              <button class="active" id="fuYes" onclick="setFollowup(true)">Yes</button>
+              <button id="fuNo" onclick="setFollowup(false)">No</button>
+            </div>
+            <div class="followup-date-field show" id="fuDateField">
+              <input class="form-input" type="date" value="2026-03-10" style="max-width:220px">
+            </div>
+            <div class="no-followup-actions" id="noFuActions">
+              <a href="create-estimate.html" class="est-btn">📄 Prepare Estimate</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Budget ── -->
+        <div class="field" style="margin-bottom:14px">
+          <div class="field-label">Budget Range</div>
+          <!-- View mode -->
+          <div class="view-field field-value" style="font-size:20px;font-weight:700;color:var(--green)">$8,500.00</div>
+          <!-- Edit mode -->
+          <div class="edit-field">
+            <div class="budget-toggle">
+              <button class="active" id="budgetFigure" onclick="setBudgetMode('figure')">Enter Figure</button>
+              <button id="budgetNA" onclick="setBudgetMode('na')">N/A</button>
+            </div>
+            <div class="budget-input-wrap show" id="budgetInputWrap">
+              <input class="form-input" type="text" value="$8,500.00" style="max-width:220px">
+            </div>
+            <div class="budget-na" id="budgetNAText">Budget not applicable for this appointment</div>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <!-- View mode fields -->
+          <div class="field"><div class="field-label">Service Site</div><div class="field-value">Downtown Office — 456 Pine Ave, Dallas TX 75201</div></div>
+          <div class="field"><div class="field-label">Probability of Closure</div><div class="field-value"><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden"><div style="width:75%;height:100%;background:var(--green);border-radius:4px"></div></div><span style="font-weight:600;font-size:14px">75%</span></div></div></div>
+          <div class="field"><div class="field-label">Expected Start Date</div><div class="field-value">March 15, 2026</div></div>
+          <div class="field"><div class="field-label">Expected Timeline</div><div class="field-value">2 weeks</div></div>
+        </div>
+
+        <!-- Site Photos -->
+        <div class="field" style="margin-top:14px">
+          <div class="field-label">Site Photos</div>
+          <div class="photo-grid">
+            <div class="photo-thumb">photo_1.jpg</div>
+            <div class="photo-thumb">photo_2.jpg</div>
+            <div class="photo-thumb">photo_3.jpg</div>
+            <div class="photo-upload">📷<span>Upload</span></div>
+          </div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Drag & drop or click to upload. JPG, PNG, HEIC up to 10MB each</div>
+        </div>
+
+        <!-- Site Notes (NEW) -->
+        <div class="site-notes-box">
+          <div class="snb-header">📝 Site Notes — by Sarah Lee</div>
+          Customer wants full bathroom renovation on the second floor. Existing pipes are copper and in good condition.
+          Main concern is the water heater — currently a 40-gallon unit, wants to upgrade to 50-gallon tankless system.
+          Tile work needed for shower area (approx 60 sq ft). Customer prefers ceramic tiles.
+          Budget is flexible but prefers to stay under $10K.
+          Follow-up needed to finalize material selections and provide detailed estimate.
+        </div>
+      </div>
+
+      <!-- ═══ FULL WIDTH: Appointment Trail & Notes ═══ -->
+      <div class="card card-full" id="notes">
+        <div class="card-title">Appointment Trail & Notes <button class="edit-btn" style="background:var(--green-light);color:var(--green);border-color:var(--green-light)" onclick="document.getElementById('noteInputArea').style.display='flex'">+ Add Note</button></div>
+        <div id="noteInputArea" style="display:none;gap:8px;margin-bottom:14px;padding:12px;background:var(--bg);border-radius:var(--radius);align-items:flex-start"><textarea id="newNoteText" style="flex:1;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;resize:none;height:60px" placeholder="Type your note here..."></textarea><button onclick="addTimelineNote()" style="padding:8px 16px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">Add</button><button onclick="document.getElementById('noteInputArea').style.display='none'" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-muted);cursor:pointer;font-family:inherit;font-size:13px">Cancel</button></div>
+        <div class="card-subtitle">Complete history of this appointment chain, newest first</div>
+
+        <div class="timeline">
+          <div class="tl-entry">
+            <div class="tl-dot note"></div>
+            <div class="tl-meta">Mar 3, 2026 · 4:15 PM <span class="tl-author">by John Smith</span></div>
+            <div class="tl-content">Called customer to confirm follow-up appointment on Mar 10. She confirmed availability at 10:00 AM. Will bring ceramic tile samples and updated tankless water heater pricing.</div>
+          </div>
+
+          <div class="tl-entry">
+            <div class="tl-dot appt"></div>
+            <div class="tl-meta">Mar 3, 2026 · 2:30 PM <span class="tl-author">by Sarah Lee</span></div>
+            <div class="tl-appt-card">
+              <div class="tl-appt-title">Follow-up Appointment Scheduled <span class="tl-appt-status" style="background:var(--orange-light);color:var(--orange)">Pending</span></div>
+              <div class="tl-appt-detail">
+                📅 Mar 10, 2026 at 10:00 AM<br>
+                🕒 1 hour<br>
+                👥 Sarah Lee<br><br>
+                Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.
+              </div>
+            </div>
+          </div>
+
+          <div class="tl-entry">
+            <div class="tl-dot note"></div>
+            <div class="tl-meta">Feb 28, 2026 · 3:45 PM <span class="tl-author">by Sarah Lee</span></div>
+            <div class="tl-content">Customer wants full bathroom renovation on the second floor. Existing pipes are copper and in good condition.<br>Main concern is the water heater — currently a 40-gallon unit, wants to upgrade to 50-gallon tankless system.<br>Tile work needed for shower area (approx 60 sq ft). Customer prefers ceramic tiles.<br>Budget is flexible but prefers to stay under $10K.<br>Follow-up needed to finalize material selections and provide detailed estimate.</div>
+          </div>
+
+          <div class="tl-entry">
+            <div class="tl-dot appt"></div>
+            <div class="tl-meta">Feb 28, 2026 · 2:00 PM <span class="tl-author">by Sarah Lee</span></div>
+            <div class="tl-appt-card">
+              <div class="tl-appt-title">Site Survey <span class="tl-appt-status" style="background:var(--green-light);color:var(--green)">Completed</span> <span style="font-size:10px;font-weight:400;color:var(--text-muted);margin-left:6px">Original Appointment</span></div>
+              <div class="tl-appt-detail">
+                📅 Feb 28, 2026 at 2:00 PM<br>
+                🕒 1 hour<br>
+                👥 Sarah Lee
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FOLLOW-UP CREATION (inline expandable) ═══ -->
+    <div class="followup-section" id="followupSection">
+      <div class="fs-header">
+        <div class="fs-title">🕓 Create Follow-up Appointment <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:6px">Follow-up #2</span></div>
+        <span class="fs-cancel" onclick="document.getElementById('followupSection').style.display='none'">✕ Cancel</span>
+      </div>
+
+      <div class="inherit-bar">
+        🔗 Inheriting from: <strong>Site Survey</strong> · Sarah Johnson · 456 Pine Ave, Dallas TX 75201
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Follow-up Date & Time</label>
+          <input class="form-input" type="datetime-local">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Duration</label>
+          <select class="form-select">
+            <option>30 minutes</option>
+            <option selected>1 hour</option>
+            <option>1.5 hours</option>
+            <option>2 hours</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Assign Crew</label>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Select crew members for the follow-up.</div>
+        <div class="crew-search">
+          <span style="color:var(--text-muted)">🔍</span>
+          <input placeholder="Search crew members...">
+        </div>
+        <div class="crew-tags">
+          <span class="crew-tag">Sarah Lee · Office Manager <span class="remove">×</span></span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Follow-up Notes</label>
+        <textarea class="form-textarea">Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.</textarea>
+      </div>
+
+      <div class="followup-footer">
+        <button class="ff-btn" onclick="document.getElementById('followupSection').style.display='none'">Cancel</button>
+        <button class="ff-btn primary">✓ Create Follow-up Appointment</button>
+      </div>
+    </div>
+
+    <!-- Page Footer -->
+    <div class="page-footer">
+      <a href="appointments.html" class="fb">Cancel</a>
+      <a href="appointments.html" class="fb primary">Save Changes</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Toggle Post-Appointment Edit Mode
+function togglePostEdit(editing) {
+  const card = document.getElementById('postApptCard');
+  const editBtn = document.getElementById('editPostBtn');
+  const saveBtn = document.getElementById('saveEditBtn');
+  const cancelBtn = document.getElementById('cancelEditBtn');
+
+  if (editing) {
+    card.classList.add('editing');
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+    cancelBtn.style.display = 'inline-block';
+  } else {
+    card.classList.remove('editing');
+    editBtn.style.display = 'inline-block';
+    saveBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+  }
+}
+
+// Follow-up Yes/No toggle
+function setFollowup(yes) {
+  const btnYes = document.getElementById('fuYes');
+  const btnNo = document.getElementById('fuNo');
+  const dateField = document.getElementById('fuDateField');
+  const noActions = document.getElementById('noFuActions');
+
+  if (yes) {
+    btnYes.classList.add('active');
+    btnNo.classList.remove('active');
+    dateField.classList.add('show');
+    noActions.classList.remove('show');
+  } else {
+    btnYes.classList.remove('active');
+    btnNo.classList.add('active');
+    dateField.classList.remove('show');
+    noActions.classList.add('show');
+  }
+}
+
+// Budget Figure / NA toggle
+function setBudgetMode(mode) {
+  const btnFigure = document.getElementById('budgetFigure');
+  const btnNA = document.getElementById('budgetNA');
+  const inputWrap = document.getElementById('budgetInputWrap');
+  const naText = document.getElementById('budgetNAText');
+
+  if (mode === 'figure') {
+    btnFigure.classList.add('active');
+    btnNA.classList.remove('active');
+    inputWrap.classList.add('show');
+    naText.classList.remove('show');
+  } else {
+    btnFigure.classList.remove('active');
+    btnNA.classList.add('active');
+    inputWrap.classList.remove('show');
+    naText.classList.add('show');
+  }
+}
+function addTimelineNote(){var t=document.getElementById("newNoteText").value.trim();if(!t)return;var now=new Date();var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})+" · "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});var timeline=document.querySelector(".timeline");var entry=document.createElement("div");entry.className="tl-entry";entry.innerHTML='<div class="tl-dot note"></div><div class="tl-meta">'+dateStr+' <span class="tl-author">by John Smith</span></div><div class="tl-content">'+t+'</div>';timeline.insertBefore(entry,timeline.firstChild);document.getElementById("newNoteText").value="";document.getElementById("noteInputArea").style.display="none"}
+</script>
+
+
+<script>
+
+// Toggle Post-Appointment Edit Mode
+function togglePostEdit(editing) {
+  const card = document.getElementById('postApptCard');
+  const editBtn = document.getElementById('editPostBtn');
+  const saveBtn = document.getElementById('saveEditBtn');
+  const cancelBtn = document.getElementById('cancelEditBtn');
+
+  if (editing) {
+    card.classList.add('editing');
+    editBtn.style.display = 'none';
+    saveBtn.style.display = 'inline-block';
+    cancelBtn.style.display = 'inline-block';
+  } else {
+    card.classList.remove('editing');
+    editBtn.style.display = 'inline-block';
+    saveBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+  }
+}
+
+// Follow-up Yes/No toggle
+function setFollowup(yes) {
+  const btnYes = document.getElementById('fuYes');
+  const btnNo = document.getElementById('fuNo');
+  const dateField = document.getElementById('fuDateField');
+  const noActions = document.getElementById('noFuActions');
+
+  if (yes) {
+    btnYes.classList.add('active');
+    btnNo.classList.remove('active');
+    dateField.classList.add('show');
+    noActions.classList.remove('show');
+  } else {
+    btnYes.classList.remove('active');
+    btnNo.classList.add('active');
+    dateField.classList.remove('show');
+    noActions.classList.add('show');
+  }
+}
+
+// Budget Figure / NA toggle
+function setBudgetMode(mode) {
+  const btnFigure = document.getElementById('budgetFigure');
+  const btnNA = document.getElementById('budgetNA');
+  const inputWrap = document.getElementById('budgetInputWrap');
+  const naText = document.getElementById('budgetNAText');
+
+  if (mode === 'figure') {
+    btnFigure.classList.add('active');
+    btnNA.classList.remove('active');
+    inputWrap.classList.add('show');
+    naText.classList.remove('show');
+  } else {
+    btnFigure.classList.remove('active');
+    btnNA.classList.add('active');
+    inputWrap.classList.remove('show');
+    naText.classList.add('show');
+  }
+}
+
+function addTimelineNote(){var t=document.getElementById("newNoteText").value.trim();if(!t)return;var now=new Date();var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})+" · "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});var timeline=document.querySelector(".timeline");var entry=document.createElement("div");entry.className="tl-entry";entry.innerHTML='<div class="tl-dot note"></div><div class="tl-meta">'+dateStr+' <span class="tl-author">by John Smith</span></div><div class="tl-content">'+t+'</div>';timeline.insertBefore(entry,timeline.firstChild);document.getElementById("newNoteText").value="";document.getElementById("noteInputArea").style.display="none"}
+</script>
+</body>
+</html>

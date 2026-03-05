@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Create Invoice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.12);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-group{margin-bottom:20px}
+.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}
+.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}
+.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}
+.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}
+.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}
+.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}
+.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}
+.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-left h1{font-size:17px;font-weight:600}
+.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;transition:all var(--transition);font-family:inherit;text-decoration:none}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.topbar-btn.primary:hover{background:var(--accent-hover)}
+.content{padding:22px 28px}
+
+/* ═══ STEPPER ═══ */
+.stepper-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex;align-items:center;justify-content:center}
+.step-item{display:flex;align-items:center;gap:10px;padding:14px 28px;cursor:pointer}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;transition:all var(--transition)}
+.step-connector{width:40px;height:2px;background:var(--border-light);transition:background var(--transition)}
+
+/* ═══ FORM STYLES ═══ */
+.form-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.trio{grid-template-columns:1fr 1fr 1fr}
+.form-row.single{grid-template-columns:1fr}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.3px}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13.5px;color:var(--text-primary);background:var(--surface);transition:border-color var(--transition);font-family:inherit}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(15,111,222,0.08)}
+.form-group textarea{resize:vertical;min-height:80px;line-height:1.5}
+.form-group select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238e96a8'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.divider{height:1px;background:var(--border-light);margin:16px 0}
+
+/* ═══ LINE ITEMS TABLE ═══ */
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg)}
+.inv-table td{padding:7px 8px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:middle}
+.it-input{width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:4px;font-size:12.5px;transition:border-color var(--transition);background:var(--surface);color:var(--text-primary)}
+.it-input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(15,111,222,0.07)}
+.it-del{width:28px;height:28px;border:none;background:transparent;color:var(--text-muted);font-size:14px;cursor:pointer;border-radius:4px;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.it-del:hover{background:var(--red-light);color:var(--red)}
+.link-btn{font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:inherit}
+.link-btn:hover{text-decoration:underline}
+
+/* ═══ TOTALS ═══ */
+.inv-totals{display:flex;flex-direction:column;align-items:flex-end;margin-top:14px;padding-top:12px;border-top:1px solid var(--border)}
+.it-row{display:flex;gap:20px;padding:3px 0;font-size:13px}
+.itl{color:var(--text-secondary);min-width:110px;text-align:right}
+.itv{font-weight:600;min-width:90px;text-align:right}
+.it-grand{border-top:2px solid var(--text-primary);padding-top:8px;margin-top:4px;font-size:15px}
+.it-grand .itv{font-weight:700;color:var(--accent)}
+
+/* ═══ SIDEBAR KPI CARDS ═══ */
+.kpi-mini{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px}
+.kpi-mini .km-label{font-size:10.5px;color:var(--text-muted);text-transform:uppercase;font-weight:600;letter-spacing:.3px;margin-bottom:2px}
+.kpi-mini .km-val{font-size:18px;font-weight:700}
+
+/* ═══ STEP 2 PREVIEW ═══ */
+.preview-shell{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;max-width:720px;margin:0 auto}
+.preview-toolbar{padding:14px 20px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between}
+.preview-doc{padding:36px 40px}
+.preview-actions{padding:20px 24px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap;background:var(--bg)}
+.action-btn{display:inline-flex;align-items:center;gap:7px;padding:11px 20px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-family:inherit}
+.action-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.action-btn.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.action-btn.btn-primary:hover{background:var(--accent-hover);border-color:var(--accent-hover)}
+.action-btn.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+.action-btn.btn-green:hover{background:#128c3e}
+.action-btn.btn-orange{background:var(--orange);color:#fff;border-color:var(--orange)}
+.action-btn.btn-orange:hover{background:#cf6d15}
+.action-btn.btn-teal{background:var(--teal);color:#fff;border-color:var(--teal)}
+.action-btn.btn-teal:hover{background:#0b7f74}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar-bg);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:700;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all 300ms ease;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card{animation:fadeUp .3s ease both}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Overview</div>
+      <a href="dashboard.html" class="nav-item"><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item"><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item"><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item"><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item"><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item"><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item"><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item"><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item active"><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item"><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item"><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item"><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item"><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="invoicing.html" class="topbar-btn" style="padding:7px 10px">← Back</a>
+      <h1>Create Invoice</h1>
+      <span class="t-sub">#INV-20260305-007</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="showToast('Draft saved')">💾 Save Draft</button>
+    </div>
+  </header>
+
+  <!-- Stepper -->
+  <div class="stepper-bar">
+    <div class="step-item" id="sItem1" onclick="switchStep(1)">
+      <div class="step-num" id="sNum1" style="border:2px solid var(--accent);background:var(--accent);color:#fff">1</div>
+      <div id="sLabel1" style="font-size:13px;font-weight:600;color:var(--text-primary)">Invoice Details</div>
+    </div>
+    <div class="step-connector" id="sConn"></div>
+    <div class="step-item" id="sItem2" onclick="switchStep(2)">
+      <div class="step-num" id="sNum2" style="border:2px solid var(--border);color:var(--text-muted)">2</div>
+      <div id="sLabel2" style="font-size:13px;font-weight:500;color:var(--text-muted)">Preview & Send</div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 1 ═══ -->
+  <div class="content" id="panel1">
+    <div class="form-layout">
+
+      <!-- LEFT: Main form -->
+      <div>
+
+        <!-- Customer & Job -->
+        <div class="card">
+          <div class="card-title">👤 Customer & Job Details</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Customer</label>
+              <select>
+                <option>John Smith — LD-0001</option>
+                <option>Sarah Johnson — LD-0002</option>
+                <option selected>Lisa Brown — CUS-0004</option>
+                <option>Mike Williams — CUS-0007</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Billing Address</label>
+              <input type="text" value="321 Maple Ln, San Antonio TX 78201">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Linked Job (optional)</label>
+              <select>
+                <option value="">— No linked job —</option>
+                <option>JOB-20260210-004 · Kitchen Pipe Replacement</option>
+                <option selected>JOB-20260218-007 · HVAC Annual Maintenance</option>
+                <option>JOB-20260225-010 · Bathroom Remodel</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Invoice Date</label>
+              <input type="date" value="2026-03-05">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Due Date</label>
+              <select>
+                <option>Due on Receipt</option>
+                <option selected>Due on Completion</option>
+                <option>Net 15</option>
+                <option>Net 30</option>
+                <option>Custom Date</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Payment Method</label>
+              <select>
+                <option>Any</option>
+                <option selected>Bank Transfer</option>
+                <option>Check</option>
+                <option>Credit Card</option>
+                <option>Cash</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <div class="card">
+          <div class="card-title">📋 Line Items</div>
+          <table class="inv-table">
+            <thead>
+              <tr>
+                <th style="width:44%">Description</th>
+                <th style="width:8%">Qty</th>
+                <th style="width:16%">Unit Price</th>
+                <th style="width:16%;text-align:right">Total</th>
+                <th style="width:5%"></th>
+              </tr>
+            </thead>
+            <tbody id="lineItems">
+              <tr>
+                <td><input type="text" class="it-input" value="HVAC Annual Maintenance — Full System Check"></td>
+                <td><input type="number" class="it-input" value="1" style="width:48px;text-align:center"></td>
+                <td><input type="text" class="it-input" value="$950.00" oninput="recalc()"></td>
+                <td style="font-weight:600;text-align:right" class="row-total">$950.00</td>
+                <td><button class="it-del" onclick="this.closest('tr').remove();recalc()">🗑</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" class="it-input" value="Refrigerant Recharge (R-410A)"></td>
+                <td><input type="number" class="it-input" value="2" style="width:48px;text-align:center"></td>
+                <td><input type="text" class="it-input" value="$180.00" oninput="recalc()"></td>
+                <td style="font-weight:600;text-align:right" class="row-total">$360.00</td>
+                <td><button class="it-del" onclick="this.closest('tr').remove();recalc()">🗑</button></td>
+              </tr>
+              <tr>
+                <td><input type="text" class="it-input" value="Air Filter Replacement (x4)"></td>
+                <td><input type="number" class="it-input" value="1" style="width:48px;text-align:center"></td>
+                <td><input type="text" class="it-input" value="$120.00" oninput="recalc()"></td>
+                <td style="font-weight:600;text-align:right" class="row-total">$120.00</td>
+                <td><button class="it-del" onclick="this.closest('tr').remove();recalc()">🗑</button></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="margin-top:10px;display:flex;gap:10px">
+            <button class="link-btn" onclick="addItem()">+ Add Line Item</button>
+            <button class="link-btn" style="color:var(--teal)">⬇ Import from Price Book</button>
+          </div>
+          <div class="inv-totals">
+            <div class="it-row"><span class="itl">Subtotal</span><span class="itv" id="subtotal">$1,430.00</span></div>
+            <div class="it-row" style="align-items:center">
+              <span class="itl">Tax</span>
+              <select style="font-size:12px;padding:3px 6px;border:1px solid var(--border);border-radius:4px;font-family:inherit;margin-right:4px" onchange="recalc()">
+                <option value="0" selected>0%</option>
+                <option value="5">5%</option>
+                <option value="8">8%</option>
+                <option value="10">10%</option>
+              </select>
+              <span class="itv" id="taxAmt">$0.00</span>
+            </div>
+            <div class="it-row it-grand"><span class="itl">Total Due</span><span class="itv" id="grandTotal">$1,430.00</span></div>
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="card">
+          <div class="card-title">📝 Notes & Terms</div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label>Internal Notes (not shown to client)</label>
+              <textarea placeholder="Add internal notes...">Customer on annual service plan. Eligible for 5% loyalty discount on next visit.</textarea>
+            </div>
+          </div>
+          <div class="form-row single">
+            <div class="form-group">
+              <label>Terms & Conditions</label>
+              <textarea placeholder="Payment terms, warranty info...">Payment due on job completion. All work guaranteed for 90 days. Please inspect work and notify within 24 hours of any issues.</textarea>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end left col -->
+
+      <!-- RIGHT: Summary sidebar -->
+      <div>
+        <div class="card" style="position:sticky;top:76px">
+          <div class="card-title">📊 Invoice Summary</div>
+
+          <div class="kpi-mini">
+            <div class="km-label">Invoice Total</div>
+            <div class="km-val" style="color:var(--accent)" id="sideTotal">$1,430.00</div>
+          </div>
+          <div class="kpi-mini">
+            <div class="km-label">Customer</div>
+            <div style="font-size:14px;font-weight:600;margin-top:2px">Lisa Brown</div>
+            <div style="font-size:12px;color:var(--text-muted)">CUS-0004 · Existing Customer</div>
+          </div>
+          <div class="kpi-mini">
+            <div class="km-label">Linked Job</div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px">JOB-20260218-007</div>
+            <div style="font-size:12px;color:var(--text-muted)">HVAC Annual Maintenance</div>
+          </div>
+          <div class="kpi-mini">
+            <div class="km-label">Due Date</div>
+            <div style="font-size:13px;font-weight:600;margin-top:2px">Due on Completion</div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="action-btn btn-primary" style="width:100%;justify-content:center" onclick="switchStep(2)">Preview & Send →</button>
+            <button class="action-btn" style="width:100%;justify-content:center" onclick="showToast('Draft saved')">💾 Save Draft</button>
+          </div>
+
+          <div style="margin-top:16px;padding:10px 12px;background:var(--accent-light);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);line-height:1.5">
+            <strong style="color:var(--accent)">Tip:</strong> You can send this invoice via email or SMS from Step 2.
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end form-layout -->
+  </div><!-- end panel1 -->
+
+  <!-- ═══ STEP 2 ═══ -->
+  <div class="content" id="panel2" style="display:none">
+    <div class="preview-shell">
+
+      <!-- Toolbar -->
+      <div class="preview-toolbar">
+        <span style="font-size:13px;font-weight:600">👁 Invoice Preview — Client View</span>
+        <div style="display:flex;gap:8px">
+          <button class="topbar-btn" style="font-size:12px;padding:5px 12px" onclick="switchStep(1)">✎ Edit Invoice</button>
+          <button class="topbar-btn" style="font-size:12px;padding:5px 12px" onclick="showToast('PDF downloaded')">⬇ Download PDF</button>
+        </div>
+      </div>
+
+      <!-- Invoice Document -->
+      <div class="preview-doc">
+
+        <!-- Header -->
+        <div style="display:flex;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:2px solid var(--text-primary)">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <div style="width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:6px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700">⚡</div>
+              <div style="font-size:17px;font-weight:700">ABC Plumbing Co.</div>
+            </div>
+            <div style="font-size:12px;color:var(--text-muted)">100 Main Street, San Antonio, TX 78201</div>
+            <div style="font-size:12px;color:var(--text-muted)">info@abcplumbing.com · (210) 555-0100</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:26px;font-weight:700;color:var(--accent);letter-spacing:1.5px">INVOICE</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">#INV-20260305-007</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Date: March 5, 2026</div>
+            <div style="display:inline-block;margin-top:6px;padding:3px 10px;background:var(--orange-light);color:var(--orange);border-radius:10px;font-size:11px;font-weight:600">Due on Completion</div>
+          </div>
+        </div>
+
+        <!-- Bill To / Job -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:14px 16px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:20px">
+          <div>
+            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Bill To</div>
+            <div style="font-size:14px;font-weight:600;margin-top:3px">Lisa Brown</div>
+            <div style="font-size:12px;color:var(--text-secondary)">321 Maple Ln, San Antonio TX 78201</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Linked Job</div>
+            <div style="font-size:13px;font-weight:600;margin-top:3px">JOB-20260218-007</div>
+            <div style="font-size:12px;color:var(--text-secondary)">HVAC Annual Maintenance</div>
+          </div>
+          <div>
+            <div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px">Payment</div>
+            <div style="font-size:13px;font-weight:600;margin-top:3px">Bank Transfer</div>
+            <div style="font-size:12px;color:var(--text-secondary)">Due on Completion</div>
+          </div>
+        </div>
+
+        <!-- Line Items -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+          <thead>
+            <tr>
+              <th style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;padding:9px 10px;border-bottom:2px solid var(--text-primary);text-align:left;color:var(--text-secondary)">Description</th>
+              <th style="font-size:10px;font-weight:600;padding:9px 10px;border-bottom:2px solid var(--text-primary);text-align:center;color:var(--text-secondary);width:8%">Qty</th>
+              <th style="font-size:10px;font-weight:600;padding:9px 10px;border-bottom:2px solid var(--text-primary);text-align:right;color:var(--text-secondary);width:16%">Unit</th>
+              <th style="font-size:10px;font-weight:600;padding:9px 10px;border-bottom:2px solid var(--text-primary);text-align:right;color:var(--text-secondary);width:16%">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600">HVAC Annual Maintenance — Full System Check</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">1</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$950.00</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right;font-weight:700">$950.00</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600">Refrigerant Recharge (R-410A)</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">2</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$180.00</td>
+              <td style="padding:9px 10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right;font-weight:700">$360.00</td>
+            </tr>
+            <tr>
+              <td style="padding:9px 10px;font-size:13px;font-weight:600">Air Filter Replacement (x4)</td>
+              <td style="padding:9px 10px;font-size:13px;text-align:center">1</td>
+              <td style="padding:9px 10px;font-size:13px;text-align:right">$120.00</td>
+              <td style="padding:9px 10px;font-size:13px;text-align:right;font-weight:700">$120.00</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Totals -->
+        <div style="display:flex;flex-direction:column;align-items:flex-end;margin-bottom:20px">
+          <div style="display:flex;gap:24px;padding:4px 0;font-size:13px"><span style="color:var(--text-secondary);min-width:110px;text-align:right">Subtotal</span><span style="font-weight:600;min-width:90px;text-align:right">$1,430.00</span></div>
+          <div style="display:flex;gap:24px;padding:4px 0;font-size:13px"><span style="color:var(--text-secondary);min-width:110px;text-align:right">Tax (0%)</span><span style="font-weight:600;min-width:90px;text-align:right">$0.00</span></div>
+          <div style="display:flex;gap:24px;padding-top:10px;margin-top:4px;border-top:2px solid var(--text-primary);font-size:16px"><span style="min-width:110px;text-align:right;font-weight:600">Total Due</span><span style="font-weight:700;color:var(--accent);min-width:90px;text-align:right">$1,430.00</span></div>
+        </div>
+
+        <!-- Terms -->
+        <div style="padding:12px 14px;background:var(--bg);border-radius:var(--radius-sm);font-size:12px;color:var(--text-secondary);line-height:1.6">
+          <strong style="color:var(--text-primary);display:block;margin-bottom:4px">Terms & Conditions</strong>
+          Payment due on job completion. All work guaranteed for 90 days. Please inspect work and notify within 24 hours of any issues.
+        </div>
+
+      </div><!-- end preview-doc -->
+
+      <!-- ═══ ACTION BUTTONS — Step 2 ═══ -->
+      <div class="preview-actions">
+        <button class="action-btn btn-primary" onclick="showToast('Invoice sent to Lisa Brown via email')">✈ Send Invoice</button>
+        <button class="action-btn btn-green" onclick="showToast('Payment marked as collected — $1,430.00')">💵 Mark as Collected</button>
+        <button class="action-btn btn-orange" onclick="showToast('Invoice marked: Due on Completion')">⏳ Due on Completion</button>
+        <button class="action-btn btn-teal" onclick="showToast('SMS sent with invoice link to Lisa Brown')">💬 Send via SMS</button>
+        <button class="action-btn" style="margin-left:auto" onclick="showToast('Invoice link copied to clipboard')">🔗 Copy Link</button>
+        <button class="action-btn" onclick="showToast('PDF downloaded')">⬇ Download PDF</button>
+      </div>
+
+    </div><!-- end preview-shell -->
+  </div><!-- end panel2 -->
+
+</div><!-- end main -->
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+function switchStep(s) {
+  document.getElementById('panel1').style.display = s === 1 ? '' : 'none';
+  document.getElementById('panel2').style.display = s === 2 ? '' : 'none';
+
+  const n1 = document.getElementById('sNum1');
+  const l1 = document.getElementById('sLabel1');
+  const n2 = document.getElementById('sNum2');
+  const l2 = document.getElementById('sLabel2');
+  const conn = document.getElementById('sConn');
+
+  if (s === 1) {
+    n1.style.cssText = 'width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--accent);background:var(--accent);color:#fff';
+    l1.style.cssText = 'font-size:13px;font-weight:600;color:var(--text-primary)';
+    n2.style.cssText = 'width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--border);color:var(--text-muted)';
+    l2.style.cssText = 'font-size:13px;font-weight:500;color:var(--text-muted)';
+    conn.style.background = 'var(--border-light)';
+  } else {
+    n1.style.cssText = 'width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--green);background:var(--green);color:#fff';
+    l1.style.cssText = 'font-size:13px;font-weight:500;color:var(--green)';
+    n2.style.cssText = 'width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid var(--accent);background:var(--accent);color:#fff';
+    l2.style.cssText = 'font-size:13px;font-weight:600;color:var(--text-primary)';
+    conn.style.background = 'var(--green)';
+  }
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function addItem() {
+  const tbody = document.getElementById('lineItems');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" class="it-input" placeholder="Service or item description"></td>
+    <td><input type="number" class="it-input" value="1" style="width:48px;text-align:center"></td>
+    <td><input type="text" class="it-input" placeholder="$0.00" oninput="recalc()"></td>
+    <td style="font-weight:600;text-align:right" class="row-total">$0.00</td>
+    <td><button class="it-del" onclick="this.closest('tr').remove();recalc()">🗑</button></td>`;
+  tbody.appendChild(tr);
+}
+
+function recalc() {
+  const rows = document.querySelectorAll('#lineItems tr');
+  let sub = 0;
+  rows.forEach(row => {
+    const inp = row.querySelector('td:nth-child(3) input');
+    if (inp) {
+      const val = parseFloat(inp.value.replace(/[^0-9.]/g, '')) || 0;
+      const qty = parseFloat(row.querySelector('td:nth-child(2) input')?.value) || 1;
+      const total = val * qty;
+      sub += total;
+      const td = row.querySelector('.row-total');
+      if (td) td.textContent = '$' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+  });
+  const taxSel = document.querySelector('select[onchange="recalc()"]');
+  const taxRate = taxSel ? parseFloat(taxSel.value) / 100 : 0;
+  const tax = sub * taxRate;
+  const grand = sub + tax;
+  const fmt = n => '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  document.getElementById('subtotal').textContent = fmt(sub);
+  document.getElementById('taxAmt').textContent = fmt(tax);
+  document.getElementById('grandTotal').textContent = fmt(grand);
+  document.getElementById('sideTotal').textContent = fmt(grand);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = '✓ ' + msg;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

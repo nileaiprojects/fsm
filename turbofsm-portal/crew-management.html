@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Crew & Employee Management</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item active"><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><a href="management-master.html" style="font-size:14px;color:var(--text-muted);margin-right:4px">←</a><h1>Crew & Employee Management</h1></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button></div>
+  </header>
+  <div class="content"><div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="topbar-btn primary" style="font-size:13px">+ Add User</button></div>
+<div class="table-wrap"><table><colgroup><col style="width:14%"><col style="width:12%"><col style="width:14%"><col style="width:14%"><col style="width:10%"><col style="width:10%"><col style="width:12%"><col style="width:8%"><col style="width:6%"></colgroup>
+<thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Skills</th><th>Role</th><th>Pay Type</th><th>Rate</th><th>Status</th><th></th></tr></thead>
+<tbody>
+<tr><td style="font-weight:600">John Smith</td><td style="font-size:13px">(555) 123-4567</td><td style="font-size:12px">john@abc.com</td><td style="font-size:12px">Master Plumber</td><td style="font-size:12px">Full Admin</td><td style="font-size:12px">N/A</td><td style="font-size:12px">N/A</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+<tr><td style="font-weight:600">James Rodriguez</td><td style="font-size:13px">(555) 345-6789</td><td style="font-size:12px">james@abc.com</td><td style="font-size:12px">Master Plumber, Pipe Fitting</td><td style="font-size:12px">Crew Member</td><td style="font-size:12px">Hourly</td><td style="font-size:12px;font-weight:600">$45/hr</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+<tr><td style="font-weight:600">Carlos Mendez</td><td style="font-size:13px">(555) 456-7890</td><td style="font-size:12px">carlos@abc.com</td><td style="font-size:12px">Journeyman Plumber</td><td style="font-size:12px">Crew Member</td><td style="font-size:12px">Hourly</td><td style="font-size:12px;font-weight:600">$35/hr</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+<tr><td style="font-weight:600">Kevin Park</td><td style="font-size:13px">(555) 567-8901</td><td style="font-size:12px">kevin@abc.com</td><td style="font-size:12px">Apprentice</td><td style="font-size:12px">Crew Member</td><td style="font-size:12px">Hourly</td><td style="font-size:12px;font-weight:600">$22/hr</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+<tr><td style="font-weight:600">David Chen</td><td style="font-size:13px">(555) 678-9012</td><td style="font-size:12px">david@abc.com</td><td style="font-size:12px">Master Plumber</td><td style="font-size:12px">Crew Member</td><td style="font-size:12px">Hourly</td><td style="font-size:12px;font-weight:600">$45/hr</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+<tr><td style="font-weight:600">Maria Santos</td><td style="font-size:13px">(555) 789-0123</td><td style="font-size:12px">maria@abc.com</td><td style="font-size:12px">Journeyman Plumber</td><td style="font-size:12px">Crew Member</td><td style="font-size:12px">Hourly</td><td style="font-size:12px;font-weight:600">$35/hr</td><td><span class="status-pill st-active" style="font-size:10px;padding:2px 8px">Active</span></td><td><a href="#" style="color:var(--accent);font-size:12px">✎</a></td></tr>
+</tbody></table></div></div>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Management Master</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item active"><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Management Master</h1><span class="t-sub">Central configuration hub</span></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button></div>
+  </header>
+  <div class="content">
+    <div class="mgmt-grid">
+      <a href="nomenclature.html" class="mgmt-card"><div class="mc-icon">⚙</div><div class="mc-title">Business Type & Nomenclature</div><div class="mc-desc">Configure industry-specific terminology</div></a>
+      <a href="materials.html" class="mgmt-card"><div class="mc-icon">📦</div><div class="mc-title">Materials Master List</div><div class="mc-desc">Manage your materials catalog and pricing</div></a>
+      <a href="services.html" class="mgmt-card"><div class="mc-icon">🔧</div><div class="mc-title">Services Master List</div><div class="mc-desc">Manage your services catalog and pricing</div></a>
+      <a href="estimate-template.html" class="mgmt-card"><div class="mc-icon">📄</div><div class="mc-title">Estimate Template</div><div class="mc-desc">Upload custom estimate template</div></a>
+      <a href="invoice-template.html" class="mgmt-card"><div class="mc-icon">📋</div><div class="mc-title">Invoice Template</div><div class="mc-desc">Upload custom invoice template</div></a>
+      <a href="crew-management.html" class="mgmt-card"><div class="mc-icon">👥</div><div class="mc-title">Crew & Employee Management</div><div class="mc-desc">Manage users, roles, and permissions</div></a>
+      <a href="currency-settings.html" class="mgmt-card"><div class="mc-icon">💲</div><div class="mc-title">Currency Settings</div><div class="mc-desc">Set default currency for estimates, invoices & pricing</div></a>
+      <a href="sites-management.html" class="mgmt-card"><div class="mc-icon">📍</div><div class="mc-title">Sites / Service Locations</div><div class="mc-desc">Manage customer service sites and locations</div></a>
+      <a href="artifact-library.html" class="mgmt-card"><div class="mc-icon">□</div><div class="mc-title">Floor Plan Artifact Library</div><div class="mc-desc">Manage drag-and-drop artifacts for floor plans</div></a>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+</body>
+</html>

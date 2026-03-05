@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Schedule</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-hover: #f8f9fb;
+  --border: #e2e5ea;
+  --border-light: #eef0f3;
+  --text-primary: #1a1d23;
+  --text-secondary: #5f6880;
+  --text-muted: #8e96a8;
+  --accent: #0f6fde;
+  --accent-light: #e8f1fc;
+  --accent-hover: #0b5bb8;
+  --teal: #0d9488;
+  --teal-light: #e6f7f5;
+  --orange: #e67e22;
+  --orange-light: #fef3e2;
+  --red: #dc3545;
+  --red-light: #fde8ea;
+  --green: #16a34a;
+  --green-light: #e8f8ee;
+  --purple: #7c3aed;
+  --purple-light: #f0ebfe;
+  --sidebar-bg: #1a1d23;
+  --sidebar-text: #8a92a6;
+  --sidebar-active: #ffffff;
+  --sidebar-active-bg: rgba(255,255,255,0.07);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --transition: 180ms ease;
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--text-primary);
+  font-size: 14px; line-height: 1.55; display: flex; min-height: 100vh;
+}
+a { color: inherit; text-decoration: none; }
+button, select, input { font-family: inherit; cursor: pointer; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d0d5dd; border-radius: 3px; }
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  width: 244px; min-height: 100vh; background: var(--sidebar-bg);
+  display: flex; flex-direction: column;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
+}
+.sidebar-brand {
+  padding: 20px 20px 16px;
+  display: flex; align-items: center; gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-brand .logo {
+  width: 33px; height: 33px;
+  background: linear-gradient(135deg, var(--accent), var(--teal));
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  font-weight: 700; color: #fff; font-size: 14px; flex-shrink: 0;
+}
+.sidebar-brand .brand-name { color: #fff; font-weight: 600; font-size: 15px; }
+.sidebar-nav { flex: 1; padding: 14px 10px; overflow-y: auto; }
+.nav-group { margin-bottom: 20px; }
+.nav-group-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 1.2px; color: rgba(255,255,255,0.25);
+  padding: 0 12px; margin-bottom: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; color: var(--sidebar-text);
+  border-radius: 8px; cursor: pointer;
+  transition: all var(--transition); font-size: 13.5px;
+  position: relative; text-decoration: none;
+}
+.nav-item:hover { background: var(--sidebar-active-bg); color: #c8cdd8; }
+.nav-item.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active); font-weight: 500;
+}
+.nav-item.active::before {
+  content: ''; position: absolute; left: -10px; top: 50%;
+  transform: translateY(-50%); width: 3px; height: 20px;
+  background: var(--accent); border-radius: 0 3px 3px 0;
+}
+.nav-item .ni { width: 18px; text-align: center; font-size: 14px; flex-shrink: 0; opacity: 0.65; }
+.nav-item.active .ni { opacity: 1; }
+.nav-item .badge {
+  margin-left: auto; background: var(--accent); color: #fff;
+  font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: 600;
+}
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.storage-bar { margin-bottom: 12px; }
+.storage-bar .sl { font-size: 11px; color: rgba(255,255,255,0.35); margin-bottom: 4px; }
+.storage-bar .st { height: 3px; background: rgba(255,255,255,0.08); border-radius: 3px; }
+.storage-bar .sf { height: 100%; width: 42%; background: var(--accent); border-radius: 3px; }
+.storage-bar a { font-size: 11px; color: var(--accent); display: inline-block; margin-top: 4px; }
+.sidebar-user { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.sidebar-user .avatar {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: var(--accent); display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: 12px; font-weight: 600; flex-shrink: 0;
+}
+.sidebar-user .uname { color: #fff; font-size: 12px; font-weight: 500; }
+.sidebar-user .urole { color: rgba(255,255,255,0.35); font-size: 11px; }
+.sidebar-logout {
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 12px; color: var(--sidebar-text);
+  font-size: 12px; cursor: pointer; border-radius: 6px;
+  transition: all var(--transition); margin-top: 8px;
+}
+.sidebar-logout:hover { background: rgba(220,53,69,0.15); color: var(--red); }
+
+/* ═══════════════════════════════════════════
+   MAIN AREA
+   ═══════════════════════════════════════════ */
+.main { margin-left: 244px; flex: 1; min-height: 100vh; }
+
+/* TOPBAR */
+.topbar {
+  height: 56px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; position: sticky; top: 0; z-index: 50;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.topbar-left h1 { font-size: 17px; font-weight: 600; }
+.t-sub { font-size: 13px; color: var(--text-muted); }
+.topbar-right { display: flex; align-items: center; gap: 8px; }
+.topbar-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text-secondary); font-size: 13.5px;
+  transition: all var(--transition); font-family: inherit;
+}
+.topbar-btn:hover { border-color: var(--accent); color: var(--accent); }
+.topbar-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.topbar-btn.primary:hover { background: var(--accent-hover); }
+.notif-btn {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; font-size: 16px; cursor: pointer;
+}
+.notif-btn .count {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--red); color: #fff; font-size: 9px; font-weight: 700;
+  width: 18px; height: 18px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 2px solid var(--surface);
+}
+.user-pill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 10px 5px 6px; border: 1px solid var(--border);
+  border-radius: 20px; transition: all var(--transition);
+}
+.user-pill:hover { border-color: var(--accent); }
+.user-pill .up-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent); color: #fff; font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.user-pill span { font-size: 12px; font-weight: 500; }
+
+/* CONTENT */
+.content { padding: 22px 28px; }
+
+/* ═══════════════════════════════════════════
+   CALENDAR TOOLBAR
+   ═══════════════════════════════════════════ */
+.cal-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 18px; flex-wrap: wrap; gap: 12px;
+}
+.cal-nav {
+  display: flex; align-items: center; gap: 10px;
+}
+.cal-nav .nav-arrow {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text-secondary);
+  transition: all var(--transition); cursor: pointer;
+}
+.cal-nav .nav-arrow:hover { border-color: var(--accent); color: var(--accent); }
+.cal-nav .cal-title { font-size: 17px; font-weight: 600; min-width: 180px; text-align: center; }
+.cal-nav .today-btn {
+  padding: 6px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--accent); background: var(--accent-light);
+  color: var(--accent); font-size: 12.5px; font-weight: 600;
+  transition: all var(--transition);
+}
+.cal-nav .today-btn:hover { background: var(--accent); color: #fff; }
+
+.cal-controls { display: flex; align-items: center; gap: 10px; }
+.view-toggle {
+  display: flex; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  overflow: hidden; background: var(--surface);
+}
+.view-toggle button {
+  padding: 7px 16px; border: none; background: transparent;
+  font-size: 12.5px; font-weight: 500; color: var(--text-secondary);
+  transition: all var(--transition); border-right: 1px solid var(--border);
+}
+.view-toggle button:last-child { border-right: none; }
+.view-toggle button:hover { color: var(--accent); background: var(--accent-light); }
+.view-toggle button.active {
+  background: var(--accent); color: #fff; font-weight: 600;
+}
+
+/* Filter Dropdowns */
+.cal-filter {
+  padding: 7px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--surface);
+  color: var(--text-secondary); font-size: 12.5px;
+  transition: all var(--transition); appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238e96a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 10px center;
+  padding-right: 28px; cursor: pointer;
+}
+.cal-filter:focus { outline: none; border-color: var(--accent); }
+
+/* Legend */
+.cal-legend {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+}
+.legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11.5px; color: var(--text-secondary); font-weight: 500;
+  cursor: pointer; padding: 4px 10px; border-radius: 20px;
+  border: 1px solid transparent; transition: all var(--transition);
+}
+.legend-item:hover { border-color: var(--border); }
+.legend-item.active { border-color: currentColor; }
+.legend-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   MONTH VIEW CALENDAR
+   ═══════════════════════════════════════════ */
+.cal-month {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.cal-month .cal-header {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.cal-month .cal-header .dh {
+  padding: 10px 8px; text-align: center;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+}
+.cal-month .cal-body {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+}
+.cal-month .cal-day {
+  min-height: 110px; border-right: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
+  padding: 6px; position: relative;
+  transition: background var(--transition);
+}
+.cal-month .cal-day:nth-child(7n) { border-right: none; }
+.cal-month .cal-day:hover { background: var(--surface-hover); }
+.cal-month .cal-day.outside { background: #fafbfc; }
+.cal-month .cal-day.outside .day-num { color: var(--text-muted); opacity: 0.5; }
+.cal-month .cal-day.today { background: var(--accent-light); }
+.cal-month .cal-day.today .day-num {
+  background: var(--accent); color: #fff; border-radius: 50%;
+  width: 24px; height: 24px; display: flex; align-items: center;
+  justify-content: center;
+}
+.day-num {
+  font-size: 12px; font-weight: 500; color: var(--text-secondary);
+  margin-bottom: 4px; display: inline-flex; align-items: center; justify-content: center;
+  width: 24px; height: 24px;
+}
+
+/* Calendar Events */
+.cal-event {
+  display: flex; align-items: center; gap: 4px;
+  padding: 3px 6px; border-radius: 4px;
+  font-size: 11px; font-weight: 500; margin-bottom: 2px;
+  cursor: grab; transition: all 150ms ease;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  position: relative; user-select: none;
+}
+.cal-event:active { cursor: grabbing; }
+.cal-event:hover { filter: brightness(0.95); transform: translateX(1px); }
+.cal-event .grip {
+  font-size: 9px; opacity: 0; transition: opacity 150ms;
+  color: inherit; flex-shrink: 0; cursor: grab;
+}
+.cal-event:hover .grip { opacity: 0.6; }
+
+.cal-event.type-appointment { background: var(--accent-light); color: var(--accent); border-left: 2.5px solid var(--accent); }
+.cal-event.type-survey { background: var(--teal-light); color: var(--teal); border-left: 2.5px solid var(--teal); }
+.cal-event.type-presentation { background: var(--purple-light); color: var(--purple); border-left: 2.5px solid var(--purple); }
+.cal-event.type-job { background: var(--orange-light); color: var(--orange); border-left: 2.5px solid var(--orange); }
+.cal-event.type-jobstart { background: var(--green-light); color: var(--green); border-left: 2.5px solid var(--green); }
+.cal-event.type-recurring { background: #fdf2f8; color: #c026d3; border-left: 2.5px solid #c026d3; }
+
+/* Drag states */
+.cal-day.drag-over {
+  background: var(--accent-light) !important;
+  outline: 2px dashed var(--accent);
+  outline-offset: -2px;
+}
+.cal-event.dragging {
+  opacity: 0.35; transform: scale(0.95);
+}
+
+/* More events */
+.cal-more {
+  font-size: 10.5px; color: var(--accent); font-weight: 600;
+  padding: 2px 6px; cursor: pointer;
+}
+.cal-more:hover { text-decoration: underline; }
+
+/* ═══════════════════════════════════════════
+   WEEK VIEW
+   ═══════════════════════════════════════════ */
+.cal-week {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.cal-week .week-header {
+  display: grid; grid-template-columns: 60px repeat(7, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+.cal-week .week-header .wh-cell {
+  padding: 10px 8px; text-align: center;
+  border-right: 1px solid var(--border-light);
+}
+.cal-week .week-header .wh-cell:last-child { border-right: none; }
+.cal-week .week-header .wh-cell .wh-day {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+}
+.cal-week .week-header .wh-cell .wh-num {
+  font-size: 20px; font-weight: 700; color: var(--text-primary); margin-top: 2px;
+}
+.cal-week .week-header .wh-cell.today .wh-num {
+  background: var(--accent); color: #fff; border-radius: 50%;
+  width: 32px; height: 32px; display: inline-flex; align-items: center;
+  justify-content: center;
+}
+.cal-week .week-header .wh-corner {
+  padding: 10px 8px; border-right: 1px solid var(--border-light);
+  display: flex; align-items: flex-end; justify-content: center;
+  font-size: 10px; color: var(--text-muted); font-weight: 500;
+}
+.cal-week .week-body {
+  display: grid; grid-template-columns: 60px repeat(7, 1fr);
+  max-height: calc(100vh - 240px); overflow-y: auto;
+}
+.cal-week .time-col {
+  border-right: 1px solid var(--border-light);
+}
+.cal-week .time-slot {
+  height: 60px; padding: 4px 8px;
+  font-size: 10.5px; color: var(--text-muted); font-weight: 500;
+  text-align: right; border-bottom: 1px solid var(--border-light);
+}
+.cal-week .day-col {
+  border-right: 1px solid var(--border-light);
+  position: relative;
+}
+.cal-week .day-col:last-child { border-right: none; }
+.cal-week .hour-row {
+  height: 60px; border-bottom: 1px solid var(--border-light);
+  position: relative; transition: background var(--transition);
+}
+.cal-week .hour-row:hover { background: var(--surface-hover); }
+.cal-week .hour-row.drag-over {
+  background: var(--accent-light) !important;
+  outline: 2px dashed var(--accent); outline-offset: -2px;
+}
+
+/* Week events (positioned) */
+.week-event {
+  position: absolute; left: 3px; right: 3px;
+  border-radius: 5px; padding: 4px 6px; cursor: grab;
+  font-size: 11px; font-weight: 500; overflow: hidden;
+  z-index: 5; transition: box-shadow 150ms, opacity 150ms;
+  user-select: none;
+}
+.week-event:hover { box-shadow: var(--shadow-md); z-index: 10; }
+.week-event:active { cursor: grabbing; }
+.week-event.dragging { opacity: 0.35; }
+.week-event .we-time { font-size: 10px; opacity: 0.75; }
+.week-event .we-title { line-height: 1.3; }
+.week-event .we-grip {
+  position: absolute; top: 3px; right: 4px;
+  font-size: 9px; opacity: 0; transition: opacity 150ms;
+}
+.week-event:hover .we-grip { opacity: 0.6; }
+
+.week-event.type-appointment { background: var(--accent-light); color: var(--accent); border-left: 3px solid var(--accent); }
+.week-event.type-survey { background: var(--teal-light); color: var(--teal); border-left: 3px solid var(--teal); }
+.week-event.type-presentation { background: var(--purple-light); color: var(--purple); border-left: 3px solid var(--purple); }
+.week-event.type-job { background: var(--orange-light); color: var(--orange); border-left: 3px solid var(--orange); }
+.week-event.type-jobstart { background: var(--green-light); color: var(--green); border-left: 3px solid var(--green); }
+.week-event.type-recurring { background: #fdf2f8; color: #c026d3; border-left: 3px solid #c026d3; }
+
+/* ═══════════════════════════════════════════
+   DAY VIEW
+   ═══════════════════════════════════════════ */
+.cal-day-view {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.cal-day-view .dv-header {
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.cal-day-view .dv-header .dv-day {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text-muted);
+}
+.cal-day-view .dv-header .dv-num {
+  font-size: 28px; font-weight: 700;
+}
+.cal-day-view .dv-header.today .dv-num {
+  background: var(--accent); color: #fff; border-radius: 50%;
+  width: 42px; height: 42px; display: flex; align-items: center;
+  justify-content: center;
+}
+.cal-day-view .dv-body {
+  display: grid; grid-template-columns: 60px 1fr;
+  max-height: calc(100vh - 280px); overflow-y: auto;
+}
+.cal-day-view .time-col { border-right: 1px solid var(--border-light); }
+.cal-day-view .time-slot {
+  height: 60px; padding: 4px 8px;
+  font-size: 10.5px; color: var(--text-muted); font-weight: 500;
+  text-align: right; border-bottom: 1px solid var(--border-light);
+}
+.cal-day-view .event-col { position: relative; }
+.cal-day-view .hour-row {
+  height: 60px; border-bottom: 1px solid var(--border-light);
+  position: relative; transition: background var(--transition);
+}
+.cal-day-view .hour-row:hover { background: var(--surface-hover); }
+.cal-day-view .hour-row.drag-over {
+  background: var(--accent-light) !important;
+  outline: 2px dashed var(--accent); outline-offset: -2px;
+}
+
+.day-event {
+  position: absolute; left: 6px; right: 6px;
+  border-radius: 6px; padding: 8px 10px; cursor: grab;
+  font-size: 12.5px; font-weight: 500; overflow: hidden;
+  z-index: 5; transition: box-shadow 150ms, opacity 150ms;
+  user-select: none;
+}
+.day-event:hover { box-shadow: var(--shadow-md); z-index: 10; }
+.day-event:active { cursor: grabbing; }
+.day-event.dragging { opacity: 0.35; }
+.day-event .de-time { font-size: 11px; opacity: 0.75; margin-bottom: 2px; }
+.day-event .de-title { font-weight: 600; }
+.day-event .de-sub { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.day-event .de-grip {
+  position: absolute; top: 6px; right: 6px;
+  font-size: 10px; opacity: 0; transition: opacity 150ms;
+}
+.day-event:hover .de-grip { opacity: 0.6; }
+
+.day-event.type-appointment { background: var(--accent-light); color: var(--accent); border-left: 3px solid var(--accent); }
+.day-event.type-survey { background: var(--teal-light); color: var(--teal); border-left: 3px solid var(--teal); }
+.day-event.type-presentation { background: var(--purple-light); color: var(--purple); border-left: 3px solid var(--purple); }
+.day-event.type-job { background: var(--orange-light); color: var(--orange); border-left: 3px solid var(--orange); }
+.day-event.type-jobstart { background: var(--green-light); color: var(--green); border-left: 3px solid var(--green); }
+.day-event.type-recurring { background: #fdf2f8; color: #c026d3; border-left: 3px solid #c026d3; }
+
+/* ═══════════════════════════════════════════
+   TOAST NOTIFICATION
+   ═══════════════════════════════════════════ */
+.toast {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--sidebar-bg); color: #fff;
+  padding: 12px 20px; border-radius: var(--radius);
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg); z-index: 1000;
+  display: flex; align-items: center; gap: 8px;
+  transform: translateY(20px); opacity: 0;
+  transition: all 300ms ease; pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
+.toast .t-icon { font-size: 16px; }
+.toast .t-undo {
+  color: var(--accent); font-weight: 600; cursor: pointer;
+  margin-left: 8px; text-decoration: underline;
+}
+
+/* ═══════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.content { animation: fadeUp 0.35s ease both; }
+.cal-toolbar { animation: fadeUp 0.35s ease 0.05s both; }
+.cal-month, .cal-week, .cal-day-view { animation: fadeUp 0.35s ease 0.1s both; }
+
+/* Hide inactive views */
+.view-hidden { display: none !important; }
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item active"><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════ -->
+
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Schedule</h1>
+      <span class="t-sub">Unified calendar view — Appointments, Jobs & more</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn">📅 Mar 4, 2026</button>
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <div class="user-pill">
+        <div class="up-avatar">JS</div>
+        <span>John Smith</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content"><div style="padding:10px 16px;background:var(--accent-light);border:1px solid rgba(15,111,222,0.15);border-radius:var(--radius);margin-bottom:16px;font-size:12.5px;color:var(--accent);display:flex;align-items:center;gap:6px">💡 <strong>Tip:</strong>&nbsp;Drag and drop events between days to re-schedule tasks quickly.</div>
+
+    <!-- Calendar Toolbar -->
+    <div class="cal-toolbar">
+      <div class="cal-nav">
+        <button class="nav-arrow" id="prevBtn" title="Previous">◀</button>
+        <div class="cal-title" id="calTitle">March 2026</div>
+        <button class="nav-arrow" id="nextBtn" title="Next">▶</button>
+        <button class="today-btn" id="todayBtn">Today</button>
+      </div>
+      <div class="cal-controls">
+        <div class="cal-legend" id="calLegend">
+          <div class="legend-item active" data-type="appointment"><div class="legend-dot" style="background:var(--accent)"></div>Appointments</div>
+          <div class="legend-item active" data-type="survey"><div class="legend-dot" style="background:var(--teal)"></div>Site Surveys</div>
+          <div class="legend-item active" data-type="presentation"><div class="legend-dot" style="background:var(--purple)"></div>Presentations</div>
+          <div class="legend-item active" data-type="job"><div class="legend-dot" style="background:var(--orange)"></div>Jobs</div>
+          <div class="legend-item active" data-type="jobstart"><div class="legend-dot" style="background:var(--green)"></div>Job Start</div>
+          <div class="legend-item active" data-type="recurring"><div class="legend-dot" style="background:#c026d3"></div>Recurring</div>
+        </div>
+      </div>
+    </div>
+    <div class="cal-toolbar" style="margin-top:-8px;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <select class="cal-filter" id="staffFilter">
+          <option value="all">All Staff</option>
+          <option value="john">John Smith</option>
+          <option value="sarah">Sarah Lee</option>
+          <option value="mike">Mike Jones</option>
+        </select>
+      </div>
+      <div class="view-toggle" id="viewToggle">
+        <button data-view="day">Day</button>
+        <button data-view="week">Week</button>
+        <button data-view="month" class="active">Month</button>
+      </div>
+    </div>
+
+    <!-- ═══ MONTH VIEW ═══ -->
+    <div id="monthView" class="cal-month"></div>
+
+    <!-- ═══ WEEK VIEW ═══ -->
+    <div id="weekView" class="cal-week view-hidden"></div>
+
+    <!-- ═══ DAY VIEW ═══ -->
+    <div id="dayView" class="cal-day-view view-hidden"></div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="t-icon">✓</span>
+  <span class="t-msg" id="toastMsg">Event rescheduled</span>
+  <span class="t-undo" id="toastUndo">Undo</span>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════════
+const EVENTS = [
+  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'screen8b-appointment-detail.html' },
+  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'screen13b-job-detail.html' },
+  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'screen13b-job-detail.html' },
+  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'screen8b-appointment-detail.html' },
+  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'screen13b-job-detail.html' },
+  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'screen13b-job-detail.html' },
+  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'screen8b-appointment-detail.html' },
+];
+
+let state = {
+  view: 'month',
+  year: 2026,
+  month: 2, // 0-indexed (March)
+  day: 4,
+  staffFilter: 'all',
+  typeFilters: new Set(['appointment','survey','presentation','job','jobstart','recurring']),
+};
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const HOURS = [];
+for (let h = 6; h <= 20; h++) {
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const hr = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  HOURS.push({ label: `${hr} ${ampm}`, hour: h });
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function dateStr(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+function isToday(y, m, d) {
+  return y === 2026 && m === 2 && d === 4;
+}
+function getFilteredEvents() {
+  return EVENTS.filter(e => {
+    if (state.staffFilter !== 'all' && e.staff !== state.staffFilter) return false;
+    if (!state.typeFilters.has(e.type)) return false;
+    return true;
+  });
+}
+function eventsForDate(ds) {
+  return getFilteredEvents().filter(e => e.date === ds).sort((a,b) => a.time.localeCompare(b.time));
+}
+function formatTime(t) {
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const hr = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hr}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function timeToMinutes(t) {
+  const [h,m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// ═══════════════════════════════════════════
+// DRAG & DROP STATE
+// ═══════════════════════════════════════════
+let dragEventId = null;
+let dragOrigDate = null;
+let dragOrigTime = null;
+let lastUndoAction = null;
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+document.getElementById('toastUndo').addEventListener('click', () => {
+  if (lastUndoAction) {
+    const ev = EVENTS.find(e => e.id === lastUndoAction.id);
+    if (ev) {
+      ev.date = lastUndoAction.oldDate;
+      ev.time = lastUndoAction.oldTime;
+      lastUndoAction = null;
+      render();
+      showToast('Change reverted');
+    }
+  }
+});
+
+// ═══════════════════════════════════════════
+// MONTH VIEW RENDER
+// ═══════════════════════════════════════════
+function renderMonth() {
+  const el = document.getElementById('monthView');
+  const firstDay = new Date(state.year, state.month, 1).getDay();
+  const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
+  const daysInPrev = new Date(state.year, state.month, 0).getDate();
+
+  let html = '<div class="cal-header">';
+  DAYS_SHORT.forEach(d => html += `<div class="dh">${d}</div>`);
+  html += '</div><div class="cal-body">';
+
+  // Previous month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const pm = state.month - 1;
+    const py = pm < 0 ? state.year - 1 : state.year;
+    const pm2 = pm < 0 ? 11 : pm;
+    const ds = dateStr(py, pm2, d);
+    html += `<div class="cal-day outside" data-date="${ds}"><div class="day-num">${d}</div></div>`;
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = dateStr(state.year, state.month, d);
+    const today = isToday(state.year, state.month, d);
+    const events = eventsForDate(ds);
+    html += `<div class="cal-day${today ? ' today' : ''}" data-date="${ds}">`;
+    html += `<div class="day-num">${d}</div>`;
+    const maxShow = 3;
+    events.slice(0, maxShow).forEach(ev => {
+      html += `<div class="cal-event type-${ev.type}" draggable="true" data-id="${ev.id}" title="${formatTime(ev.time)} · ${ev.title}">`;
+      html += `<span class="grip">⋮⋮</span>`;
+      html += `<span>${formatTime(ev.time).replace(/:00/g,'')} · ${ev.title}</span>`;
+      html += `</div>`;
+    });
+    if (events.length > maxShow) {
+      html += `<div class="cal-more">+${events.length - maxShow} more</div>`;
+    }
+    html += '</div>';
+  }
+
+  // Next month padding
+  const totalCells = firstDay + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let d = 1; d <= remaining; d++) {
+    const nm = state.month + 1;
+    const ny = nm > 11 ? state.year + 1 : state.year;
+    const nm2 = nm > 11 ? 0 : nm;
+    const ds = dateStr(ny, nm2, d);
+    html += `<div class="cal-day outside" data-date="${ds}"><div class="day-num">${d}</div></div>`;
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+  setupMonthDragDrop();
+}
+
+function setupMonthDragDrop() {
+  document.querySelectorAll('#monthView .cal-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#monthView .cal-day').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetDate = cell.dataset.date;
+      if (targetDate && dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev && ev.date !== targetDate) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          ev.date = targetDate;
+          render();
+          showToast(`"${ev.title}" moved to ${new Date(targetDate+'T00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// WEEK VIEW RENDER
+// ═══════════════════════════════════════════
+function getWeekDates() {
+  const current = new Date(state.year, state.month, state.day);
+  const dayOfWeek = current.getDay();
+  const sunday = new Date(current);
+  sunday.setDate(current.getDate() - dayOfWeek);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function renderWeek() {
+  const el = document.getElementById('weekView');
+  const dates = getWeekDates();
+
+  let html = '<div class="week-header">';
+  html += '<div class="wh-corner">GMT-5</div>';
+  dates.forEach(d => {
+    const today = isToday(d.getFullYear(), d.getMonth(), d.getDate());
+    html += `<div class="wh-cell${today ? ' today' : ''}">`;
+    html += `<div class="wh-day">${DAYS_SHORT[d.getDay()]}</div>`;
+    html += `<div class="wh-num">${d.getDate()}</div>`;
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="week-body">';
+  // Time column
+  html += '<div class="time-col">';
+  HOURS.forEach(h => html += `<div class="time-slot">${h.label}</div>`);
+  html += '</div>';
+
+  // Day columns
+  dates.forEach(d => {
+    const ds = dateStr(d.getFullYear(), d.getMonth(), d.getDate());
+    const events = eventsForDate(ds);
+    html += `<div class="day-col" data-date="${ds}">`;
+    HOURS.forEach(h => {
+      html += `<div class="hour-row" data-date="${ds}" data-hour="${h.hour}"></div>`;
+    });
+    // Overlay events
+    events.forEach(ev => {
+      const mins = timeToMinutes(ev.time);
+      const startHour = HOURS[0].hour;
+      const top = (mins - startHour * 60);
+      const height = Math.max(ev.duration, 30);
+      html += `<div class="week-event type-${ev.type}" draggable="true" data-id="${ev.id}"
+        style="top:${top}px; height:${height}px;" title="${formatTime(ev.time)} · ${ev.title}">`;
+      html += `<span class="we-grip">⋮⋮</span>`;
+      html += `<div class="we-time">${formatTime(ev.time)}</div>`;
+      html += `<div class="we-title">${ev.title}</div>`;
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+  setupWeekDragDrop();
+}
+
+function setupWeekDragDrop() {
+  document.querySelectorAll('#weekView .week-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#weekView .hour-row').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetDate = cell.dataset.date;
+      const targetHour = parseInt(cell.dataset.hour);
+      if (targetDate && dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          const oldMins = timeToMinutes(ev.time);
+          const newTime = `${String(targetHour).padStart(2,'0')}:${String(oldMins % 60).padStart(2,'0')}`;
+          ev.date = targetDate;
+          ev.time = newTime;
+          render();
+          showToast(`"${ev.title}" → ${new Date(targetDate+'T00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} at ${formatTime(newTime)}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// DAY VIEW RENDER
+// ═══════════════════════════════════════════
+function renderDay() {
+  const el = document.getElementById('dayView');
+  const d = new Date(state.year, state.month, state.day);
+  const ds = dateStr(d.getFullYear(), d.getMonth(), d.getDate());
+  const events = eventsForDate(ds);
+  const today = isToday(d.getFullYear(), d.getMonth(), d.getDate());
+
+  let html = `<div class="dv-header${today ? ' today' : ''}">`;
+  html += `<div class="dv-day">${DAYS_SHORT[d.getDay()]}</div>`;
+  html += `<div class="dv-num">${d.getDate()}</div>`;
+  html += `<div style="font-size:13px;color:var(--text-secondary);margin-left:4px;">${MONTHS[state.month]} ${state.year}</div>`;
+  html += '</div>';
+
+  html += '<div class="dv-body">';
+  html += '<div class="time-col">';
+  HOURS.forEach(h => html += `<div class="time-slot">${h.label}</div>`);
+  html += '</div>';
+
+  html += `<div class="event-col" data-date="${ds}">`;
+  HOURS.forEach(h => {
+    html += `<div class="hour-row" data-date="${ds}" data-hour="${h.hour}"></div>`;
+  });
+  events.forEach(ev => {
+    const mins = timeToMinutes(ev.time);
+    const startHour = HOURS[0].hour;
+    const top = (mins - startHour * 60);
+    const height = Math.max(ev.duration, 40);
+    html += `<div class="day-event type-${ev.type}" draggable="true" data-id="${ev.id}"
+      style="top:${top}px; height:${height}px;" title="${formatTime(ev.time)} · ${ev.title}">`;
+    html += `<span class="de-grip">⋮⋮</span>`;
+    html += `<div class="de-time">${formatTime(ev.time)} — ${formatTime( (() => { const m = timeToMinutes(ev.time) + ev.duration; return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; })() )}</div>`;
+    html += `<div class="de-title">${ev.title}</div>`;
+    html += `<div class="de-sub">Staff: ${ev.staff.charAt(0).toUpperCase() + ev.staff.slice(1)}</div>`;
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  el.innerHTML = html;
+  setupDayDragDrop();
+}
+
+function setupDayDragDrop() {
+  document.querySelectorAll('#dayView .day-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#dayView .hour-row').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetHour = parseInt(cell.dataset.hour);
+      if (dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          const oldMins = timeToMinutes(ev.time);
+          ev.time = `${String(targetHour).padStart(2,'0')}:${String(oldMins % 60).padStart(2,'0')}`;
+          render();
+          showToast(`"${ev.title}" moved to ${formatTime(ev.time)}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION & CONTROLS
+// ═══════════════════════════════════════════
+function updateTitle() {
+  const el = document.getElementById('calTitle');
+  if (state.view === 'month') {
+    el.textContent = `${MONTHS[state.month]} ${state.year}`;
+  } else if (state.view === 'week') {
+    const dates = getWeekDates();
+    const s = dates[0];
+    const e = dates[6];
+    if (s.getMonth() === e.getMonth()) {
+      el.textContent = `${MONTHS[s.getMonth()]} ${s.getDate()} – ${e.getDate()}, ${s.getFullYear()}`;
+    } else {
+      el.textContent = `${MONTHS[s.getMonth()].slice(0,3)} ${s.getDate()} – ${MONTHS[e.getMonth()].slice(0,3)} ${e.getDate()}, ${e.getFullYear()}`;
+    }
+  } else {
+    const d = new Date(state.year, state.month, state.day);
+    el.textContent = `${DAYS_SHORT[d.getDay()]}, ${MONTHS[state.month]} ${state.day}, ${state.year}`;
+  }
+}
+
+function render() {
+  updateTitle();
+  renderMonth();
+  renderWeek();
+  renderDay();
+}
+
+// View toggle
+document.getElementById('viewToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const view = btn.dataset.view;
+  state.view = view;
+
+  document.querySelectorAll('#viewToggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('monthView').classList.toggle('view-hidden', view !== 'month');
+  document.getElementById('weekView').classList.toggle('view-hidden', view !== 'week');
+  document.getElementById('dayView').classList.toggle('view-hidden', view !== 'day');
+
+  updateTitle();
+});
+
+// Prev/Next
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (state.view === 'month') {
+    state.month--;
+    if (state.month < 0) { state.month = 11; state.year--; }
+  } else if (state.view === 'week') {
+    state.day -= 7;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  } else {
+    state.day--;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  }
+  render();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (state.view === 'month') {
+    state.month++;
+    if (state.month > 11) { state.month = 0; state.year++; }
+  } else if (state.view === 'week') {
+    state.day += 7;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  } else {
+    state.day++;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  }
+  render();
+});
+
+// Today
+document.getElementById('todayBtn').addEventListener('click', () => {
+  state.year = 2026; state.month = 2; state.day = 4;
+  render();
+});
+
+// Staff filter
+document.getElementById('staffFilter').addEventListener('change', e => {
+  state.staffFilter = e.target.value;
+  render();
+});
+
+// Legend toggle
+document.getElementById('calLegend').addEventListener('click', e => {
+  const item = e.target.closest('.legend-item');
+  if (!item) return;
+  const type = item.dataset.type;
+  if (state.typeFilters.has(type)) {
+    state.typeFilters.delete(type);
+    item.classList.remove('active');
+  } else {
+    state.typeFilters.add(type);
+    item.classList.add('active');
+  }
+  render();
+});
+
+// Initial render
+render();
+</script>
+
+<script>
+
+// ═══════════════════════════════════════════
+// DATA & STATE
+// ═══════════════════════════════════════════
+const EVENTS = [
+  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'screen8b-appointment-detail.html' },
+  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'screen13b-job-detail.html' },
+  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'screen13b-job-detail.html' },
+  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'screen8b-appointment-detail.html' },
+  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'screen13b-job-detail.html' },
+  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'screen13b-job-detail.html' },
+  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'screen13b-job-detail.html' },
+  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'screen8b-appointment-detail.html' },
+  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'screen8b-appointment-detail.html' },
+];
+
+let state = {
+  view: 'month',
+  year: 2026,
+  month: 2, // 0-indexed (March)
+  day: 4,
+  staffFilter: 'all',
+  typeFilters: new Set(['appointment','survey','presentation','job','jobstart','recurring']),
+};
+
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS_SHORT = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const HOURS = [];
+for (let h = 6; h <= 20; h++) {
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const hr = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  HOURS.push({ label: `${hr} ${ampm}`, hour: h });
+}
+
+// ═══════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════
+function dateStr(y, m, d) {
+  return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+function isToday(y, m, d) {
+  return y === 2026 && m === 2 && d === 4;
+}
+function getFilteredEvents() {
+  return EVENTS.filter(e => {
+    if (state.staffFilter !== 'all' && e.staff !== state.staffFilter) return false;
+    if (!state.typeFilters.has(e.type)) return false;
+    return true;
+  });
+}
+function eventsForDate(ds) {
+  return getFilteredEvents().filter(e => e.date === ds).sort((a,b) => a.time.localeCompare(b.time));
+}
+function formatTime(t) {
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h < 12 ? 'AM' : 'PM';
+  const hr = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hr}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function timeToMinutes(t) {
+  const [h,m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+// ═══════════════════════════════════════════
+// DRAG & DROP STATE
+// ═══════════════════════════════════════════
+let dragEventId = null;
+let dragOrigDate = null;
+let dragOrigTime = null;
+let lastUndoAction = null;
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toast._timeout);
+  toast._timeout = setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+document.getElementById('toastUndo').addEventListener('click', () => {
+  if (lastUndoAction) {
+    const ev = EVENTS.find(e => e.id === lastUndoAction.id);
+    if (ev) {
+      ev.date = lastUndoAction.oldDate;
+      ev.time = lastUndoAction.oldTime;
+      lastUndoAction = null;
+      render();
+      showToast('Change reverted');
+    }
+  }
+});
+
+// ═══════════════════════════════════════════
+// MONTH VIEW RENDER
+// ═══════════════════════════════════════════
+function renderMonth() {
+  const el = document.getElementById('monthView');
+  const firstDay = new Date(state.year, state.month, 1).getDay();
+  const daysInMonth = new Date(state.year, state.month + 1, 0).getDate();
+  const daysInPrev = new Date(state.year, state.month, 0).getDate();
+
+  let html = '<div class="cal-header">';
+  DAYS_SHORT.forEach(d => html += `<div class="dh">${d}</div>`);
+  html += '</div><div class="cal-body">';
+
+  // Previous month padding
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const d = daysInPrev - i;
+    const pm = state.month - 1;
+    const py = pm < 0 ? state.year - 1 : state.year;
+    const pm2 = pm < 0 ? 11 : pm;
+    const ds = dateStr(py, pm2, d);
+    html += `<div class="cal-day outside" data-date="${ds}"><div class="day-num">${d}</div></div>`;
+  }
+
+  // Current month
+  for (let d = 1; d <= daysInMonth; d++) {
+    const ds = dateStr(state.year, state.month, d);
+    const today = isToday(state.year, state.month, d);
+    const events = eventsForDate(ds);
+    html += `<div class="cal-day${today ? ' today' : ''}" data-date="${ds}">`;
+    html += `<div class="day-num">${d}</div>`;
+    const maxShow = 3;
+    events.slice(0, maxShow).forEach(ev => {
+      html += `<div class="cal-event type-${ev.type}" draggable="true" data-id="${ev.id}" title="${formatTime(ev.time)} · ${ev.title}">`;
+      html += `<span class="grip">⋮⋮</span>`;
+      html += `<span>${formatTime(ev.time).replace(/:00/g,'')} · ${ev.title}</span>`;
+      html += `</div>`;
+    });
+    if (events.length > maxShow) {
+      html += `<div class="cal-more">+${events.length - maxShow} more</div>`;
+    }
+    html += '</div>';
+  }
+
+  // Next month padding
+  const totalCells = firstDay + daysInMonth;
+  const remaining = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let d = 1; d <= remaining; d++) {
+    const nm = state.month + 1;
+    const ny = nm > 11 ? state.year + 1 : state.year;
+    const nm2 = nm > 11 ? 0 : nm;
+    const ds = dateStr(ny, nm2, d);
+    html += `<div class="cal-day outside" data-date="${ds}"><div class="day-num">${d}</div></div>`;
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+  setupMonthDragDrop();
+}
+
+function setupMonthDragDrop() {
+  document.querySelectorAll('#monthView .cal-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#monthView .cal-day').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetDate = cell.dataset.date;
+      if (targetDate && dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev && ev.date !== targetDate) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          ev.date = targetDate;
+          render();
+          showToast(`"${ev.title}" moved to ${new Date(targetDate+'T00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// WEEK VIEW RENDER
+// ═══════════════════════════════════════════
+function getWeekDates() {
+  const current = new Date(state.year, state.month, state.day);
+  const dayOfWeek = current.getDay();
+  const sunday = new Date(current);
+  sunday.setDate(current.getDate() - dayOfWeek);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function renderWeek() {
+  const el = document.getElementById('weekView');
+  const dates = getWeekDates();
+
+  let html = '<div class="week-header">';
+  html += '<div class="wh-corner">GMT-5</div>';
+  dates.forEach(d => {
+    const today = isToday(d.getFullYear(), d.getMonth(), d.getDate());
+    html += `<div class="wh-cell${today ? ' today' : ''}">`;
+    html += `<div class="wh-day">${DAYS_SHORT[d.getDay()]}</div>`;
+    html += `<div class="wh-num">${d.getDate()}</div>`;
+    html += '</div>';
+  });
+  html += '</div>';
+
+  html += '<div class="week-body">';
+  // Time column
+  html += '<div class="time-col">';
+  HOURS.forEach(h => html += `<div class="time-slot">${h.label}</div>`);
+  html += '</div>';
+
+  // Day columns
+  dates.forEach(d => {
+    const ds = dateStr(d.getFullYear(), d.getMonth(), d.getDate());
+    const events = eventsForDate(ds);
+    html += `<div class="day-col" data-date="${ds}">`;
+    HOURS.forEach(h => {
+      html += `<div class="hour-row" data-date="${ds}" data-hour="${h.hour}"></div>`;
+    });
+    // Overlay events
+    events.forEach(ev => {
+      const mins = timeToMinutes(ev.time);
+      const startHour = HOURS[0].hour;
+      const top = (mins - startHour * 60);
+      const height = Math.max(ev.duration, 30);
+      html += `<div class="week-event type-${ev.type}" draggable="true" data-id="${ev.id}"
+        style="top:${top}px; height:${height}px;" title="${formatTime(ev.time)} · ${ev.title}">`;
+      html += `<span class="we-grip">⋮⋮</span>`;
+      html += `<div class="we-time">${formatTime(ev.time)}</div>`;
+      html += `<div class="we-title">${ev.title}</div>`;
+      html += '</div>';
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+  setupWeekDragDrop();
+}
+
+function setupWeekDragDrop() {
+  document.querySelectorAll('#weekView .week-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#weekView .hour-row').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetDate = cell.dataset.date;
+      const targetHour = parseInt(cell.dataset.hour);
+      if (targetDate && dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          const oldMins = timeToMinutes(ev.time);
+          const newTime = `${String(targetHour).padStart(2,'0')}:${String(oldMins % 60).padStart(2,'0')}`;
+          ev.date = targetDate;
+          ev.time = newTime;
+          render();
+          showToast(`"${ev.title}" → ${new Date(targetDate+'T00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})} at ${formatTime(newTime)}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// DAY VIEW RENDER
+// ═══════════════════════════════════════════
+function renderDay() {
+  const el = document.getElementById('dayView');
+  const d = new Date(state.year, state.month, state.day);
+  const ds = dateStr(d.getFullYear(), d.getMonth(), d.getDate());
+  const events = eventsForDate(ds);
+  const today = isToday(d.getFullYear(), d.getMonth(), d.getDate());
+
+  let html = `<div class="dv-header${today ? ' today' : ''}">`;
+  html += `<div class="dv-day">${DAYS_SHORT[d.getDay()]}</div>`;
+  html += `<div class="dv-num">${d.getDate()}</div>`;
+  html += `<div style="font-size:13px;color:var(--text-secondary);margin-left:4px;">${MONTHS[state.month]} ${state.year}</div>`;
+  html += '</div>';
+
+  html += '<div class="dv-body">';
+  html += '<div class="time-col">';
+  HOURS.forEach(h => html += `<div class="time-slot">${h.label}</div>`);
+  html += '</div>';
+
+  html += `<div class="event-col" data-date="${ds}">`;
+  HOURS.forEach(h => {
+    html += `<div class="hour-row" data-date="${ds}" data-hour="${h.hour}"></div>`;
+  });
+  events.forEach(ev => {
+    const mins = timeToMinutes(ev.time);
+    const startHour = HOURS[0].hour;
+    const top = (mins - startHour * 60);
+    const height = Math.max(ev.duration, 40);
+    html += `<div class="day-event type-${ev.type}" draggable="true" data-id="${ev.id}"
+      style="top:${top}px; height:${height}px;" title="${formatTime(ev.time)} · ${ev.title}">`;
+    html += `<span class="de-grip">⋮⋮</span>`;
+    html += `<div class="de-time">${formatTime(ev.time)} — ${formatTime( (() => { const m = timeToMinutes(ev.time) + ev.duration; return `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`; })() )}</div>`;
+    html += `<div class="de-title">${ev.title}</div>`;
+    html += `<div class="de-sub">Staff: ${ev.staff.charAt(0).toUpperCase() + ev.staff.slice(1)}</div>`;
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  el.innerHTML = html;
+  setupDayDragDrop();
+}
+
+function setupDayDragDrop() {
+  document.querySelectorAll('#dayView .day-event').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      dragEventId = parseInt(el.dataset.id);
+      const ev = EVENTS.find(x => x.id === dragEventId);
+      dragOrigDate = ev.date;
+      dragOrigTime = ev.time;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', dragEventId);
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    el.addEventListener('click', () => {
+      const ev = EVENTS.find(x => x.id === parseInt(el.dataset.id));
+      if (ev && ev.link) window.location.href = ev.link;
+    });
+  });
+
+  document.querySelectorAll('#dayView .hour-row').forEach(cell => {
+    cell.addEventListener('dragover', e => { e.preventDefault(); cell.classList.add('drag-over'); });
+    cell.addEventListener('dragleave', () => cell.classList.remove('drag-over'));
+    cell.addEventListener('drop', e => {
+      e.preventDefault();
+      cell.classList.remove('drag-over');
+      const targetHour = parseInt(cell.dataset.hour);
+      if (dragEventId) {
+        const ev = EVENTS.find(x => x.id === dragEventId);
+        if (ev) {
+          lastUndoAction = { id: ev.id, oldDate: ev.date, oldTime: ev.time };
+          const oldMins = timeToMinutes(ev.time);
+          ev.time = `${String(targetHour).padStart(2,'0')}:${String(oldMins % 60).padStart(2,'0')}`;
+          render();
+          showToast(`"${ev.title}" moved to ${formatTime(ev.time)}`);
+        }
+      }
+      dragEventId = null;
+    });
+  });
+}
+
+// ═══════════════════════════════════════════
+// NAVIGATION & CONTROLS
+// ═══════════════════════════════════════════
+function updateTitle() {
+  const el = document.getElementById('calTitle');
+  if (state.view === 'month') {
+    el.textContent = `${MONTHS[state.month]} ${state.year}`;
+  } else if (state.view === 'week') {
+    const dates = getWeekDates();
+    const s = dates[0];
+    const e = dates[6];
+    if (s.getMonth() === e.getMonth()) {
+      el.textContent = `${MONTHS[s.getMonth()]} ${s.getDate()} – ${e.getDate()}, ${s.getFullYear()}`;
+    } else {
+      el.textContent = `${MONTHS[s.getMonth()].slice(0,3)} ${s.getDate()} – ${MONTHS[e.getMonth()].slice(0,3)} ${e.getDate()}, ${e.getFullYear()}`;
+    }
+  } else {
+    const d = new Date(state.year, state.month, state.day);
+    el.textContent = `${DAYS_SHORT[d.getDay()]}, ${MONTHS[state.month]} ${state.day}, ${state.year}`;
+  }
+}
+
+function render() {
+  updateTitle();
+  renderMonth();
+  renderWeek();
+  renderDay();
+}
+
+// View toggle
+document.getElementById('viewToggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  const view = btn.dataset.view;
+  state.view = view;
+
+  document.querySelectorAll('#viewToggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  document.getElementById('monthView').classList.toggle('view-hidden', view !== 'month');
+  document.getElementById('weekView').classList.toggle('view-hidden', view !== 'week');
+  document.getElementById('dayView').classList.toggle('view-hidden', view !== 'day');
+
+  updateTitle();
+});
+
+// Prev/Next
+document.getElementById('prevBtn').addEventListener('click', () => {
+  if (state.view === 'month') {
+    state.month--;
+    if (state.month < 0) { state.month = 11; state.year--; }
+  } else if (state.view === 'week') {
+    state.day -= 7;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  } else {
+    state.day--;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  }
+  render();
+});
+
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (state.view === 'month') {
+    state.month++;
+    if (state.month > 11) { state.month = 0; state.year++; }
+  } else if (state.view === 'week') {
+    state.day += 7;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  } else {
+    state.day++;
+    const d = new Date(state.year, state.month, state.day);
+    state.year = d.getFullYear(); state.month = d.getMonth(); state.day = d.getDate();
+  }
+  render();
+});
+
+// Today
+document.getElementById('todayBtn').addEventListener('click', () => {
+  state.year = 2026; state.month = 2; state.day = 4;
+  render();
+});
+
+// Staff filter
+document.getElementById('staffFilter').addEventListener('change', e => {
+  state.staffFilter = e.target.value;
+  render();
+});
+
+// Legend toggle
+document.getElementById('calLegend').addEventListener('click', e => {
+  const item = e.target.closest('.legend-item');
+  if (!item) return;
+  const type = item.dataset.type;
+  if (state.typeFilters.has(type)) {
+    state.typeFilters.delete(type);
+    item.classList.remove('active');
+  } else {
+    state.typeFilters.add(type);
+    item.classList.add('active');
+  }
+  render();
+});
+
+// Initial render
+render();
+
+</script>
+</body>
+</html>

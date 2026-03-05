@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM - Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    :root{--primary:#0f6fde;--primary-hover:#0b5bb8;--green:#16a34a;--green-hover:#128c3e;--border:#e2e5ea;--text-light:#5f6880;--text-muted:#8e96a8;--bg:#f6f7f9;--radius-sm:6px}
+
+    body.auth-page{
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;
+      background:linear-gradient(135deg,#e8f0fe 0%,#f6f7f9 50%,#e6f7f5 100%);
+      padding:40px 20px;
+    }
+
+    /* ═══ AUTH CARD ═══ */
+    .auth-card{
+      width:460px;max-width:100%;
+      background:#fff;
+      border:1px solid var(--border);
+      border-radius:16px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.06),0 2px 8px rgba(0,0,0,0.04);
+      padding:40px 40px 32px;
+    }
+
+    /* Logo */
+    .signin-logo{text-align:center;margin-bottom:24px}
+    .signin-logo a{
+      display:inline-flex;align-items:center;gap:10px;
+      text-decoration:none;
+    }
+    .signin-logo .logo-icon{
+      width:38px;height:38px;
+      background:linear-gradient(135deg,var(--primary),#0d9488);
+      border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:16px;color:#fff;font-weight:700;
+    }
+    .signin-logo .logo-text{
+      font-size:24px;font-weight:700;color:var(--primary);
+    }
+
+    /* Title */
+    .auth-card h2{
+      font-size:22px;font-weight:700;text-align:center;margin-bottom:4px;color:#1a1d23;
+    }
+    .auth-card .subtitle{
+      text-align:center;color:var(--text-light);font-size:13px;margin-bottom:28px;
+    }
+
+    /* Step indicator */
+    .step-indicator{
+      display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;
+    }
+    .step-dot{
+      width:32px;height:32px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:700;
+      border:2px solid var(--border);
+      color:var(--text-muted);background:#fff;
+      transition:all 0.3s ease;
+    }
+    .step-dot.active{
+      background:var(--primary);color:#fff;border-color:var(--primary);
+    }
+    .step-dot.completed{
+      background:var(--green);color:#fff;border-color:var(--green);
+    }
+    .step-line{
+      width:60px;height:2px;background:var(--border);
+      transition:background 0.3s ease;
+    }
+    .step-line.active{background:var(--primary)}
+    .step-labels{
+      display:flex;justify-content:center;gap:52px;margin-top:6px;margin-bottom:0;
+    }
+    .step-label{font-size:11px;color:var(--text-muted);font-weight:500;text-align:center}
+    .step-label.active{color:var(--primary);font-weight:600}
+
+    /* Form group */
+    .form-group{margin-bottom:18px}
+    .form-group label{
+      display:block;font-size:13px;font-weight:600;color:#1a1d23;margin-bottom:6px;
+    }
+    .form-group label .req{color:#dc3545;margin-left:2px}
+    .form-input{
+      width:100%;padding:12px 14px;
+      border:1.5px solid var(--border);border-radius:var(--radius-sm);
+      font-size:14px;font-family:inherit;color:#1a1d23;
+      background:#fff;transition:all 0.2s ease;
+    }
+    .form-input:focus{
+      outline:none;border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(15,111,222,0.1);
+    }
+    .form-input::placeholder{color:#b0b8c9}
+
+    /* Buttons */
+    .btn-send-otp{
+      width:100%;padding:13px;font-size:15px;font-weight:600;
+      border:none;border-radius:8px;cursor:pointer;
+      background:var(--primary);color:#fff;
+      font-family:inherit;transition:all 0.2s ease;
+    }
+    .btn-send-otp:hover{background:var(--primary-hover)}
+
+    .btn-verify{
+      display:block;width:100%;padding:13px;font-size:15px;font-weight:600;
+      border:none;border-radius:8px;cursor:pointer;
+      background:var(--green);color:#fff;
+      font-family:inherit;text-align:center;text-decoration:none;
+      transition:all 0.2s ease;
+    }
+    .btn-verify:hover{background:var(--green-hover)}
+
+    .btn-back{
+      display:inline-flex;align-items:center;gap:4px;
+      background:none;border:none;color:var(--text-light);
+      font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;
+      padding:0;margin-bottom:16px;transition:color 0.2s;
+    }
+    .btn-back:hover{color:var(--primary)}
+
+    /* OTP inputs */
+    .otp-inputs{
+      display:flex;gap:10px;justify-content:center;margin-bottom:22px;
+    }
+    .otp-inputs input{
+      width:48px;height:56px;text-align:center;
+      font-size:22px;font-weight:600;color:#1a1d23;
+      border:2px solid var(--border);border-radius:10px;
+      outline:none;transition:all 0.2s ease;
+      font-family:inherit;
+    }
+    .otp-inputs input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(15,111,222,0.1);
+    }
+    .otp-inputs input.filled{border-color:var(--primary);background:#f0f7ff}
+
+    /* OTP info */
+    .otp-sent-to{
+      text-align:center;font-size:13px;color:var(--text-light);
+      margin-bottom:20px;padding:10px 16px;
+      background:#f0f7ff;border-radius:var(--radius-sm);
+    }
+    .otp-sent-to strong{color:#1a1d23;font-weight:600}
+
+    .otp-actions{text-align:center;margin-top:18px}
+    .resend-link{font-size:13px;color:var(--text-light)}
+    .resend-link a{color:var(--primary);text-decoration:none;font-weight:500}
+    .resend-link a:hover{text-decoration:underline}
+    .otp-validity{font-size:12px;color:var(--text-muted);text-align:center;margin-top:8px;font-style:italic}
+
+    /* Divider */
+    .form-divider{
+      height:1px;background:var(--border);margin:24px 0;
+    }
+
+    /* Bottom links */
+    .form-links{text-align:center;font-size:13px;color:var(--text-light)}
+    .form-links a{color:var(--primary);text-decoration:none;font-weight:600}
+    .form-links a:hover{text-decoration:underline}
+
+    /* Step panels */
+    .step-panel{display:none}
+    .step-panel.active{display:block;animation:fadeIn 0.3s ease}
+
+    @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body class="auth-page">
+
+  <div class="auth-card">
+
+    <!-- LOGO -->
+    <div class="signin-logo">
+      <a href="landing.html">
+        <div class="logo-icon">⚡</div>
+        <span class="logo-text">TurboFSM</span>
+      </a>
+    </div>
+
+    <!-- TITLE -->
+    <h2>Sign In to TurboFSM</h2>
+    <div class="subtitle">Enter your registered email or phone number</div>
+
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot1">1</div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-dot" id="dot2">2</div>
+    </div>
+    <div class="step-labels">
+      <span class="step-label active" id="label1">Enter Email/Phone</span>
+      <span class="step-label" id="label2">Verify OTP</span>
+    </div>
+
+    <!-- ═══ STEP 1: EMAIL / PHONE ═══ -->
+    <div class="step-panel active" id="step1">
+      <div class="form-group">
+        <label>Email or Phone Number<span class="req">*</span></label>
+        <input type="text" class="form-input" id="emailInput" placeholder="john@company.com or (555) 123-4567">
+      </div>
+      <button type="button" class="btn-send-otp" onclick="goToStep2()">Send OTP</button>
+    </div>
+
+    <!-- ═══ STEP 2: OTP VERIFICATION ═══ -->
+    <div class="step-panel" id="step2">
+      <button type="button" class="btn-back" onclick="goToStep1()">← Change email/phone</button>
+
+      <div class="otp-sent-to">
+        OTP sent to <strong id="sentTo">john@company.com</strong>
+      </div>
+
+      <div class="otp-inputs">
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        <input type="text" maxlength="1" inputmode="numeric" data-otp>
+      </div>
+
+      <a href="dashboard.html" class="btn-verify">Verify &amp; Sign In</a>
+
+      <div class="otp-actions">
+        <div class="resend-link">
+          Didn't receive the code? <a href="#" onclick="event.preventDefault()">Resend OTP</a>
+          <span style="font-size:12px;color:var(--text-muted)"> (available after 60s)</span>
+        </div>
+        <div class="otp-validity">OTP valid for 10 minutes</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM LINKS -->
+    <div class="form-divider"></div>
+    <div class="form-links">
+      Don't have an account? <a href="registration.html">Start Free Trial</a>
+    </div>
+
+  </div>
+
+<script>
+// Step navigation
+function goToStep2() {
+  var email = document.getElementById('emailInput').value.trim();
+  if (!email) email = 'john@company.com';
+  document.getElementById('sentTo').textContent = email;
+
+  document.getElementById('step1').classList.remove('active');
+  document.getElementById('step2').classList.add('active');
+
+  // Update indicators
+  document.getElementById('dot1').classList.remove('active');
+  document.getElementById('dot1').classList.add('completed');
+  document.getElementById('dot1').textContent = '✓';
+  document.getElementById('line1').classList.add('active');
+  document.getElementById('dot2').classList.add('active');
+  document.getElementById('label1').classList.remove('active');
+  document.getElementById('label2').classList.add('active');
+
+  // Focus first OTP input
+  var first = document.querySelector('[data-otp]');
+  if (first) first.focus();
+}
+
+function goToStep1() {
+  document.getElementById('step2').classList.remove('active');
+  document.getElementById('step1').classList.add('active');
+
+  // Reset indicators
+  document.getElementById('dot1').classList.add('active');
+  document.getElementById('dot1').classList.remove('completed');
+  document.getElementById('dot1').textContent = '1';
+  document.getElementById('line1').classList.remove('active');
+  document.getElementById('dot2').classList.remove('active');
+  document.getElementById('label1').classList.add('active');
+  document.getElementById('label2').classList.remove('active');
+
+  document.getElementById('emailInput').focus();
+}
+
+// OTP auto-advance: type a digit and jump to next box
+document.querySelectorAll('[data-otp]').forEach(function(input, i, all) {
+  input.addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+    if (this.value && i < all.length - 1) all[i + 1].focus();
+    this.classList.toggle('filled', this.value.length > 0);
+  });
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Backspace' && !this.value && i > 0) {
+      all[i - 1].focus();
+      all[i - 1].value = '';
+      all[i - 1].classList.remove('filled');
+    }
+  });
+  // Allow paste of full OTP
+  input.addEventListener('paste', function(e) {
+    e.preventDefault();
+    var data = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+    for (var j = 0; j < Math.min(data.length, all.length - i); j++) {
+      all[i + j].value = data[j];
+      all[i + j].classList.add('filled');
+    }
+    var next = Math.min(i + data.length, all.length - 1);
+    all[next].focus();
+  });
+});
+</script>
+
+</body>
+</html>

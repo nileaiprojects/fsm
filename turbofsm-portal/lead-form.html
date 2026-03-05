@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Create / Edit Lead</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root {
+  --bg: #f6f7f9;--surface: #ffffff;--surface-hover: #f8f9fb;--border: #e2e5ea;--border-light: #eef0f3;--text-primary: #1a1d23;--text-secondary: #5f6880;--text-muted: #8e96a8;--accent: #0f6fde;--accent-light: #e8f1fc;--accent-hover: #0b5bb8;--teal: #0d9488;--teal-light: #e6f7f5;--orange: #e67e22;--orange-light: #fef3e2;--red: #dc3545;--red-light: #fde8ea;--green: #16a34a;--green-light: #e8f8ee;--purple: #7c3aed;--purple-light: #f0ebfe;--sidebar-bg: #1a1d23;--sidebar-text: #8a92a6;--sidebar-active: #ffffff;--sidebar-active-bg: rgba(255,255,255,0.07);--radius-sm: 6px;--radius: 10px;--radius-lg: 14px;--shadow: 0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md: 0 4px 12px rgba(0,0,0,0.07);--shadow-lg: 0 8px 24px rgba(0,0,0,0.12);--transition: 180ms ease;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+/* SIDEBAR */
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-group{margin-bottom:20px}.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}
+.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+/* MAIN */
+.main{margin-left:244px;flex:1;min-height:100vh}
+
+/* TOPBAR */
+.topbar{height:54px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-left h1{font-size:16px;font-weight:600}.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all var(--transition);font-family:inherit}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.topbar-btn.primary:hover{background:var(--accent-hover)}
+.topbar-btn.teal{border-color:var(--teal);color:var(--teal)}.topbar-btn.teal:hover{background:var(--teal-light)}
+.notif-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;cursor:pointer}
+.notif-btn .count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.auto-status{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:var(--accent-light);color:var(--accent)}
+
+/* CONTENT — full width */
+.content{padding:20px 28px}
+
+/* Note */
+.note-bar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--accent-light);border:1px solid rgba(15,111,222,0.15);border-radius:var(--radius);margin-bottom:18px;font-size:12px;color:var(--accent)}
+
+/* 2x2 GRID */
+.quad-grid{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto auto;gap:16px}
+
+/* FORM SECTION CARDS */
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;display:flex;flex-direction:column}
+.form-section-title{font-size:14px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.form-section-subtitle{font-size:11px;color:var(--text-muted);margin-bottom:16px}
+.form-group{margin-bottom:14px}.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:11px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;transition:border-color var(--transition);background:var(--surface);color:var(--text-primary)}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-select{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--surface);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e96a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-textarea{min-height:80px;resize:vertical}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.pin-row{display:flex;gap:8px;align-items:center}
+.pin-row .pin-icon{width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:all var(--transition);flex-shrink:0}
+.pin-row .pin-icon:hover{border-color:var(--accent);background:var(--accent-light)}
+
+/* SITES TABLE */
+.sites-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.add-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;border:1px dashed var(--accent);border-radius:var(--radius-sm);background:var(--accent-light);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;transition:all var(--transition)}
+.add-btn:hover{background:var(--accent);color:#fff;border-style:solid}
+.sites-note{font-size:11px;color:var(--text-muted);margin-bottom:12px;padding:8px 12px;background:var(--bg);border-radius:var(--radius-sm);line-height:1.6}
+.sites-table{width:100%;border-collapse:collapse}
+.sites-table thead th{padding:8px 10px;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);text-align:left;background:var(--bg);border-bottom:1px solid var(--border)}
+.sites-table tbody tr{border-bottom:1px solid var(--border-light)}.sites-table tbody tr:last-child{border-bottom:none}
+.sites-table tbody td{padding:10px 10px;font-size:12px;vertical-align:top}
+.site-name{font-weight:600;font-size:12px}
+.site-primary{display:inline-block;font-size:9px;font-weight:600;background:var(--teal-light);color:var(--teal);padding:1px 6px;border-radius:10px;margin-left:4px;vertical-align:middle}
+.site-contact{font-size:11px;color:var(--text-secondary)}
+.site-notes{font-size:11px;color:var(--text-muted)}
+.site-act{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:11px;transition:all var(--transition);margin-right:3px;color:var(--text-secondary)}
+.site-act:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.site-act.del:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+.sites-footer{font-size:11px;color:var(--text-muted);margin-top:10px;font-style:italic}
+
+/* FOOTER ACTIONS */
+.form-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:18px;padding:16px 24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg)}
+.fb{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-primary)}
+.fb:hover{border-color:var(--accent);color:var(--accent)}
+.fb.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.fb.primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.fb.teal{border-color:var(--teal);color:var(--teal)}.fb.teal:hover{background:var(--teal-light)}
+.fb.cancel{color:var(--text-muted)}.fb.cancel:hover{color:var(--red);border-color:var(--red-light)}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.form-section{animation:fadeUp .3s ease both}
+.quad-grid .form-section:nth-child(1){animation-delay:.04s}
+.quad-grid .form-section:nth-child(2){animation-delay:.08s}
+.quad-grid .form-section:nth-child(3){animation-delay:.12s}
+.quad-grid .form-section:nth-child(4){animation-delay:.16s}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item active"><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- SIDEBAR -->
+
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="lead-manager.html" class="topbar-btn" style="padding:7px 10px;">← Back</a>
+      <h1>Create New Lead</h1>
+      <span class="t-sub">Fill in lead details below</span>
+      <span class="auto-status">● New</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <a href="lead-manager.html" class="topbar-btn">Cancel</a>
+      <a href="appointments.html" class="topbar-btn teal">Save & Schedule Appointment</a>
+      <button class="topbar-btn primary">Save Lead</button>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Note -->
+    <div class="note-bar">
+      📝 <strong>Note:</strong>&nbsp; Lead No. auto-generated on first save. Format: LD-YYYYMMDD-NNNN. Status is automatically set to <strong>New</strong> for every lead created.
+    </div>
+
+    <!-- 2×2 QUADRANT LAYOUT -->
+    <div class="quad-grid">
+
+      <!-- TOP-LEFT: Lead Information -->
+      <div class="form-section">
+        <div class="form-section-title">Lead Information</div>
+        <div class="form-section-subtitle">Basic contact and source details</div>
+        <div class="form-group">
+          <label class="form-label">Lead No.</label>
+          <input class="form-input" value="" placeholder="Auto-generated on save" disabled style="background:#f9fafb;color:var(--text-muted);">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Customer Name</label>
+          <input class="form-input" placeholder="Enter customer name">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input class="form-input" placeholder="(555) 000-0000">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input class="form-input" type="email" placeholder="email@example.com">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lead Source</label>
+          <select class="form-select">
+            <option>-- Select Source --</option>
+            <option>Referral</option>
+            <option>Website</option>
+            <option>Google Ad</option>
+            <option>Cold Call</option>
+            <option>Social Media</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- TOP-RIGHT: Primary / Billing Address -->
+      <div class="form-section">
+        <div class="form-section-title">🏠 Primary / Billing Address</div>
+        <div class="form-section-subtitle">Customer's main office or billing address</div>
+        <div class="form-group">
+          <label class="form-label">Address Line 1</label>
+          <input class="form-input" placeholder="Street address">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Address Line 2</label>
+          <input class="form-input" placeholder="Suite, unit, building (optional)">
+        </div>
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label">City</label>
+            <input class="form-input" placeholder="City">
+          </div>
+          <div class="form-group">
+            <label class="form-label">State</label>
+            <input class="form-input" placeholder="State">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Zip Code</label>
+            <input class="form-input" placeholder="Zip">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Google Location Pin</label>
+          <div class="pin-row">
+            <input class="form-input" placeholder="Paste Google Maps link or use pin" style="flex:1;">
+            <div class="pin-icon">📍</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM-LEFT: Service Sites -->
+      <div class="form-section">
+        <div class="form-section-title">📍 Service Locations (Sites)</div>
+        <div class="form-section-subtitle">Where work will be performed — can differ from billing address</div>
+        <div class="sites-note">
+          📝 <strong>Sites:</strong> Each customer can have multiple service locations. Sites are reusable across Appointments, Estimates, and Jobs. One site can be marked as "Primary Service Location" (default selection). Site ID format: SITE-YYYYMMDD-NNNN.
+        </div>
+        <div class="sites-header">
+          <span style="font-size:12px;font-weight:600;color:var(--text-secondary);">Current Sites</span>
+          <button class="add-btn">+ Add Site</button>
+        </div>
+        <table class="sites-table">
+          <thead><tr><th>Site Name</th><th>Address</th><th>Site Contact</th><th>Notes</th><th style="width:70px;">Actions</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><span class="site-name">Downtown Office</span><span class="site-primary">Primary</span></td>
+              <td style="font-size:11px;color:var(--text-secondary);">456 Commerce Blvd, Springfield, IL 62704</td>
+              <td><div class="site-contact">Mike Johnson</div><div class="site-contact">(555) 111-2222</div></td>
+              <td><span class="site-notes">Gate code: 4455</span></td>
+              <td><span class="site-act" title="Edit">✎</span><span class="site-act del" title="Delete">🗑</span></td>
+            </tr>
+            <tr>
+              <td><span class="site-name">Warehouse B</span></td>
+              <td style="font-size:11px;color:var(--text-secondary);">789 Industrial Park, Springfield, IL 62705</td>
+              <td><div class="site-contact">Same as customer</div></td>
+              <td><span class="site-notes">Loading dock entrance, ask for security</span></td>
+              <td><span class="site-act" title="Edit">✎</span><span class="site-act del" title="Delete">🗑</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="sites-footer">Sites added here will be available for selection when creating Appointments, Estimates, and Jobs for this customer.</div>
+      </div>
+
+      <!-- BOTTOM-RIGHT: Lead Details -->
+      <div class="form-section">
+        <div class="form-section-title">📋 Lead Details</div>
+        <div class="form-section-subtitle">Description, priority, and notes</div>
+        <div class="form-group">
+          <label class="form-label">Lead Description</label>
+          <textarea class="form-input form-textarea" placeholder="Describe the lead, scope of work, or customer needs..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Lead Priority</label>
+          <select class="form-select">
+            <option>-- Select Priority --</option>
+            <option>🔴 Urgent</option>
+            <option>🟠 Medium</option>
+            <option>🟢 Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-input form-textarea" placeholder="Internal notes about this lead..."></textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="form-footer">
+      <a href="lead-manager.html" class="fb cancel">Cancel</a>
+      <a href="appointments.html" class="fb teal">Save & Schedule Appointment →</a>
+      <button class="fb primary">Save Lead</button>
+    </div>
+
+  </div>
+</div>
+
+
+<script>
+
+</script>
+</body>
+</html>

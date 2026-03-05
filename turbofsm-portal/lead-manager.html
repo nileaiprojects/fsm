@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Lead Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.12);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+
+/* ═══ SIDEBAR ═══ */
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-group{margin-bottom:20px}
+.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}
+.nav-item.active .ni{opacity:1}
+.nav-item .badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:600}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.storage-bar{margin-bottom:12px}
+.storage-bar .sl{font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px}
+.storage-bar .st{height:3px;background:rgba(255,255,255,0.08);border-radius:3px}
+.storage-bar .sf{height:100%;width:42%;background:var(--accent);border-radius:3px}
+.storage-bar a{font-size:11px;color:var(--accent);display:inline-block;margin-top:4px}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}
+.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.sidebar-logout{display:flex;align-items:center;gap:8px;padding:8px 12px;color:var(--sidebar-text);font-size:12px;cursor:pointer;border-radius:6px;transition:all var(--transition);margin-top:8px}
+.sidebar-logout:hover{background:rgba(220,53,69,0.15);color:var(--red)}
+
+/* ═══ MAIN ═══ */
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-left h1{font-size:17px;font-weight:600}
+.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;transition:all var(--transition);font-family:inherit}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600;padding:9px 20px;font-size:14px;border-radius:var(--radius)}
+.topbar-btn.primary:hover{background:var(--accent-hover)}
+.notif-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;position:relative;font-size:16px;cursor:pointer}
+.notif-btn .count{position:absolute;top:-4px;right:-4px;background:var(--red);color:#fff;font-size:9px;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid var(--surface)}
+.content{padding:22px 28px}
+
+/* ═══ KPI STRIP ═══ */
+.kpi-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.kpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 20px;position:relative;overflow:hidden;transition:all var(--transition);cursor:pointer}
+.kpi-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.kpi-card .kv{font-size:28px;font-weight:700;line-height:1.2}
+.kpi-card .kl{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.kpi-card .kdate{font-size:11px;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px}
+.kpi-card .ka{position:absolute;bottom:0;left:0;right:0;height:3px}
+
+/* ═══ FILTER BAR ═══ */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);width:300px;transition:border-color var(--transition)}
+.search-box:focus-within{border-color:var(--accent)}
+.search-box input{border:none;outline:none;font-family:inherit;font-size:14px;flex:1;background:transparent;width:100%;color:var(--text-primary)}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;background:var(--surface);border:1px solid var(--border);border-radius:20px;font-size:13px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:inherit}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip.active{background:var(--accent-light);border-color:var(--accent);color:var(--accent)}
+.chip .cnt{background:var(--bg);padding:1px 7px;border-radius:10px;font-size:11px;font-weight:600}
+.chip.active .cnt{background:var(--accent);color:#fff}
+
+/* ═══ TABLE ═══ */
+.table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+thead th{padding:12px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);text-align:left;background:var(--bg);border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border-light);transition:background var(--transition)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--surface-hover)}
+tbody td{padding:14px 16px;font-size:14px;vertical-align:middle;overflow:hidden}
+
+/* Lead cell — name + lead no on hover + description */
+.lead-cell .lc-name{font-weight:600;font-size:14.5px;display:flex;align-items:center;gap:6px}
+.lead-cell .lc-id{font-size:11px;color:var(--text-muted);font-weight:500;margin-top:2px;max-height:0;overflow:hidden;transition:max-height .2s ease,opacity .2s ease;opacity:0}
+tbody tr:hover .lead-cell .lc-id{max-height:18px;opacity:1}
+.lead-cell .lc-desc{font-size:12.5px;color:var(--text-secondary);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.source-tag{display:inline-block;font-size:9.5px;font-weight:600;padding:1px 6px;border-radius:10px;vertical-align:middle}
+.src-web{background:var(--accent-light);color:var(--accent)}
+.src-referral{background:var(--teal-light);color:var(--teal)}
+.src-phone{background:var(--orange-light);color:var(--orange)}
+.src-walkin{background:var(--green-light);color:var(--green)}
+
+/* Contact cell */
+.contact-cell .cc-phone{font-size:13.5px;font-weight:500;white-space:nowrap}
+.contact-cell .cc-email{font-size:12px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Address */
+.addr-cell{font-size:13px;color:var(--text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Status dropdown */
+.status-dropdown{position:relative;display:inline-block}
+.sd-select{appearance:none;border:none;background:transparent;font-size:11.5px;font-weight:600;font-family:inherit;cursor:pointer;padding:4px 24px 4px 11px;border-radius:20px;transition:all var(--transition);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%238e96a8' d='M5 7L1 3h8z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.sd-select:focus{outline:none;box-shadow:0 0 0 2px var(--accent-light)}
+.sd-select.st-new{background-color:var(--accent-light);color:var(--accent)}
+.sd-select.st-contacted{background-color:var(--teal-light);color:var(--teal)}
+.sd-select.st-followup{background-color:var(--orange-light);color:var(--orange)}
+.sd-select.st-estimate{background-color:var(--purple-light);color:var(--purple)}
+.sd-select.st-closed{background-color:var(--green-light);color:var(--green)}
+.sd-select.st-lost{background-color:var(--red-light);color:var(--red)}
+.sd-select.st-junk{background-color:#eee;color:#999}
+
+/* Row actions */
+.row-actions{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;opacity:1;transition:opacity var(--transition)}
+tbody tr:hover .row-actions{opacity:1}
+.ra{display:inline-flex;align-items:center;justify-content:center;height:28px;padding:0 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;font-size:12px;transition:all var(--transition);color:var(--text-secondary);white-space:nowrap;gap:3px;text-decoration:none;font-family:inherit}
+.ra:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.ra.teal:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
+.ra.ra-estimate{background:var(--purple-light);color:var(--purple);border-color:rgba(124,58,237,.2);font-weight:600}
+.ra.ra-estimate:hover{background:var(--purple);color:#fff;border-color:var(--purple)}
+
+/* Note bar */
+.note-bar{padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-top:18px;font-size:13px;color:var(--text-secondary);line-height:1.7}
+.note-bar strong{color:var(--text-primary)}
+
+/* ═══ NOTES DRAWER ═══ */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:500;display:none}
+.drawer-overlay.open{display:block}
+.notes-drawer{position:fixed;right:-460px;top:0;bottom:0;width:460px;background:var(--surface);box-shadow:-4px 0 24px rgba(0,0,0,0.12);z-index:600;transition:right 300ms ease;display:flex;flex-direction:column}
+.notes-drawer.open{right:0}
+.nd-header{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.nd-header h3{font-size:15px;font-weight:600}
+.nd-close{width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all var(--transition)}
+.nd-close:hover{background:var(--red-light);border-color:var(--red);color:var(--red)}
+.nd-body{flex:1;overflow-y:auto;padding:18px 22px}
+.nd-lead-info{padding:14px;background:var(--bg);border-radius:var(--radius);margin-bottom:16px}
+.nd-lead-info .nli-name{font-weight:600;font-size:14px}
+.nd-lead-info .nli-id{font-size:11px;color:var(--text-muted)}
+.nd-lead-info .nli-detail{font-size:12.5px;color:var(--text-secondary);margin-top:4px;line-height:1.5}
+.note-item{padding:12px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:8px}
+.note-item .ni-time{font-size:11px;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:4px}
+.note-item .ni-author{font-weight:600;color:var(--teal)}
+.note-item .ni-text{font-size:13px;line-height:1.5}
+.nd-input-area{padding:16px 22px;border-top:1px solid var(--border);display:flex;gap:8px}
+.nd-input-area textarea{flex:1;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;resize:none;height:42px;transition:border-color var(--transition)}
+.nd-input-area textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.nd-input-area button{padding:0 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;transition:background var(--transition)}
+.nd-input-area button:hover{background:var(--accent-hover)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar-bg);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:700;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all 300ms ease;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.kpi-card{animation:fadeUp .3s ease both}
+.kpi-card:nth-child(1){animation-delay:.04s}
+.kpi-card:nth-child(2){animation-delay:.08s}
+.kpi-card:nth-child(3){animation-delay:.12s}
+.kpi-card:nth-child(4){animation-delay:.16s}
+.filter-bar{animation:fadeUp .3s ease .18s both}
+.table-wrap{animation:fadeUp .35s ease .22s both}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item active"><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+<!-- SIDEBAR -->
+
+
+<!-- MAIN -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <h1>Lead Manager</h1>
+      <span class="t-sub">Central lead repository</span>
+    </div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">3</span></button>
+      <a href="lead-form.html" class="topbar-btn primary">+ Create Lead</a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi-card" data-filter="all"><div class="kv" style="color:var(--accent)">6</div><div class="kl">Total Leads</div><div class="kdate">📋 All active</div><div class="ka" style="background:var(--accent)"></div></div>
+      <div class="kpi-card" data-filter="hot"><div class="kv" style="color:var(--orange)">3</div><div class="kl">Needs Follow Up</div><div class="kdate">🔥 New + Follow Up</div><div class="ka" style="background:var(--orange)"></div></div>
+      <div class="kpi-card" data-filter="estimate"><div class="kv" style="color:var(--purple)">1</div><div class="kl">Estimate Sent</div><div class="kdate">📄 Awaiting response</div><div class="ka" style="background:var(--purple)"></div></div>
+      <div class="kpi-card" data-filter="closed"><div class="kv" style="color:var(--green)">1</div><div class="kl">Closed / Won</div><div class="kdate">✓ Converted to job</div><div class="ka" style="background:var(--green)"></div></div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchInput" placeholder="Search by customer, phone, email, address..."></div>
+      <button class="chip active" data-status="all">All <span class="cnt">6</span></button>
+      <button class="chip" data-status="new">New <span class="cnt">1</span></button>
+      <button class="chip" data-status="contacted">Contacted</button>
+      <button class="chip" data-status="followup">Follow Up <span class="cnt">2</span></button>
+      <button class="chip" data-status="estimate">Estimate Sent <span class="cnt">1</span></button>
+      <button class="chip" data-status="closed">Closed <span class="cnt">1</span></button>
+      <button class="chip" data-status="lost">Lost</button>
+      <button class="chip" data-status="junk">Junk <span class="cnt">1</span></button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <colgroup>
+          <col style="width:24%">
+          <col style="width:14%">
+          <col style="width:14%">
+          <col style="width:9%">
+          <col style="width:11%">
+          <col style="width:28%">
+        </colgroup>
+        <thead><tr><th>Lead</th><th>Contact</th><th>Address</th><th>Date</th><th>Status</th><th style="min-width:230px">Actions</th></tr></thead>
+        <tbody id="leadBody">
+
+          <tr data-status="new" data-search="ld-20260215-0001 john smith 555-123-4567 john@email.com austin kitchen pipe replacement">
+            <td class="lead-cell"><div class="lc-name">John Smith <span class="source-tag src-web">Web</span></div><div class="lc-id">LD-20260215-0001</div><div class="lc-desc">Kitchen pipe replacement needed urgently</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 123-4567</div><div class="cc-email">john@email.com</div></td>
+            <td class="addr-cell">123 Oak St, Austin TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 15</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-new" onchange="updateStatus(this)"><option selected data-cls="new">New</option><option data-cls="contacted">Contacted</option><option data-cls="followup">Follow Up</option><option data-cls="estimate">Estimate Sent</option><option data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0001')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+          <tr data-status="followup" data-search="ld-20260214-0002 sarah johnson 555-234-5678 sarah@email.com dallas bathroom renovation">
+            <td class="lead-cell"><div class="lc-name">Sarah Johnson <span class="source-tag src-referral">Referral</span></div><div class="lc-id">LD-20260214-0002</div><div class="lc-desc">Bathroom renovation plumbing work</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 234-5678</div><div class="cc-email">sarah@email.com</div></td>
+            <td class="addr-cell">456 Pine Ave, Dallas TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 14</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-followup" onchange="updateStatus(this)"><option data-cls="new">New</option><option data-cls="contacted">Contacted</option><option selected data-cls="followup">Follow Up</option><option data-cls="estimate">Estimate Sent</option><option data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0002')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+          <tr data-status="estimate" data-search="ld-20260213-0003 mike williams 555-345-6789 mike@email.com houston water heater">
+            <td class="lead-cell"><div class="lc-name">Mike Williams <span class="source-tag src-phone">Phone</span></div><div class="lc-id">LD-20260213-0003</div><div class="lc-desc">Water heater installation & gas line</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 345-6789</div><div class="cc-email">mike@email.com</div></td>
+            <td class="addr-cell">789 Elm Dr, Houston TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 13</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-estimate" onchange="updateStatus(this)"><option data-cls="new">New</option><option data-cls="contacted">Contacted</option><option data-cls="followup">Follow Up</option><option selected data-cls="estimate">Estimate Sent</option><option data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0003')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+          <tr data-status="closed" data-search="ld-20260210-0004 lisa brown 555-456-7890 lisa@email.com san antonio re-piping">
+            <td class="lead-cell"><div class="lc-name">Lisa Brown <span class="source-tag src-web">Web</span></div><div class="lc-id">LD-20260210-0004</div><div class="lc-desc">Full house re-piping project</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 456-7890</div><div class="cc-email">lisa@email.com</div></td>
+            <td class="addr-cell">321 Maple Ln, San Antonio TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 10</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-closed" onchange="updateStatus(this)"><option data-cls="new">New</option><option data-cls="contacted">Contacted</option><option data-cls="followup">Follow Up</option><option data-cls="estimate">Estimate Sent</option><option selected data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0004')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+          <tr data-status="followup" data-search="ld-20260208-0005 tom davis 555-567-8901 tom@email.com fort worth emergency leak">
+            <td class="lead-cell"><div class="lc-name">Tom Davis <span class="source-tag src-walkin">Walk-in</span></div><div class="lc-id">LD-20260208-0005</div><div class="lc-desc">Emergency leak repair in basement</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 567-8901</div><div class="cc-email">tom@email.com</div></td>
+            <td class="addr-cell">654 Cedar Ct, Fort Worth TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 8</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-followup" onchange="updateStatus(this)"><option data-cls="new">New</option><option data-cls="contacted">Contacted</option><option selected data-cls="followup">Follow Up</option><option data-cls="estimate">Estimate Sent</option><option data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0005')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+          <tr data-status="junk" data-search="ld-20260205-0006 amy wilson 555-678-9012 amy@email.com plano spam">
+            <td class="lead-cell"><div class="lc-name">Amy Wilson <span class="source-tag src-web">Web</span></div><div class="lc-id">LD-20260205-0006</div><div class="lc-desc">Spam inquiry — no valid project</div></td>
+            <td class="contact-cell"><div class="cc-phone">(555) 678-9012</div><div class="cc-email">amy@email.com</div></td>
+            <td class="addr-cell">987 Birch Way, Plano TX</td>
+            <td><div style="font-weight:500;font-size:13px">Feb 5</div><div style="font-size:11.5px;color:var(--text-muted)">2026</div></td>
+            <td><div class="status-dropdown"><select class="sd-select st-junk" onchange="updateStatus(this)"><option data-cls="new">New</option><option data-cls="contacted">Contacted</option><option data-cls="followup">Follow Up</option><option data-cls="estimate">Estimate Sent</option><option data-cls="closed">Closed</option><option data-cls="lost">Lost</option><option selected data-cls="junk">Junk</option></select></div></td>
+            <td><div class="row-actions"><a href="lead-form.html" class="ra">✎ Edit</a><button class="ra" onclick="openNotes('0006')">📝 Note</button><a href="create-appointment.html" class="ra teal">📅 Appt</a><a href="create-estimate.html" class="ra ra-estimate">📄 Estimate</a></div></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note-bar"><strong>📝 Note:</strong>&nbsp; Closed leads automatically become Customer records and appear in Job Creation.</div>
+  </div>
+</div>
+
+<!-- NOTES DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeNotes()"></div>
+<div class="notes-drawer" id="notesDrawer">
+  <div class="nd-header"><h3>📝 Lead Notes</h3><button class="nd-close" onclick="closeNotes()">✕</button></div>
+  <div class="nd-body" id="ndBody"></div>
+  <div class="nd-input-area"><textarea id="noteInput" placeholder="Add a note..."></textarea><button onclick="addNote()">Add</button></div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+const leadData={
+  '0001':{name:'John Smith',id:'LD-20260215-0001',phone:'(555) 123-4567',email:'john@email.com',addr:'123 Oak St, Austin TX'},
+  '0002':{name:'Sarah Johnson',id:'LD-20260214-0002',phone:'(555) 234-5678',email:'sarah@email.com',addr:'456 Pine Ave, Dallas TX'},
+  '0003':{name:'Mike Williams',id:'LD-20260213-0003',phone:'(555) 345-6789',email:'mike@email.com',addr:'789 Elm Dr, Houston TX'},
+  '0004':{name:'Lisa Brown',id:'LD-20260210-0004',phone:'(555) 456-7890',email:'lisa@email.com',addr:'321 Maple Ln, San Antonio TX'},
+  '0005':{name:'Tom Davis',id:'LD-20260208-0005',phone:'(555) 567-8901',email:'tom@email.com',addr:'654 Cedar Ct, Fort Worth TX'},
+  '0006':{name:'Amy Wilson',id:'LD-20260205-0006',phone:'(555) 678-9012',email:'amy@email.com',addr:'987 Birch Way, Plano TX'}
+};
+const notesData={
+  '0001':[{author:'John Smith',text:'Spoke with customer about kitchen pipe issue. Needs replacement of main line under sink + dishwasher connection.',time:'Feb 15, 2026 · 10:30 AM'}],
+  '0002':[{author:'John Smith',text:'Initial call — customer wants full bathroom renovation. Needs site survey before estimate.',time:'Feb 14, 2026 · 3:15 PM'},{author:'Sarah Lee',text:'Called back to schedule follow-up. Customer prefers mornings.',time:'Feb 16, 2026 · 9:00 AM'}],
+  '0003':[{author:'John Smith',text:'Customer needs 50-gal water heater replacement. Existing unit is gas. Also needs gas line extension.',time:'Feb 13, 2026 · 11:00 AM'},{author:'John Smith',text:'Estimate #EST-20260213-0003 sent for $5,750. Awaiting customer response.',time:'Feb 14, 2026 · 4:00 PM'}],
+  '0004':[{author:'John Smith',text:'Lisa approved the estimate. Full house re-pipe scheduled for next week. Job created.',time:'Feb 12, 2026 · 2:00 PM'}],
+  '0005':[{author:'John Smith',text:'Emergency call — basement flooding from burst pipe. Needs urgent follow-up to assess damage.',time:'Feb 8, 2026 · 8:00 AM'}],
+  '0006':[]
+};
+let currentLead=null;
+
+document.querySelectorAll('.chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const s=c.dataset.status;document.querySelectorAll('#leadBody tr').forEach(r=>{r.style.display=(s==='all'||r.dataset.status===s)?'':'none'})})});
+
+document.querySelectorAll('.kpi-card').forEach(c=>{c.addEventListener('click',()=>{const f=c.dataset.filter;if(!f)return;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.dataset.status===(f==='all'?'all':f==='hot'?'all':f)));document.querySelectorAll('#leadBody tr').forEach(r=>{if(f==='all'){r.style.display='';return}if(f==='hot'){r.style.display=(r.dataset.status==='new'||r.dataset.status==='followup')?'':'none'}else{r.style.display=r.dataset.status===f?'':'none'}})})});
+
+document.getElementById('searchInput').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#leadBody tr').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});
+
+function updateStatus(sel){const cls=sel.options[sel.selectedIndex].dataset.cls;sel.className='sd-select st-'+cls;sel.closest('tr').dataset.status=cls;showToast('Status updated to '+sel.options[sel.selectedIndex].text)}
+
+function openNotes(id){currentLead=id;const lead=leadData[id],notes=notesData[id]||[],body=document.getElementById('ndBody');let html=`<div class="nd-lead-info"><div class="nli-name">${lead.name}</div><div class="nli-id">${lead.id}</div><div class="nli-detail">${lead.phone} · ${lead.email}<br>${lead.addr}</div></div>`;if(!notes.length){html+='<div style="text-align:center;padding:30px 0;color:var(--text-muted);font-size:13px">No notes yet. Add the first note below.</div>'}else{notes.forEach(n=>{html+=`<div class="note-item"><div class="ni-time"><span class="ni-author">${n.author}</span> · ${n.time}</div><div class="ni-text">${n.text}</div></div>`})}body.innerHTML=html;document.getElementById('notesDrawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.getElementById('noteInput').value=''}
+
+function closeNotes(){document.getElementById('notesDrawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');currentLead=null}
+
+function addNote(){const input=document.getElementById('noteInput'),text=input.value.trim();if(!text||!currentLead)return;const now=new Date(),time=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});if(!notesData[currentLead])notesData[currentLead]=[];notesData[currentLead].push({author:'John Smith',text:text,time:time});openNotes(currentLead);showToast('Note added')}
+
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
+</script>
+
+<script>
+
+const leadData={
+  '0001':{name:'John Smith',id:'LD-20260215-0001',phone:'(555) 123-4567',email:'john@email.com',addr:'123 Oak St, Austin TX'},
+  '0002':{name:'Sarah Johnson',id:'LD-20260214-0002',phone:'(555) 234-5678',email:'sarah@email.com',addr:'456 Pine Ave, Dallas TX'},
+  '0003':{name:'Mike Williams',id:'LD-20260213-0003',phone:'(555) 345-6789',email:'mike@email.com',addr:'789 Elm Dr, Houston TX'},
+  '0004':{name:'Lisa Brown',id:'LD-20260210-0004',phone:'(555) 456-7890',email:'lisa@email.com',addr:'321 Maple Ln, San Antonio TX'},
+  '0005':{name:'Tom Davis',id:'LD-20260208-0005',phone:'(555) 567-8901',email:'tom@email.com',addr:'654 Cedar Ct, Fort Worth TX'},
+  '0006':{name:'Amy Wilson',id:'LD-20260205-0006',phone:'(555) 678-9012',email:'amy@email.com',addr:'987 Birch Way, Plano TX'}
+};
+const notesData={
+  '0001':[{author:'John Smith',text:'Spoke with customer about kitchen pipe issue. Needs replacement of main line under sink + dishwasher connection.',time:'Feb 15, 2026 · 10:30 AM'}],
+  '0002':[{author:'John Smith',text:'Initial call — customer wants full bathroom renovation. Needs site survey before estimate.',time:'Feb 14, 2026 · 3:15 PM'},{author:'Sarah Lee',text:'Called back to schedule follow-up. Customer prefers mornings.',time:'Feb 16, 2026 · 9:00 AM'}],
+  '0003':[{author:'John Smith',text:'Customer needs 50-gal water heater replacement. Existing unit is gas. Also needs gas line extension.',time:'Feb 13, 2026 · 11:00 AM'},{author:'John Smith',text:'Estimate #EST-20260213-0003 sent for $5,750. Awaiting customer response.',time:'Feb 14, 2026 · 4:00 PM'}],
+  '0004':[{author:'John Smith',text:'Lisa approved the estimate. Full house re-pipe scheduled for next week. Job created.',time:'Feb 12, 2026 · 2:00 PM'}],
+  '0005':[{author:'John Smith',text:'Emergency call — basement flooding from burst pipe. Needs urgent follow-up to assess damage.',time:'Feb 8, 2026 · 8:00 AM'}],
+  '0006':[]
+};
+let currentLead=null;
+
+document.querySelectorAll('.chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const s=c.dataset.status;document.querySelectorAll('#leadBody tr').forEach(r=>{r.style.display=(s==='all'||r.dataset.status===s)?'':'none'})})});
+
+document.querySelectorAll('.kpi-card').forEach(c=>{c.addEventListener('click',()=>{const f=c.dataset.filter;if(!f)return;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('active',x.dataset.status===(f==='all'?'all':f==='hot'?'all':f)));document.querySelectorAll('#leadBody tr').forEach(r=>{if(f==='all'){r.style.display='';return}if(f==='hot'){r.style.display=(r.dataset.status==='new'||r.dataset.status==='followup')?'':'none'}else{r.style.display=r.dataset.status===f?'':'none'}})})});
+
+document.getElementById('searchInput').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#leadBody tr').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});
+
+function updateStatus(sel){const cls=sel.options[sel.selectedIndex].dataset.cls;sel.className='sd-select st-'+cls;sel.closest('tr').dataset.status=cls;showToast('Status updated to '+sel.options[sel.selectedIndex].text)}
+
+function openNotes(id){currentLead=id;const lead=leadData[id],notes=notesData[id]||[],body=document.getElementById('ndBody');let html=`<div class="nd-lead-info"><div class="nli-name">${lead.name}</div><div class="nli-id">${lead.id}</div><div class="nli-detail">${lead.phone} · ${lead.email}<br>${lead.addr}</div></div>`;if(!notes.length){html+='<div style="text-align:center;padding:30px 0;color:var(--text-muted);font-size:13px">No notes yet. Add the first note below.</div>'}else{notes.forEach(n=>{html+=`<div class="note-item"><div class="ni-time"><span class="ni-author">${n.author}</span> · ${n.time}</div><div class="ni-text">${n.text}</div></div>`})}body.innerHTML=html;document.getElementById('notesDrawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.getElementById('noteInput').value=''}
+
+function closeNotes(){document.getElementById('notesDrawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');currentLead=null}
+
+function addNote(){const input=document.getElementById('noteInput'),text=input.value.trim();if(!text||!currentLead)return;const now=new Date(),time=now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' · '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});if(!notesData[currentLead])notesData[currentLead]=[];notesData[currentLead].push({author:'John Smith',text:text,time:time});openNotes(currentLead);showToast('Note added')}
+
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
+
+</script>
+</body>
+</html>

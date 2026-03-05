@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Floor Plan Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.fp-layout{display:grid;grid-template-columns:260px 1fr 280px;gap:0;height:calc(100vh - 56px)}
+.fp-left{background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;padding:0}
+.fp-canvas{background:#e8ecf0;position:relative;overflow:hidden}
+.fp-right{background:var(--surface);border-left:1px solid var(--border);overflow-y:auto;padding:16px}
+.fp-toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border)}
+.fp-toolbar button{padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:12px;cursor:pointer;transition:all var(--transition);color:var(--text-secondary);font-family:inherit}
+.fp-toolbar button:hover{border-color:var(--accent);color:var(--accent)}
+.fp-toolbar button.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.art-section{border-bottom:1px solid var(--border-light)}
+.art-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-secondary);transition:background var(--transition)}
+.art-header:hover{background:var(--surface-hover)}
+.art-header.open{color:var(--accent)}
+.art-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;padding:6px 16px 12px}
+.art-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 2px;border-radius:var(--radius-sm);cursor:grab;transition:all var(--transition);font-size:9px;color:var(--text-muted);text-align:center}
+.art-item:hover{background:var(--accent-light);color:var(--accent)}
+.art-item .ai{font-size:18px}
+.canvas-room{position:absolute;background:rgba(255,255,255,0.9);border:2px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:11px;color:var(--text-secondary);font-weight:500}
+.canvas-room:hover{border-color:var(--accent);z-index:2}
+.fp-info{padding:0 0 10px;border-bottom:1px solid var(--border-light);margin-bottom:10px}
+.fp-info-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.fp-info-row .fi-label{color:var(--text-muted)}.fp-info-row .fi-val{font-weight:600}
+.fp-field{margin-bottom:10px}
+.fp-field label{display:block;font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+.fp-field input,.fp-field select{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit}
+.fp-statusbar{position:absolute;bottom:0;left:0;right:0;padding:6px 16px;background:rgba(255,255,255,0.9);border-top:1px solid var(--border);font-size:11px;color:var(--text-muted);display:flex;gap:16px}
+.fp-premium{padding:10px 16px;background:var(--orange-light);border-bottom:1px solid rgba(230,126,34,.15);font-size:11.5px;color:var(--orange);display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item"><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main" style="display:flex;flex-direction:column">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Floor Plan Builder</h1><span class="t-sub">Create & manage floor plans</span></div>
+    <div class="topbar-right">
+      <button class="topbar-btn">+ New Floor Plan</button>
+      <div style="display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden"><button style="padding:6px 12px;border:none;background:var(--accent);color:#fff;font-size:12px;font-weight:600;cursor:pointer">2D</button><button style="padding:6px 12px;border:none;background:var(--surface);color:var(--text-muted);font-size:12px;font-weight:600;cursor:pointer">3D</button></div>
+      <button class="topbar-btn">🖶 Export</button>
+      <button class="topbar-btn">🖨 Print</button>
+      <a href="profile-presentation.html" class="topbar-btn">💾 Save to Presentation</a>
+    </div>
+  </header>
+  <div class="fp-premium">★ <strong>Premium Feature:</strong>&nbsp; Floor Plan Builder is available as an add-on. <a href="pricing.html" style="color:var(--orange);font-weight:600;margin-left:4px">View Plans</a></div>
+  <div class="fp-layout">
+    <!-- Left: Artifacts -->
+    <div class="fp-left">
+      <div style="padding:12px 16px;font-size:14px;font-weight:600;border-bottom:1px solid var(--border)">📦 Artifacts</div>
+      <div class="art-section"><div class="art-header open" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none'">▼ Structural <span style="font-size:11px;color:var(--text-muted);font-weight:400">10</span></div><div class="art-grid"><div class="art-item"><span class="ai">█</span>Wall</div><div class="art-item"><span class="ai">🚪</span>Door</div><div class="art-item"><span class="ai">⬜</span>Window</div><div class="art-item"><span class="ai">🔼</span>Stairs</div><div class="art-item"><span class="ai">▣</span>Column</div><div class="art-item"><span class="ai">▦</span>Partition</div><div class="art-item"><span class="ai">△</span>Roof</div><div class="art-item"><span class="ai">▬</span>Beam</div><div class="art-item"><span class="ai">█</span>Slab</div><div class="art-item" style="color:var(--accent)"><span class="ai">+</span>Custom</div></div></div>
+      <div class="art-section"><div class="art-header" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none'">▶ Plumbing <span style="font-size:11px;color:var(--text-muted);font-weight:400">13</span></div><div class="art-grid" style="display:none"><div class="art-item"><span class="ai">🚿</span>Sink</div><div class="art-item"><span class="ai">🚽</span>Toilet</div><div class="art-item"><span class="ai">🛁</span>Bathtub</div><div class="art-item"><span class="ai">🚿</span>Shower</div><div class="art-item"><span class="ai">♨</span>Water Htr</div><div class="art-item"><span class="ai">━</span>Pipes</div><div class="art-item"><span class="ai">💧</span>Valve</div><div class="art-item"><span class="ai">○</span>Drain</div><div class="art-item" style="color:var(--accent)"><span class="ai">+</span>Custom</div></div></div>
+      <div class="art-section"><div class="art-header" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none'">▶ HVAC <span style="font-size:11px;color:var(--text-muted);font-weight:400">11</span></div><div class="art-grid" style="display:none"><div class="art-item"><span class="ai">❄</span>AC Unit</div><div class="art-item"><span class="ai">◫</span>Vent</div><div class="art-item"><span class="ai">▬</span>Duct</div><div class="art-item"><span class="ai">🌡</span>Thermo</div><div class="art-item"><span class="ai">🔥</span>Furnace</div><div class="art-item" style="color:var(--accent)"><span class="ai">+</span>Custom</div></div></div>
+      <div class="art-section"><div class="art-header" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none'">▶ Electrical <span style="font-size:11px;color:var(--text-muted);font-weight:400">12</span></div><div class="art-grid" style="display:none"><div class="art-item"><span class="ai">🔌</span>Outlet</div><div class="art-item"><span class="ai">⏻</span>Switch</div><div class="art-item"><span class="ai">💡</span>Light</div><div class="art-item"><span class="ai">⚡</span>Panel</div><div class="art-item" style="color:var(--accent)"><span class="ai">+</span>Custom</div></div></div>
+      <div class="art-section"><div class="art-header" onclick="this.classList.toggle('open');this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'grid':'none'">▶ Furniture <span style="font-size:11px;color:var(--text-muted);font-weight:400">12</span></div><div class="art-grid" style="display:none"><div class="art-item"><span class="ai">🪑</span>Chair</div><div class="art-item"><span class="ai">🖵</span>Table</div><div class="art-item"><span class="ai">🛌</span>Bed</div><div class="art-item"><span class="ai">💺</span>Sofa</div><div class="art-item" style="color:var(--accent)"><span class="ai">+</span>Custom</div></div></div>
+      <div style="padding:12px 16px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border)">58 artifacts · 2 custom<br><a href="artifact-library.html" style="color:var(--accent);font-size:11px">⚙ Manage Artifact Library</a></div>
+    </div>
+    <!-- Center: Canvas -->
+    <div class="fp-canvas">
+      <div class="fp-toolbar">
+        <button title="Select">✋</button><button title="Draw Wall">█</button><button title="Measure">↔</button><button title="Text">T</button>
+        <span style="width:1px;height:16px;background:var(--border);margin:0 4px"></span>
+        <button title="Undo">↶</button><button title="Redo">↷</button>
+        <span style="width:1px;height:16px;background:var(--border);margin:0 4px"></span>
+        <label style="font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer"><input type="checkbox" checked> Snap to Grid</label>
+        <span style="flex:1"></span>
+        <button>−</button><span style="font-size:12px;font-weight:600;padding:0 6px">100%</span><button>+</button><button>⊞</button>
+      </div>
+      <div style="position:relative;width:100%;height:100%">
+        <div class="canvas-room" style="left:40px;top:40px;width:240px;height:200px"><div style="font-size:12px;font-weight:600">Kitchen</div><div style="font-size:10px;color:var(--text-muted)">12 × 10 ft · 120 sq ft</div></div>
+        <div class="canvas-room" style="left:280px;top:40px;width:160px;height:200px;border-color:var(--accent)"><div style="font-size:12px;font-weight:600">Bathroom</div><div style="font-size:10px;color:var(--text-muted)">8 × 10 ft · 80 sq ft</div></div>
+        <div class="canvas-room" style="left:40px;top:260px;width:400px;height:180px"><div style="font-size:12px;font-weight:600">Living Room</div><div style="font-size:10px;color:var(--text-muted)">14 × 12 ft · 168 sq ft</div></div>
+      </div>
+      <div class="fp-statusbar">
+        <span>Zoom: 100%</span><span>|</span><span>Grid: 1 ft</span><span>|</span><span><strong>Total Area: 368 sq ft</strong></span><span>|</span><span>3 Rooms</span><span>|</span><span>Selected: Bathroom</span>
+      </div>
+    </div>
+    <!-- Right: Properties -->
+    <div class="fp-right">
+      <div style="font-size:14px;font-weight:600;margin-bottom:12px">📄 Floor Plan</div>
+      <div class="fp-field"><label>Title</label><input type="text" value="Bathroom Remodel — 1st Floor"></div>
+      <div class="fp-field"><label>Customer</label><input type="text" value="John Smith" readonly style="background:var(--bg)"></div>
+      <div class="fp-field"><label>Linked Estimate</label><select><option selected>EST-20260215-0001</option><option>None (Independent)</option></select></div>
+      <div class="fp-field"><label>Notes</label><textarea style="width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;min-height:60px;font-family:inherit;resize:vertical">First floor layout for plumbing estimate</textarea></div>
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px">
+        <div style="font-size:14px;font-weight:600;margin-bottom:10px">🏠 Room: Bathroom</div>
+        <div class="fp-field"><label>Room Name</label><input type="text" value="Bathroom"></div>
+        <div class="fp-info"><div class="fp-info-row"><span class="fi-label">Area</span><span class="fi-val">80 sq ft</span></div><div class="fp-info-row"><span class="fi-label">Perimeter</span><span class="fi-val">36 ft</span></div></div>
+        <div class="fp-field"><label>Floor Type</label><select><option selected>Tile</option><option>Hardwood</option><option>Carpet</option><option>Vinyl</option></select></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

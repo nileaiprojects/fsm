@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Job Detail</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.12);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}.nav-group{margin-bottom:20px}.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}.nav-item.active .ni{opacity:1}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.main{margin-left:244px;flex:1;min-height:100vh}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}.topbar-left h1{font-size:17px;font-weight:600}.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;transition:all var(--transition);font-family:inherit;text-decoration:none}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.topbar-btn.primary:hover{background:var(--accent-hover)}
+.content{padding:22px 28px}
+
+/* Status bar */
+.jsb{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 24px;margin-bottom:18px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.jsb-item{display:flex;flex-direction:column;gap:2px}
+.jsb-label{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px}
+.jsb-value{font-size:14px;font-weight:600}
+.status-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:600}
+.st-in-progress{background:var(--orange-light);color:var(--orange)}
+
+/* Tabs */
+.tab-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:18px}
+.tab{padding:12px 20px;font-size:13.5px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all var(--transition)}
+.tab:hover{color:var(--accent)}.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.tab-panel{display:none}.tab-panel.active{display:block;animation:fadeUp .25s ease}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:16px}
+.card-title{font-size:14px;font-weight:600;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.ct-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px}
+
+/* Day toggle for attendance */
+.day-tabs{display:flex;gap:6px;margin-bottom:14px}
+.day-tab{padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:600;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);font-family:inherit;background:var(--surface)}
+.day-tab:hover{border-color:var(--accent);color:var(--accent)}.day-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Attendance table */
+.att-table{width:100%;border-collapse:collapse}
+.att-table th{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg)}
+.att-table td{padding:10px 12px;border-bottom:1px solid var(--border-light);font-size:13px}
+.att-status{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.att-present{background:var(--green-light);color:var(--green)}.att-absent{background:var(--red-light);color:var(--red)}.att-late{background:var(--orange-light);color:var(--orange)}
+.att-loc{font-size:11px;color:var(--text-muted);margin-top:2px;display:flex;align-items:center;gap:3px}
+
+/* Checklist with multi-day */
+.cl-day-group{margin-bottom:16px}
+.cl-day-label{font-size:12px;font-weight:600;color:var(--text-secondary);padding:6px 0;border-bottom:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.check-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.check-item:last-child{border-bottom:none}
+.check-box{width:20px;height:20px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;color:transparent;cursor:pointer;transition:all var(--transition);flex-shrink:0}
+.check-box.checked{border-color:var(--green);background:var(--green);color:#fff}
+.check-text{font-size:13.5px;flex:1}.check-text.done{text-decoration:line-through;color:var(--text-muted)}
+.check-who{font-size:11px;color:var(--teal);font-weight:500}
+
+/* Notes */
+.note-item{padding:12px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius);margin-bottom:8px}
+.note-item .ni-meta{font-size:11px;color:var(--text-muted);margin-bottom:4px}.note-item .ni-meta strong{color:var(--teal)}
+.note-item .ni-text{font-size:13px;line-height:1.5}
+
+/* Documents */
+.doc-item{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);margin-bottom:6px}
+.doc-item .di-icon{font-size:20px;flex-shrink:0}.doc-item .di-name{font-weight:600;font-size:13px}.doc-item .di-size{font-size:11px;color:var(--text-muted)}
+
+/* Estimate mini */
+.est-mini{padding:16px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius)}
+.em-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border-light)}.em-row:last-child{border-bottom:none}
+.em-label{color:var(--text-secondary)}.em-val{font-weight:600}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item active"><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><a href="jobs-board.html" style="font-size:14px;color:var(--text-muted);margin-right:4px">←</a><h1>Job Detail</h1><span class="t-sub">JOB-20260210-004 · John Smith</span></div>
+    <div class="topbar-right"><a href="job-invoice.html" class="topbar-btn">💰 Invoice</a><a href="job-cost-sheet.html" class="topbar-btn">📊 Cost Sheet</a><a href="create-job.html" class="topbar-btn">✎ Edit Job</a></div>
+  </header>
+
+  <div class="content">
+    <div class="jsb">
+      <div class="jsb-item"><div class="jsb-label">Job ID</div><div class="jsb-value">JOB-20260210-004</div></div>
+      <div class="jsb-item"><div class="jsb-label">Customer</div><div class="jsb-value">John Smith</div></div>
+      <div class="jsb-item"><div class="jsb-label">Site</div><div class="jsb-value" style="font-size:13px">123 Oak St, Austin TX</div></div>
+      <div class="jsb-item"><div class="jsb-label">Schedule</div><div class="jsb-value">Mar 5 – 7, 2026</div></div>
+      <div class="jsb-item"><div class="jsb-label">Status</div><span class="status-pill st-in-progress">● In Progress</span></div>
+      <div class="jsb-item"><div class="jsb-label">Value</div><div class="jsb-value" style="color:var(--accent)">$8,500</div></div>
+      <div class="jsb-item" style="margin-left:auto"><div class="jsb-label">Crew</div><div style="display:flex"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:600">JR</span><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:600;margin-left:-6px">CM</span></div></div>
+    </div>
+
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('attendance',this)">Attendance</div>
+      <div class="tab" onclick="switchTab('checklist',this)">Checklist</div>
+      <div class="tab" onclick="switchTab('notes',this)">Notes & Remarks</div>
+      <div class="tab" onclick="switchTab('documents',this)">Documents</div>
+      <div class="tab" onclick="switchTab('estimate',this)">Linked Estimate</div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="tab-panel active" id="tab-attendance">
+      <div class="card">
+        <div class="card-title">👷 Crew Attendance</div>
+        <div class="day-tabs">
+          <button class="day-tab active" onclick="switchDay(this,'day1')">Day 1 · Mar 5</button>
+          <button class="day-tab" onclick="switchDay(this,'day2')">Day 2 · Mar 6</button>
+          <button class="day-tab" onclick="switchDay(this,'day3')">Day 3 · Mar 7</button>
+        </div>
+        <div id="day1">
+          <table class="att-table">
+            <thead><tr><th>Crew Member</th><th>Check-in</th><th>Location</th><th>Check-out</th><th>Hours</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">James Rodriguez<div style="font-size:11px;color:var(--text-muted);font-weight:400">Master Plumber (Lead)</div></td><td>8:02 AM</td><td><div class="att-loc">📍 123 Oak St, Austin</div><div style="font-size:10px;color:var(--green)">✓ Within job site radius</div></td><td>4:45 PM</td><td style="font-weight:600">8h 43m</td><td><span class="att-status att-present">✓ Present</span></td></tr>
+              <tr><td style="font-weight:600">Carlos Mendez<div style="font-size:11px;color:var(--text-muted);font-weight:400">Journeyman Plumber</div></td><td>8:35 AM</td><td><div class="att-loc">📍 123 Oak St, Austin</div><div style="font-size:10px;color:var(--orange)">⚠ 35 min late</div></td><td>4:45 PM</td><td style="font-weight:600">8h 10m</td><td><span class="att-status att-late">⏱ Late</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="day2" style="display:none">
+          <table class="att-table">
+            <thead><tr><th>Crew Member</th><th>Check-in</th><th>Location</th><th>Check-out</th><th>Hours</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-weight:600">James Rodriguez<div style="font-size:11px;color:var(--text-muted);font-weight:400">Master Plumber (Lead)</div></td><td>7:58 AM</td><td><div class="att-loc">📍 123 Oak St, Austin</div><div style="font-size:10px;color:var(--green)">✓ Within job site radius</div></td><td>5:02 PM</td><td style="font-weight:600">9h 04m</td><td><span class="att-status att-present">✓ Present</span></td></tr>
+              <tr><td style="font-weight:600">Carlos Mendez<div style="font-size:11px;color:var(--text-muted);font-weight:400">Journeyman Plumber</div></td><td colspan="4" style="text-align:center;color:var(--red);font-weight:600">Did not check in</td><td><span class="att-status att-absent">✕ Absent</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="day3" style="display:none"><div style="text-align:center;padding:30px 0;color:var(--text-muted)">Day 3 has not started yet.</div></div>
+      </div>
+    </div>
+
+    <!-- CHECKLIST -->
+    <div class="tab-panel" id="tab-checklist">
+      <div class="card">
+        <div class="card-title">✅ Job Checklist <span class="ct-badge" style="background:var(--accent-light);color:var(--accent)">3 of 5 completed</span></div>
+        <div class="cl-day-group">
+          <div class="cl-day-label">📅 Day 1 — Mar 5</div>
+          <div class="check-item"><div class="check-box checked">✓</div><div class="check-text done">Shut off main water supply</div><div class="check-who">JR · 8:15 AM</div></div>
+          <div class="check-item"><div class="check-box checked">✓</div><div class="check-text done">Remove old piping from kitchen wall</div><div class="check-who">CM · 10:30 AM</div></div>
+        </div>
+        <div class="cl-day-group">
+          <div class="cl-day-label">📅 Day 2 — Mar 6</div>
+          <div class="check-item"><div class="check-box checked">✓</div><div class="check-text done">Install new PEX lines to kitchen sink</div><div class="check-who">JR · 2:00 PM</div></div>
+          <div class="check-item"><div class="check-box"><span style="color:transparent">✓</span></div><div class="check-text">Connect dishwasher supply line</div><div class="check-who" style="color:var(--text-muted)">Pending</div></div>
+        </div>
+        <div class="cl-day-group">
+          <div class="cl-day-label">📅 Day 3 — Mar 7</div>
+          <div class="check-item"><div class="check-box"><span style="color:transparent">✓</span></div><div class="check-text">Pressure test all connections & cleanup</div><div class="check-who" style="color:var(--text-muted)">Pending</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="tab-panel" id="tab-notes">
+      <div class="card">
+        <div class="card-title">📝 Notes & Remarks</div>
+        <div class="note-item"><div class="ni-meta"><strong>James Rodriguez</strong> · Mar 5, 2026 · 12:30 PM</div><div class="ni-text">Old copper piping under the sink was heavily corroded. Replaced with PEX as planned. Customer approved extra elbow joint ($45 additional).</div></div>
+        <div class="note-item"><div class="ni-meta"><strong>John Smith</strong> · Mar 5, 2026 · 9:00 AM</div><div class="ni-text">Job started on schedule. Crew arrived at 8 AM. Customer confirmed basement access. Gate code: 4455.</div></div>
+        <div style="margin-top:12px;display:flex;gap:8px"><textarea style="flex:1;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;resize:none;height:42px;font-family:inherit" placeholder="Add a note..."></textarea><button style="padding:0 18px;background:var(--accent);color:#fff;border:none;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer">Add</button></div>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS -->
+    <div class="tab-panel" id="tab-documents">
+      <div class="card">
+        <div class="card-title">📎 Documents & Photos</div>
+        <div class="doc-item"><span class="di-icon">🖼</span><div><div class="di-name">before-kitchen-pipes.jpg</div><div class="di-size">2.4 MB · Uploaded Mar 5</div></div></div>
+        <div class="doc-item"><span class="di-icon">🖼</span><div><div class="di-name">corroded-copper-detail.jpg</div><div class="di-size">1.8 MB · Uploaded Mar 5</div></div></div>
+        <div class="doc-item"><span class="di-icon">📄</span><div><div class="di-name">site-access-permit.pdf</div><div class="di-size">420 KB · Uploaded Mar 4</div></div></div>
+        <div class="doc-item"><span class="di-icon">📄</span><div><div class="di-name">floor-plan-kitchen.jpg</div><div class="di-size">1.8 MB · Admin uploaded</div></div></div>
+        <div style="margin-top:12px;padding:24px;border:2px dashed var(--border);border-radius:var(--radius);text-align:center;color:var(--text-muted);cursor:pointer"><div style="font-size:20px;margin-bottom:4px">☁</div><div style="font-size:12.5px">Drop files or click to upload</div></div>
+      </div>
+    </div>
+
+    <!-- ESTIMATE -->
+    <div class="tab-panel" id="tab-estimate">
+      <div class="card">
+        <div class="card-title">📄 Linked Estimate <a href="estimates.html" style="font-size:12px;color:var(--accent);font-weight:500;margin-left:auto">View Full Estimate →</a></div>
+        <div class="est-mini">
+          <div class="em-row"><span class="em-label">Estimate ID</span><span class="em-val">EST-20260215-0001</span></div>
+          <div class="em-row"><span class="em-label">Customer</span><span class="em-val">John Smith</span></div>
+          <div class="em-row"><span class="em-label">Created</span><span class="em-val">Feb 15, 2026</span></div>
+          <div class="em-row"><span class="em-label">Status</span><span class="em-val" style="color:var(--green)">Approved</span></div>
+          <div class="em-row"><span class="em-label">Services</span><span class="em-val">3 items</span></div>
+          <div class="em-row" style="border-bottom:none;padding-top:8px;border-top:2px solid var(--text-primary);margin-top:4px"><span class="em-label" style="font-weight:600;color:var(--text-primary)">Total</span><span class="em-val" style="font-size:16px;color:var(--accent)">$8,500.00</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+name).classList.add('active')}
+function switchDay(btn,id){document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');['day1','day2','day3'].forEach(d=>document.getElementById(d).style.display=d===id?'':'none')}
+</script>
+
+<script>
+
+function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+name).classList.add('active')}
+function switchDay(btn,id){document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');['day1','day2','day3'].forEach(d=>document.getElementById(d).style.display=d===id?'':'none')}
+
+</script>
+</body>
+</html>

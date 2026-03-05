@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Currency Settings</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item active"><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><a href="management-master.html" style="font-size:14px;color:var(--text-muted);margin-right:4px">←</a><h1>Currency Settings</h1></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button></div>
+  </header>
+  <div class="content"><div class="card"><div class="card-title">Default Currency</div><div class="card-subtitle">This currency will be applied to all estimates, invoices, and pricing throughout TurboFSM.</div>
+<div class="form-group"><label class="form-label">Currency</label><select class="form-select" style="max-width:400px"><option selected>USD ($) — US Dollar</option><option>EUR (€) — Euro</option><option>GBP (£) — British Pound</option><option>CAD ($) — Canadian Dollar</option><option>AUD ($) — Australian Dollar</option></select></div>
+<div class="form-row" style="max-width:600px;margin-top:14px"><div class="form-group"><label class="form-label">Symbol Position</label><select class="form-select"><option selected>Before amount ($100)</option><option>After amount (100$)</option></select></div><div class="form-group"><label class="form-label">Decimal Places</label><select class="form-select"><option selected>2 ($100.00)</option><option>0 ($100)</option></select></div></div>
+<div style="margin-top:16px"><button class="topbar-btn primary">Save Currency Settings</button></div></div></div>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+</body>
+</html>

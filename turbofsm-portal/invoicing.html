@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Invoicing</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item active"><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left"><h1>Invoicing</h1><span class="t-sub">All invoices, payment tracking, and collection history</span></div>
+    <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button><a href="create-invoice.html" class="topbar-btn primary-lg">+ Create Invoice</a></div>
+  </header>
+  <div class="content">
+    <div class="kpi-strip kpi-5">
+      <div class="kpi-card"><div class="kv" style="color:var(--accent)">12</div><div class="kl">Total Invoices</div><div class="kdate">📄 All time</div><div class="ka" style="background:var(--accent)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--green)">$68,450</div><div class="kl">Collected</div><div class="kdate">💵 This quarter</div><div class="ka" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--orange)">$24,200</div><div class="kl">Outstanding</div><div class="kdate">⏳ Pending payment</div><div class="ka" style="background:var(--orange)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--red)">$3,200</div><div class="kl">Overdue</div><div class="kdate">⚠ Past due date</div><div class="ka" style="background:var(--red)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--teal)">78%</div><div class="kl">Collection Rate</div><div class="kdate">📊 Overall</div><div class="ka" style="background:var(--teal)"></div></div>
+    </div>
+    <div class="filter-bar">
+      <div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchInv" placeholder="Search by customer, invoice ID, job..."></div>
+      <button class="chip active" onclick="filterInv('all',this)">All <span class="cnt">12</span></button>
+      <button class="chip" onclick="filterInv('sent',this)">Sent <span class="cnt">4</span></button>
+      <button class="chip" onclick="filterInv('paid',this)">Paid <span class="cnt">5</span></button>
+      <button class="chip" onclick="filterInv('partial',this)">Partial <span class="cnt">1</span></button>
+      <button class="chip" onclick="filterInv('overdue',this)">Overdue <span class="cnt">1</span></button>
+      <button class="chip" onclick="filterInv('draft',this)">Draft <span class="cnt">1</span></button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <colgroup><col style="width:14%"><col style="width:18%"><col style="width:12%"><col style="width:12%"><col style="width:10%"><col style="width:10%"><col style="width:10%"><col style="width:14%"></colgroup>
+        <thead><tr><th>Invoice ID</th><th>Customer / Job</th><th>Amount</th><th>Date Sent</th><th>Due Date</th><th>Paid</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="invBody">
+          <tr data-status="paid" data-search="inv-001 tom davis slab leak"><td style="font-weight:600;font-size:13px">INV-20260221-001</td><td><div style="font-weight:600">Tom Davis</div><div style="font-size:12px;color:var(--text-muted)">JOB-006 · Slab Leak Repair</div></td><td style="font-weight:700">$3,200</td><td style="font-size:13px">Feb 21, 2026</td><td style="font-size:13px">Mar 7</td><td style="font-weight:600;color:var(--green)">$3,200</td><td><span class="status-pill st-paid">● Paid</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="#" class="ab" data-tip="Download">📥</a></div></td></tr>
+          <tr data-status="paid" data-search="inv-002 david kim emergency pipe"><td style="font-weight:600;font-size:13px">INV-20260203-002</td><td><div style="font-weight:600">David Kim</div><div style="font-size:12px;color:var(--text-muted)">JOB-007 · Emergency Pipe Burst</div></td><td style="font-weight:700">$8,900</td><td style="font-size:13px">Feb 3, 2026</td><td style="font-size:13px">Feb 17</td><td style="font-weight:600;color:var(--green)">$8,900</td><td><span class="status-pill st-paid">● Paid</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="#" class="ab" data-tip="Download">📥</a></div></td></tr>
+          <tr data-status="sent" data-search="inv-003 john smith kitchen pipe"><td style="font-weight:600;font-size:13px">INV-20260305-003</td><td><div style="font-weight:600">John Smith</div><div style="font-size:12px;color:var(--text-muted)">JOB-004 · Kitchen Pipe Replacement</div></td><td style="font-weight:700">$8,500</td><td style="font-size:13px">Mar 5, 2026</td><td style="font-size:13px">Mar 19</td><td style="font-weight:600;color:var(--orange)">$4,250</td><td><span class="status-pill st-partial">● Partial</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="record-payment.html" class="ab ab-green" data-tip="Record Payment">💵</a><a href="#" class="ab" data-tip="Resend">✈</a></div></td></tr>
+          <tr data-status="sent" data-search="inv-004 sarah johnson bathroom"><td style="font-weight:600;font-size:13px">INV-20260303-004</td><td><div style="font-weight:600">Sarah Johnson</div><div style="font-size:12px;color:var(--text-muted)">JOB-005 · Bathroom Renovation</div></td><td style="font-weight:700">$12,300</td><td style="font-size:13px">Mar 3, 2026</td><td style="font-size:13px">Mar 17</td><td style="font-weight:600;color:var(--orange)">$6,150</td><td><span class="status-pill st-partial">● Partial</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="record-payment.html" class="ab ab-green" data-tip="Record Payment">💵</a><a href="#" class="ab" data-tip="Resend">✈</a></div></td></tr>
+          <tr data-status="overdue" data-search="inv-005 lisa brown re-piping"><td style="font-weight:600;font-size:13px;color:var(--red)">INV-20260212-005</td><td><div style="font-weight:600">Lisa Brown</div><div style="font-size:12px;color:var(--text-muted)">JOB-001 · Full House Re-piping</div></td><td style="font-weight:700">$22,000</td><td style="font-size:13px">Feb 12, 2026</td><td style="font-size:13px;color:var(--red);font-weight:600">Feb 26 ⚠</td><td style="font-weight:600;color:var(--red)">$0</td><td><span class="status-pill st-overdue">● Overdue</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="record-payment.html" class="ab ab-green" data-tip="Record Payment">💵</a><a href="#" class="ab ab-orange" data-tip="Send Reminder">⚠</a></div></td></tr>
+          <tr data-status="sent" data-search="inv-006 rachel green hvac"><td style="font-weight:600;font-size:13px">INV-20260303-006</td><td><div style="font-weight:600">Rachel Green</div><div style="font-size:12px;color:var(--text-muted)">JOB-003 · HVAC Maintenance</div></td><td style="font-weight:700">$3,600</td><td style="font-size:13px">Mar 3, 2026</td><td style="font-size:13px">Mar 17</td><td style="font-weight:600;color:var(--text-muted)">$0</td><td><span class="status-pill st-sent">● Sent</span></td><td><div class="action-row"><a href="invoice-details.html" class="ab" data-tip="View">👁</a><a href="record-payment.html" class="ab ab-green" data-tip="Record Payment">💵</a></div></td></tr>
+          <tr data-status="draft" data-search="inv-007 amy wilson restroom"><td style="font-weight:600;font-size:13px">INV-20260305-007</td><td><div style="font-weight:600">Amy Wilson</div><div style="font-size:12px;color:var(--text-muted)">JOB-008 · Restroom Buildout</div></td><td style="font-weight:700">$15,800</td><td style="font-size:13px;color:var(--text-muted)">Not sent</td><td style="font-size:13px">—</td><td style="font-weight:600;color:var(--text-muted)">$0</td><td><span class="status-pill st-draft">● Draft</span></td><td><div class="action-row"><a href="create-invoice.html" class="ab" data-tip="Edit">✎</a><a href="#" class="ab ab-teal" data-tip="Send">✈</a></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+<script>
+function filterInv(status,btn){document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));btn.classList.add('active');document.querySelectorAll('#invBody tr').forEach(r=>{r.style.display=(status==='all'||r.dataset.status===status)?'':'none'})}
+document.getElementById('searchInv').addEventListener('input',e=>{const q=e.target.value.toLowerCase();document.querySelectorAll('#invBody tr').forEach(r=>{r.style.display=r.dataset.search.includes(q)?'':'none'})});
+function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+m;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}</script>
+</body>
+</html>
