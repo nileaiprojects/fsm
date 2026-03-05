@@ -1,346 +1,347 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Dashboard-specific styles */
-    .kpi-section { margin-bottom: 28px; }
-
-    .kpi-section .section-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .kpi-section .section-header .section-icon {
-      font-size: 16px;
-      opacity: 0.7;
-    }
-
-    /* Clickable KPI cards */
-    a.kpi-card-link {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      border-radius: 8px;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-    }
-    a.kpi-card-link:hover {
-      transform: translateY(-2px);
-    }
-
-    .kpi-card {
-      cursor: pointer;
-      transition: box-shadow 0.2s ease, transform 0.15s ease;
-    }
-
-    /* Pre-Sales cards — Navy (#1B2A4A) */
-    .kpi-card.pre-sales {
-      box-shadow: 0 2px 10px rgba(27, 42, 74, 0.12);
-      border-left: 3px solid #1B2A4A;
-    }
-    .kpi-card.pre-sales .kpi-value { color: #1B2A4A; }
-    a.kpi-card-link:hover .kpi-card.pre-sales {
-      box-shadow: 0 6px 22px rgba(27, 42, 74, 0.22);
-    }
-
-    /* Operations cards — Teal (#1A6B5C) */
-    .kpi-card.operations {
-      box-shadow: 0 2px 10px rgba(26, 107, 92, 0.12);
-      border-left: 3px solid #1A6B5C;
-    }
-    .kpi-card.operations .kpi-value { color: #1A6B5C; }
-    a.kpi-card-link:hover .kpi-card.operations {
-      box-shadow: 0 6px 22px rgba(26, 107, 92, 0.22);
-    }
-
-    /* Billing cards — Deep Indigo (#4A3880) */
-    .kpi-card.billing {
-      box-shadow: 0 2px 10px rgba(74, 56, 128, 0.12);
-      border-left: 3px solid #4A3880;
-    }
-    .kpi-card.billing .kpi-value { color: #4A3880; }
-    a.kpi-card-link:hover .kpi-card.billing {
-      box-shadow: 0 6px 22px rgba(74, 56, 128, 0.22);
-    }
-
-    /* Quick action cards — subtle slate shadow */
-    .quick-action-btn {
-      box-shadow: 0 2px 6px rgba(27, 42, 74, 0.06);
-      transition: box-shadow 0.2s ease, transform 0.15s ease;
-    }
-    .quick-action-btn:hover {
-      box-shadow: 0 4px 14px rgba(27, 42, 74, 0.14);
-      transform: translateY(-2px);
-    }
-
-    .quick-actions-section {
-      margin-bottom: 24px;
-    }
-
-    .quick-actions-section .section-header {
-      border-bottom-color: var(--primary);
-    }
-
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurboFSM — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-  <div class="layout">
-
     <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
-      </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html" class="active">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <div class="main-area">
-
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
-              </div>
+    <div class="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo">⚡</div>
+            <div class="brand-name">TurboFSM</div>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-group">
+                <div class="nav-group-label">Main</div>
+                <a href="screen4-dashboard.html" class="nav-item active"><span class="ni">■</span><span>Dashboard</span></a>
             </div>
-            <a href="screen5-pricing.html" class="btn-sm" style="text-decoration:none;">Buy More Space</a>
-          </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Sales</div>
+                <a href="screen6-leads.html" class="nav-item"><span class="ni">◈</span><span>Lead Manager</span><span class="badge">8</span></a>
+                <a href="screen8-appointments.html" class="nav-item"><span class="ni">📅</span><span>Appointments</span></a>
+                <a href="screen9-schedule.html" class="nav-item"><span class="ni">🕓</span><span>Schedule</span></a>
+                <a href="screen10-estimates.html" class="nav-item"><span class="ni">📄</span><span>Estimation</span></a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Operations</div>
+                <a href="screen12-floorplan.html" class="nav-item"><span class="ni">□</span><span>Floor Plan</span></a>
+                <a href="screen13-jobs.html" class="nav-item"><span class="ni">🛠</span><span>Job Creation</span><span class="badge">7</span></a>
+                <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">💰</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Showcase</div>
+                <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+            </div>
+            <div class="nav-group">
+                <div class="nav-group-label">Setup</div>
+                <a href="screen15-management.html" class="nav-item"><span class="ni">⚙</span><span>Management Master</span></a>
+                <a href="screen16-settings.html" class="nav-item"><span class="ni">🔧</span><span>Client Settings</span></a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="storage-bar">
+                <div class="sl">Storage</div>
+                <div class="st"><div class="sf"></div></div>
+                <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div>
+                <a href="screen5-pricing.html">Buy More Space</a>
+            </div>
+            <div class="sidebar-user">
+                <div class="avatar">JS</div>
+                <div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div>
+            </div>
+            <a href="screen3-signin.html" class="sidebar-logout"><span>➜</span><span>Log Out</span></a>
         </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
-          </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- PAGE TITLE -->
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle">Welcome back, John</div>
-
-        <!-- PRE-SALES KPIs -->
-        <div class="kpi-section">
-          <div class="section-header">
-            <span class="section-icon">&#128200;</span> Pre-Sales KPIs
-          </div>
-          <div class="kpi-grid" style="margin-top: 12px;">
-            <a href="screen10-estimates.html?status=sent" class="kpi-card-link" title="View all sent estimates">
-              <div class="kpi-card pre-sales">
-                <div class="kpi-value">24</div>
-                <div class="kpi-label">Estimates Sent</div>
-              </div>
-            </a>
-            <a href="screen6-leads.html?status=new" class="kpi-card-link" title="View leads with New status">
-              <div class="kpi-card pre-sales">
-                <div class="kpi-value">8</div>
-                <div class="kpi-label">Leads Pending</div>
-              </div>
-            </a>
-            <a href="screen6-leads.html?status=follow-up" class="kpi-card-link" title="View leads with Follow Up status">
-              <div class="kpi-card pre-sales">
-                <div class="kpi-value">5</div>
-                <div class="kpi-label">Follow-ups Required</div>
-              </div>
-            </a>
-            <a href="screen6-leads.html?status=all" class="kpi-card-link" title="View all leads">
-              <div class="kpi-card pre-sales">
-                <div class="kpi-value">156</div>
-                <div class="kpi-label">Total Leads</div>
-              </div>
-            </a>
-            <a href="screen6-leads.html?status=all&period=mtd" class="kpi-card-link" title="View leads created this month">
-              <div class="kpi-card pre-sales">
-                <div class="kpi-value">12</div>
-                <div class="kpi-label">Leads MTD</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- OPERATIONS KPIs -->
-        <div class="kpi-section">
-          <div class="section-header">
-            <span class="section-icon">&#128736;</span> Operations KPIs
-          </div>
-          <div class="kpi-grid" style="margin-top: 12px;">
-            <a href="screen13-jobs.html" class="kpi-card-link">
-              <div class="kpi-card operations">
-                <div class="kpi-value">7</div>
-                <div class="kpi-label">Jobs Under Progress</div>
-              </div>
-            </a>
-            <a href="screen10-estimates.html" class="kpi-card-link">
-              <div class="kpi-card operations">
-                <div class="kpi-value">3</div>
-                <div class="kpi-label">Estimates Awaiting Approval</div>
-              </div>
-            </a>
-            <a href="screen9-schedule.html" class="kpi-card-link">
-              <div class="kpi-card operations">
-                <div class="kpi-value">2</div>
-                <div class="kpi-label">Jobs Scheduled Today</div>
-              </div>
-            </a>
-            <a href="screen8-appointments.html" class="kpi-card-link">
-              <div class="kpi-card operations">
-                <div class="kpi-value">4</div>
-                <div class="kpi-label">Appointments Next 3 Days</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- BILLING KPIs -->
-        <div class="kpi-section">
-          <div class="section-header">
-            <span class="section-icon">&#128176;</span> Billing KPIs
-          </div>
-          <div class="kpi-grid" style="margin-top: 12px;">
-            <a href="screen14a-invoicing.html" class="kpi-card-link">
-              <div class="kpi-card billing">
-                <div class="kpi-value">$45,200</div>
-                <div class="kpi-label">Total Invoices Raised MTD</div>
-              </div>
-            </a>
-            <a href="screen14a-invoicing.html" class="kpi-card-link">
-              <div class="kpi-card billing">
-                <div class="kpi-value">$38,500</div>
-                <div class="kpi-label">Total Collections MTD</div>
-              </div>
-            </a>
-            <a href="screen14a-invoicing.html" class="kpi-card-link">
-              <div class="kpi-card billing">
-                <div class="kpi-value">$12,800</div>
-                <div class="kpi-label">Pending Collections</div>
-              </div>
-            </a>
-            <a href="screen14a-invoicing.html" class="kpi-card-link">
-              <div class="kpi-card billing">
-                <div class="kpi-value">6</div>
-                <div class="kpi-label">Pending Invoices</div>
-              </div>
-            </a>
-          </div>
-        </div>
-
-        <!-- QUICK ACTIONS -->
-        <div class="quick-actions-section">
-          <div class="section-header">Quick Actions</div>
-          <div class="quick-actions" style="margin-top: 12px;">
-            <a href="screen7-lead-form.html" class="quick-action-btn">+ Create New Lead</a>
-            <a href="screen11-estimate-form.html" class="quick-action-btn">+ Create New Estimate</a>
-            <a href="screen8-appointments.html" class="quick-action-btn">+ Create New Appointment</a>
-            <a href="screen14a-invoicing.html" class="quick-action-btn">+ Create New Invoice</a>
-            <a href="screen13-jobs.html" class="quick-action-btn">+ Create New Job</a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html"><strong>4. Dashboard</strong></a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
-      </div>
-
     </div>
-  </div>
 
+    <!-- MAIN -->
+    <div class="main">
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>Dashboard</h1>
+                <div class="subtitle">ABC Plumbing Co.</div>
+            </div>
+            <div class="topbar-right">
+                <button class="topbar-btn"><span>📅</span><span>Mar 5, 2026</span></button>
+                <button class="notif-btn">🔔<span class="count">3</span></button>
+                <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="welcome">
+                <div>
+                    <h2>Welcome back, John</h2>
+                    <p>You have 5 follow-ups required and 2 jobs scheduled today</p>
+                </div>
+            </div>
+
+            <!-- Pre-Sales KPIs -->
+            <div class="kpi-section">
+                <div class="kpi-header">
+                    <div class="kh-dot" style="background:#0f6fde;"></div>
+                    <h3>📈 Pre-Sales KPIs</h3>
+                </div>
+                <div class="kpi-grid">
+                    <a href="screen10-estimates.html?status=sent" class="kpi-card" title="View all sent estimates">
+                        <div class="kpi-value">24</div>
+                        <div class="kpi-label">Estimates Sent</div>
+                        <div class="kpi-trend up">↑ 8%</div>
+                        <div class="kpi-accent" style="background:#0f6fde;"></div>
+                    </a>
+                    <a href="screen6-leads.html?status=new" class="kpi-card" title="View leads with New status">
+                        <div class="kpi-value">8</div>
+                        <div class="kpi-label">Leads Pending</div>
+                        <div class="kpi-accent" style="background:#0d9488;"></div>
+                    </a>
+                    <a href="screen6-leads.html?status=follow-up" class="kpi-card" title="View leads with Follow Up status">
+                        <div class="kpi-value">5</div>
+                        <div class="kpi-label">Follow-ups Required</div>
+                        <div class="kpi-accent" style="background:#e67e22;"></div>
+                    </a>
+                    <a href="screen6-leads.html?status=all" class="kpi-card" title="View all leads">
+                        <div class="kpi-value">156</div>
+                        <div class="kpi-label">Total Leads</div>
+                        <div class="kpi-trend up">↑ 12%</div>
+                        <div class="kpi-accent" style="background:#7c3aed;"></div>
+                    </a>
+                    <a href="screen6-leads.html?status=all&period=mtd" class="kpi-card" title="View leads created this month">
+                        <div class="kpi-value">12</div>
+                        <div class="kpi-label">Leads MTD</div>
+                        <div class="kpi-accent" style="background:#16a34a;"></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Operations KPIs -->
+            <div class="kpi-section">
+                <div class="kpi-header">
+                    <div class="kh-dot" style="background:#e67e22;"></div>
+                    <h3>🛠 Operations KPIs</h3>
+                </div>
+                <div class="kpi-grid">
+                    <a href="screen13-jobs.html" class="kpi-card" title="View jobs under progress">
+                        <div class="kpi-value">7</div>
+                        <div class="kpi-label">Jobs Under Progress</div>
+                        <div class="kpi-accent" style="background:#e67e22;"></div>
+                    </a>
+                    <a href="screen10-estimates.html" class="kpi-card" title="View estimates awaiting approval">
+                        <div class="kpi-value">3</div>
+                        <div class="kpi-label">Estimates Awaiting Approval</div>
+                        <div class="kpi-accent" style="background:#0f6fde;"></div>
+                    </a>
+                    <a href="screen9-schedule.html" class="kpi-card" title="View today's schedule">
+                        <div class="kpi-value">2</div>
+                        <div class="kpi-label">Jobs Scheduled Today</div>
+                        <div class="kpi-accent" style="background:#16a34a;"></div>
+                    </a>
+                    <a href="screen8-appointments.html" class="kpi-card" title="View upcoming appointments">
+                        <div class="kpi-value">4</div>
+                        <div class="kpi-label">Appointments Next 3 Days</div>
+                        <div class="kpi-accent" style="background:#0d9488;"></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Billing KPIs -->
+            <div class="kpi-section">
+                <div class="kpi-header">
+                    <div class="kh-dot" style="background:#16a34a;"></div>
+                    <h3>💰 Billing KPIs</h3>
+                </div>
+                <div class="kpi-grid">
+                    <a href="screen14a-invoicing.html" class="kpi-card" title="View invoicing details">
+                        <div class="kpi-value">$45,200</div>
+                        <div class="kpi-label">Total Invoices Raised MTD</div>
+                        <div class="kpi-trend up">↑ 15%</div>
+                        <div class="kpi-accent" style="background:#16a34a;"></div>
+                    </a>
+                    <a href="screen14a-invoicing.html" class="kpi-card" title="View collections">
+                        <div class="kpi-value">$38,500</div>
+                        <div class="kpi-label">Total Collections MTD</div>
+                        <div class="kpi-accent" style="background:#0d9488;"></div>
+                    </a>
+                    <a href="screen14a-invoicing.html" class="kpi-card" title="View pending collections">
+                        <div class="kpi-value">$12,800</div>
+                        <div class="kpi-label">Pending Collections</div>
+                        <div class="kpi-trend up">↑ 5%</div>
+                        <div class="kpi-accent" style="background:#e67e22;"></div>
+                    </a>
+                    <a href="screen14a-invoicing.html" class="kpi-card" title="View pending invoices">
+                        <div class="kpi-value">6</div>
+                        <div class="kpi-label">Pending Invoices</div>
+                        <div class="kpi-accent" style="background:#dc3545;"></div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-panel">
+                <div class="qp-header"><h3>Quick Actions</h3></div>
+                <div class="quick-grid">
+                    <a href="screen7-lead-form.html" class="quick-card">
+                        <div class="qc-icon" style="background:#e8f1fc;color:#0f6fde;">◈</div>
+                        <div class="qc-label">+ Create New Lead</div>
+                        <div class="qc-shortcut">⌘ L</div>
+                    </a>
+                    <a href="screen11-estimate-form.html" class="quick-card">
+                        <div class="qc-icon" style="background:#f0ebfe;color:#7c3aed;">📄</div>
+                        <div class="qc-label">+ Create New Estimate</div>
+                        <div class="qc-shortcut">⌘ E</div>
+                    </a>
+                    <a href="screen8a-appointment-form.html" class="quick-card">
+                        <div class="qc-icon" style="background:#e6f7f5;color:#0d9488;">📅</div>
+                        <div class="qc-label">+ Create New Appointment</div>
+                        <div class="qc-shortcut">⌘ A</div>
+                    </a>
+                    <a href="screen14a-invoicing.html" class="quick-card">
+                        <div class="qc-icon" style="background:#e8f8ee;color:#16a34a;">💰</div>
+                        <div class="qc-label">+ Create New Invoice</div>
+                        <div class="qc-shortcut">⌘ I</div>
+                    </a>
+                    <a href="screen13a-job-form.html" class="quick-card">
+                        <div class="qc-icon" style="background:#fef3e2;color:#e67e22;">🛠</div>
+                        <div class="qc-label">+ Create New Job</div>
+                        <div class="qc-shortcut">⌘ J</div>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="two-col">
+                <!-- Recent Activity -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Recent Activity</h3>
+                        <a href="#" class="view-all">View All →</a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background:#0d9488;"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Lisa Brown</strong> — Estimate #EST-0004 approved ($22,000)</div>
+                            <div class="activity-meta">2 hours ago · Job auto-created</div>
+                        </div>
+                        <a href="screen13b-job-detail.html" class="activity-action">View Job →</a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background:#0f6fde;"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Sarah Johnson</strong> — Site Survey completed</div>
+                            <div class="activity-meta">3 hours ago · Follow-up scheduled Mar 10</div>
+                        </div>
+                        <a href="screen11-estimate-form.html" class="activity-action">Create Estimate →</a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background:#e67e22;"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Mike Williams</strong> — Estimate awaiting approval</div>
+                            <div class="activity-meta">5 hours ago · $5,750 · Water Heater Installation</div>
+                        </div>
+                        <a href="screen6-leads.html?status=follow-up" class="activity-action">Follow Up →</a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background:#7c3aed;"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>JOB-0007</strong> — Visit #2 completed (Lawn Service)</div>
+                            <div class="activity-meta">Yesterday · David Park · James Rodriguez</div>
+                        </div>
+                        <a href="screen13b-job-detail.html" class="activity-action">View Detail →</a>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-dot" style="background:#16a34a;"></div>
+                        <div class="activity-content">
+                            <div class="activity-text"><strong>Tom Davis</strong> — New lead from website</div>
+                            <div class="activity-meta">Yesterday · Emergency leak repair · Fort Worth TX</div>
+                        </div>
+                        <a href="screen8a-appointment-form.html" class="activity-action">Schedule Appt →</a>
+                    </div>
+                </div>
+
+                <!-- Coming Up -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h3>Coming Up</h3>
+                        <a href="screen9-schedule.html" class="view-all">Full Schedule →</a>
+                    </div>
+                    <a href="screen8b-appointment-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">5</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">Survey: Johnson</div><div class="si-meta">10:00 AM · 456 Pine Ave, Dallas TX</div></div>
+                        <div class="sched-tag" style="background:#e8f1fc;color:#0f6fde;">Survey</div>
+                    </a>
+                    <a href="screen8b-appointment-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">8</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">Assessment: Williams</div><div class="si-meta">9:30 AM · 789 Elm Dr, Houston TX</div></div>
+                        <div class="sched-tag" style="background:#e6f7f5;color:#0d9488;">Appt</div>
+                    </a>
+                    <a href="screen13b-job-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">10</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">Job #13: Brown — Full Re-pipe</div><div class="si-meta">8:00 AM · 321 Maple Ln, San Antonio TX</div></div>
+                        <div class="sched-tag" style="background:#fef3e2;color:#e67e22;">Job</div>
+                    </a>
+                    <a href="screen13b-job-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">10</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">🔄 Lawn Service: Park</div><div class="si-meta">10:00 AM · Weekly visit · 123 Green St</div></div>
+                        <div class="sched-tag" style="background:#f0ebfe;color:#7c3aed;">Recurring</div>
+                    </a>
+                    <a href="screen13b-job-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">12</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">Job Start: Davis — Pipe Replace</div><div class="si-meta">7:00 AM · 654 Cedar Ct, Fort Worth TX</div></div>
+                        <div class="sched-tag" style="background:#fde8ea;color:#dc3545;">Job</div>
+                    </a>
+                    <a href="screen8b-appointment-detail.html" class="sched-item">
+                        <div class="sched-date"><div class="sd-day">12</div><div class="sd-month">Mar</div></div>
+                        <div class="sched-info"><div class="si-title">Presentation: Wilson</div><div class="si-meta">1:00 PM · 234 Walnut Ave, Irving TX</div></div>
+                        <div class="sched-tag" style="background:#e8f8ee;color:#16a34a;">Pres</div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCREEN NAVIGATION -->
+        <div class="screen-nav">
+            <strong>Wireframe Screen Navigation:</strong><br><br>
+            <a href="screen1-landing.html">1. Landing</a>
+            <a href="screen2-registration.html">2. Registration</a>
+            <a href="screen3-signin.html">3. Sign In</a>
+            <a href="screen4-dashboard.html"><strong>4. Dashboard</strong></a>
+            <a href="screen5-pricing.html">5. Pricing</a>
+            <a href="screen5a-payment.html">5a. Payment</a>
+            <a href="screen6-leads.html">6. Lead Manager</a>
+            <a href="screen7-lead-form.html">7. Lead Form</a>
+            <a href="screen8-appointments.html">8. Appointments</a>
+            <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+            <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+            <a href="screen9-schedule.html">9. Schedule</a>
+            <a href="screen10-estimates.html">10. Estimates</a>
+            <a href="screen11-estimate-form.html">11. Est Step 1</a>
+            <a href="screen11-step2.html">11-S2. Est Builder</a>
+            <a href="screen11-step3.html">11-S3. Terms</a>
+            <a href="screen11-step4.html">11-S4. Review</a>
+            <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+            <a href="screen12-floorplan.html">12. Floor Plan</a>
+            <a href="screen13-jobs.html">13. Jobs</a>
+            <a href="screen13a-job-form.html">13a. Job Form</a>
+            <a href="screen13b-job-detail.html">13b. Job Detail</a>
+            <a href="screen14a-invoicing.html">14a. Invoicing</a>
+            <a href="screen15-management.html">15. Management Master</a>
+            <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+            <a href="screen15b-materials.html">15b. Materials</a>
+            <a href="screen15c-services.html">15c. Services</a>
+            <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+            <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+            <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+            <a href="screen15g-currency-settings.html">15g. Currency</a>
+            <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+            <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+        </div>
+    </div>
 </body>
 </html>

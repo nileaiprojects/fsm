@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Schedule (Week)</title>
+  <title>TurboFSM &mdash; Schedule (Week)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .calendar-controls {
+    .calendar-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -15,13 +16,13 @@
       gap: 12px;
     }
 
-    .calendar-controls-left {
+    .calendar-toolbar-left {
       display: flex;
       align-items: center;
       gap: 12px;
     }
 
-    .calendar-controls-right {
+    .calendar-toolbar-right {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -30,7 +31,7 @@
     .cal-nav-btn {
       width: 36px;
       height: 36px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 6px;
       background: #fff;
       cursor: pointer;
@@ -51,7 +52,7 @@
 
     .cal-today-btn {
       padding: 6px 16px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 6px;
       background: #fff;
       font-size: 13px;
@@ -69,7 +70,7 @@
     .view-toggle-btn {
       padding: 6px 16px;
       font-size: 13px;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0,0,0,.08);
       background: #fff;
       cursor: pointer;
       font-weight: 500;
@@ -77,15 +78,15 @@
 
     .view-toggle-btn:first-child { border-radius: 6px 0 0 6px; }
     .view-toggle-btn:last-child { border-radius: 0 6px 6px 0; }
-    .view-toggle-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .view-toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     .legend-bar {
       display: flex;
       align-items: center;
       gap: 20px;
       padding: 10px 16px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      background: var(--surface);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 8px;
       margin-bottom: 16px;
       font-size: 12px;
@@ -129,17 +130,17 @@
     .week-grid {
       display: grid;
       grid-template-columns: 80px repeat(7, 1fr);
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 8px;
       overflow: hidden;
-      background: var(--card-bg);
+      background: var(--surface);
       min-width: 900px;
     }
 
     .week-corner {
       background: #f8f9fa;
-      border-right: 1px solid var(--border);
-      border-bottom: 2px solid var(--border);
+      border-right: 1px solid rgba(0,0,0,.08);
+      border-bottom: 2px solid rgba(0,0,0,.08);
       padding: 10px;
     }
 
@@ -149,7 +150,7 @@
       font-weight: 600;
       font-size: 12px;
       background: #f8f9fa;
-      border-bottom: 2px solid var(--border);
+      border-bottom: 2px solid rgba(0,0,0,.08);
       border-right: 1px solid #eee;
       color: var(--text);
     }
@@ -159,18 +160,18 @@
     }
 
     .week-day-header.today {
-      color: var(--primary);
+      color: var(--accent);
     }
 
     .week-day-name {
       font-size: 11px;
       text-transform: uppercase;
-      color: var(--text-light);
+      color: var(--muted);
       font-weight: 500;
     }
 
     .week-day-header.today .week-day-name {
-      color: var(--primary);
+      color: var(--accent);
     }
 
     .week-day-num {
@@ -180,7 +181,7 @@
     }
 
     .week-day-header.today .week-day-num {
-      background: var(--primary);
+      background: var(--accent);
       color: #fff;
       width: 28px;
       height: 28px;
@@ -194,8 +195,8 @@
       padding: 0 8px;
       font-size: 11px;
       font-weight: 500;
-      color: var(--text-light);
-      border-right: 1px solid var(--border);
+      color: var(--muted);
+      border-right: 1px solid rgba(0,0,0,.08);
       border-bottom: 1px solid #eee;
       display: flex;
       align-items: flex-start;
@@ -257,427 +258,388 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
   </style>
 </head>
 <body>
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html" class="active">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item active"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
-              </div>
-            </div>
-            <button class="btn-sm">Buy More Space</button>
-          </div>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Schedule</h1>
+        <span class="t-sub">Unified calendar view of all activities</span>
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- CALENDAR CONTROLS -->
+      <div class="calendar-toolbar">
+        <div class="calendar-toolbar-left">
+          <button class="cal-nav-btn" title="Previous Week">&#9664;</button>
+          <div class="cal-month-title">Mar 1 – 7, 2026</div>
+          <button class="cal-nav-btn" title="Next Week">&#9654;</button>
+          <button class="cal-today-btn">Today</button>
         </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
+        <div class="calendar-toolbar-right">
+          <div class="view-toggle">
+            <a href="screen9a-schedule-day.html" class="view-toggle-btn">Day</a>
+            <a href="screen9b-schedule-week.html" class="view-toggle-btn active">Week</a>
+            <a href="screen9-schedule.html" class="view-toggle-btn">Month</a>
           </div>
-          <div class="user-avatar">JS</div>
+          <select class="form-select">
+            <option value="all">All Staff</option>
+            <option value="john-smith">John Smith</option>
+            <option value="sarah-lee">Sarah Lee</option>
+            <option value="mike-jones">Mike Jones</option>
+          </select>
         </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- PAGE TITLE -->
-        <div class="page-title">Schedule</div>
-        <div class="page-subtitle">Unified calendar view of all activities</div>
-
-        <!-- CALENDAR CONTROLS -->
-        <div class="calendar-controls">
-          <div class="calendar-controls-left">
-            <button class="cal-nav-btn" title="Previous Week">&#9664;</button>
-            <div class="cal-month-title">Mar 1 – 7, 2026</div>
-            <button class="cal-nav-btn" title="Next Week">&#9654;</button>
-            <button class="cal-today-btn">Today</button>
-          </div>
-          <div class="calendar-controls-right">
-            <div class="view-toggle">
-              <a href="screen9a-schedule-day.html" class="view-toggle-btn">Day</a>
-              <a href="screen9b-schedule-week.html" class="view-toggle-btn active">Week</a>
-              <a href="screen9-schedule.html" class="view-toggle-btn">Month</a>
-            </div>
-            <select class="filter-select">
-              <option value="all">All Staff</option>
-              <option value="john-smith">John Smith</option>
-              <option value="sarah-lee">Sarah Lee</option>
-              <option value="mike-jones">Mike Jones</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- COLOR LEGEND -->
-        <div class="legend-bar">
-          <div class="legend-item">
-            <div class="legend-dot appointment"></div>
-            <span>Appointments</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot survey"></div>
-            <span>Site Surveys</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot presentation"></div>
-            <span>Profile Presentations</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot job-scheduled"></div>
-            <span>Job Schedule</span>
-          </div>
-          <div class="legend-item">
-            <div class="legend-dot job-start"></div>
-            <span>Job Start</span>
-          </div>
-          <div class="legend-item" style="margin-left: 10px; padding-left: 10px; border-left: 1px solid #ddd;">
-            <span style="font-size: 14px;">🔄</span>
-            <span>Recurring Job</span>
-          </div>
-        </div>
-
-        <!-- WIREFRAME NOTE -->
-        <div class="wireframe-note">
-          &#128221; <strong>Schedule — Week View Features:</strong>
-          <ul style="margin: 6px 0 0 16px; line-height: 1.8;">
-            <li><strong>Week Grid:</strong> 8-column layout with time labels (7 AM – 7 PM) and 7 day columns (Sun–Sat).</li>
-            <li><strong>Compact Events:</strong> Event blocks show time range, type icon, and customer name in a space-efficient format.</li>
-            <li><strong>Today Highlight:</strong> Today's column header (Tue 3) is highlighted with a blue circle on the date number.</li>
-            <li><strong>Clickable:</strong> Click any event block to navigate to its detail page (Appointment Detail or Job Detail).</li>
-            <li><strong>Navigation:</strong> Use ◄/► arrows to move between weeks. Use Day/Week/Month toggle to switch views.</li>
-            <li><strong>Recurring Jobs:</strong> Event blocks for recurring jobs show a 🔄 prefix in the type label (e.g., "🔄 Job") to distinguish them from one-time jobs. Each visit within a billing period appears as an individual event on the calendar.</li>
-          </ul>
-        </div>
-
-        <!-- WEEK GRID - Mar 1–7, 2026 (Sun to Sat) -->
-        <div class="week-scroll-container">
-          <div class="week-grid">
-            <!-- Header Row -->
-            <div class="week-corner"></div>
-            <div class="week-day-header">
-              <div class="week-day-name">Sun</div>
-              <div class="week-day-num">1</div>
-            </div>
-            <div class="week-day-header">
-              <div class="week-day-name">Mon</div>
-              <div class="week-day-num">2</div>
-            </div>
-            <div class="week-day-header today">
-              <div class="week-day-name">Tue</div>
-              <div class="week-day-num">3</div>
-            </div>
-            <div class="week-day-header">
-              <div class="week-day-name">Wed</div>
-              <div class="week-day-num">4</div>
-            </div>
-            <div class="week-day-header">
-              <div class="week-day-name">Thu</div>
-              <div class="week-day-num">5</div>
-            </div>
-            <div class="week-day-header">
-              <div class="week-day-name">Fri</div>
-              <div class="week-day-num">6</div>
-            </div>
-            <div class="week-day-header">
-              <div class="week-day-name">Sat</div>
-              <div class="week-day-num">7</div>
-            </div>
-
-            <!-- 7 AM Row -->
-            <div class="week-time-label">7 AM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 8 AM Row -->
-            <div class="week-time-label">8 AM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 9 AM Row -->
-            <div class="week-time-label">9 AM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Tue 3, 9 AM: Appointment Smith (9:00-10:00) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-appointment" style="top: 0; height: 56px;">
-                <span class="week-event-time">9–10 AM</span>
-                <span class="week-event-type">&#128197; Appt</span>
-                <span class="week-event-customer">Smith</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Fri 6, 9 AM: Survey Hall (9:00-10:00) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 0; height: 56px;">
-                <span class="week-event-time">9–10 AM</span>
-                <span class="week-event-type">&#128269; Survey</span>
-                <span class="week-event-customer">Hall</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-
-            <!-- 10 AM Row -->
-            <div class="week-time-label">10 AM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Mon 2, 10 AM: Appointment Garcia (10:00-11:00) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-appointment" style="top: 0; height: 56px;">
-                <span class="week-event-time">10–11 AM</span>
-                <span class="week-event-type">&#128197; Appt</span>
-                <span class="week-event-customer">Garcia</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Thu 5, 10 AM: Survey Johnson (10:00-11:30) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 0; height: 86px;">
-                <span class="week-event-time">10–11:30 AM</span>
-                <span class="week-event-type">&#128269; Survey</span>
-                <span class="week-event-customer">Johnson</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 11 AM Row -->
-            <div class="week-time-label">11 AM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Tue 3, 11 AM: Survey Lee (11:30-12:30) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 30px; height: 56px;">
-                <span class="week-event-time">11:30–12:30</span>
-                <span class="week-event-type">&#128269; Survey</span>
-                <span class="week-event-customer">Lee</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 12 PM Row -->
-            <div class="week-time-label">12 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 1 PM Row -->
-            <div class="week-time-label">1 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 2 PM Row -->
-            <div class="week-time-label">2 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot">
-              <!-- Tue 3, 2 PM: Job #13 Brown (2:00-3:30) -->
-              <a href="screen13b-job-detail.html" class="week-event-block event-job-scheduled" style="top: 0; height: 86px;">
-                <span class="week-event-time">2–3:30 PM</span>
-                <span class="week-event-type">&#128736; Job</span>
-                <span class="week-event-customer">Job #13</span>
-              </a>
-            </div>
-            <div class="week-time-slot">
-              <!-- Wed 4, 2 PM: Presentation Clark (2:00-3:00) -->
-              <a href="screen8b-appointment-detail.html" class="week-event-block event-presentation" style="top: 0; height: 56px;">
-                <span class="week-event-time">2–3 PM</span>
-                <span class="week-event-type">&#128203; Pres</span>
-                <span class="week-event-customer">Clark</span>
-              </a>
-            </div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 3 PM Row -->
-            <div class="week-time-label">3 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 4 PM Row -->
-            <div class="week-time-label">4 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 5 PM Row -->
-            <div class="week-time-label">5 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 6 PM Row -->
-            <div class="week-time-label">6 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-            <!-- 7 PM Row -->
-            <div class="week-time-label">7 PM</div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-            <div class="week-time-slot"></div>
-
-          </div>
-        </div>
-
       </div>
 
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule (Month)</a>
-        <a href="screen9a-schedule-day.html">9a. Schedule (Day)</a>
-        <a href="screen9b-schedule-week.html"><strong>9b. Schedule (Week)</strong></a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-        <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
+      <!-- COLOR LEGEND -->
+      <div class="legend-bar">
+        <div class="legend-item">
+          <div class="legend-dot appointment"></div>
+          <span>Appointments</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot survey"></div>
+          <span>Site Surveys</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot presentation"></div>
+          <span>Profile Presentations</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot job-scheduled"></div>
+          <span>Job Schedule</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-dot job-start"></div>
+          <span>Job Start</span>
+        </div>
+        <div class="legend-item" style="margin-left: 10px; padding-left: 10px; border-left: 1px solid #ddd;">
+          <span style="font-size: 14px;">&#128260;</span>
+          <span>Recurring Job</span>
+        </div>
+      </div>
+
+      <!-- WIREFRAME NOTE -->
+      <div class="note-bar">
+        &#128221; <strong>Schedule — Week View Features:</strong>
+        <ul style="margin: 6px 0 0 16px; line-height: 1.8;">
+          <li><strong>Week Grid:</strong> 8-column layout with time labels (7 AM – 7 PM) and 7 day columns (Sun–Sat).</li>
+          <li><strong>Compact Events:</strong> Event blocks show time range, type icon, and customer name in a space-efficient format.</li>
+          <li><strong>Today Highlight:</strong> Today's column header (Tue 3) is highlighted with a blue circle on the date number.</li>
+          <li><strong>Clickable:</strong> Click any event block to navigate to its detail page (Appointment Detail or Job Detail).</li>
+          <li><strong>Navigation:</strong> Use &#9668;/&#9658; arrows to move between weeks. Use Day/Week/Month toggle to switch views.</li>
+          <li><strong>Recurring Jobs:</strong> Event blocks for recurring jobs show a &#128260; prefix in the type label (e.g., "&#128260; Job") to distinguish them from one-time jobs. Each visit within a billing period appears as an individual event on the calendar.</li>
+        </ul>
+      </div>
+
+      <!-- WEEK GRID - Mar 1-7, 2026 (Sun to Sat) -->
+      <div class="week-scroll-container">
+        <div class="week-grid">
+          <!-- Header Row -->
+          <div class="week-corner"></div>
+          <div class="week-day-header">
+            <div class="week-day-name">Sun</div>
+            <div class="week-day-num">1</div>
+          </div>
+          <div class="week-day-header">
+            <div class="week-day-name">Mon</div>
+            <div class="week-day-num">2</div>
+          </div>
+          <div class="week-day-header today">
+            <div class="week-day-name">Tue</div>
+            <div class="week-day-num">3</div>
+          </div>
+          <div class="week-day-header">
+            <div class="week-day-name">Wed</div>
+            <div class="week-day-num">4</div>
+          </div>
+          <div class="week-day-header">
+            <div class="week-day-name">Thu</div>
+            <div class="week-day-num">5</div>
+          </div>
+          <div class="week-day-header">
+            <div class="week-day-name">Fri</div>
+            <div class="week-day-num">6</div>
+          </div>
+          <div class="week-day-header">
+            <div class="week-day-name">Sat</div>
+            <div class="week-day-num">7</div>
+          </div>
+
+          <!-- 7 AM Row -->
+          <div class="week-time-label">7 AM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 8 AM Row -->
+          <div class="week-time-label">8 AM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 9 AM Row -->
+          <div class="week-time-label">9 AM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Tue 3, 9 AM: Appointment Smith (9:00-10:00) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-appointment" style="top: 0; height: 56px;">
+              <span class="week-event-time">9–10 AM</span>
+              <span class="week-event-type">&#128197; Appt</span>
+              <span class="week-event-customer">Smith</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Fri 6, 9 AM: Survey Hall (9:00-10:00) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 0; height: 56px;">
+              <span class="week-event-time">9–10 AM</span>
+              <span class="week-event-type">&#128269; Survey</span>
+              <span class="week-event-customer">Hall</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+
+          <!-- 10 AM Row -->
+          <div class="week-time-label">10 AM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Mon 2, 10 AM: Appointment Garcia (10:00-11:00) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-appointment" style="top: 0; height: 56px;">
+              <span class="week-event-time">10–11 AM</span>
+              <span class="week-event-type">&#128197; Appt</span>
+              <span class="week-event-customer">Garcia</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Thu 5, 10 AM: Survey Johnson (10:00-11:30) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 0; height: 86px;">
+              <span class="week-event-time">10–11:30 AM</span>
+              <span class="week-event-type">&#128269; Survey</span>
+              <span class="week-event-customer">Johnson</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 11 AM Row -->
+          <div class="week-time-label">11 AM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Tue 3, 11 AM: Survey Lee (11:30-12:30) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-survey" style="top: 30px; height: 56px;">
+              <span class="week-event-time">11:30–12:30</span>
+              <span class="week-event-type">&#128269; Survey</span>
+              <span class="week-event-customer">Lee</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 12 PM Row -->
+          <div class="week-time-label">12 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 1 PM Row -->
+          <div class="week-time-label">1 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 2 PM Row -->
+          <div class="week-time-label">2 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot">
+            <!-- Tue 3, 2 PM: Job #13 Brown (2:00-3:30) -->
+            <a href="screen13b-job-detail.html" class="week-event-block event-job-scheduled" style="top: 0; height: 86px;">
+              <span class="week-event-time">2–3:30 PM</span>
+              <span class="week-event-type">&#128736; Job</span>
+              <span class="week-event-customer">Job #13</span>
+            </a>
+          </div>
+          <div class="week-time-slot">
+            <!-- Wed 4, 2 PM: Presentation Clark (2:00-3:00) -->
+            <a href="screen8b-appointment-detail.html" class="week-event-block event-presentation" style="top: 0; height: 56px;">
+              <span class="week-event-time">2–3 PM</span>
+              <span class="week-event-type">&#128203; Pres</span>
+              <span class="week-event-customer">Clark</span>
+            </a>
+          </div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 3 PM Row -->
+          <div class="week-time-label">3 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 4 PM Row -->
+          <div class="week-time-label">4 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 5 PM Row -->
+          <div class="week-time-label">5 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 6 PM Row -->
+          <div class="week-time-label">6 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+          <!-- 7 PM Row -->
+          <div class="week-time-label">7 PM</div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+          <div class="week-time-slot"></div>
+
+        </div>
       </div>
 
     </div>
+
+    <!-- SCREEN NAVIGATION -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a>
+      <a href="screen2-registration.html">2. Registration</a>
+      <a href="screen3-signin.html">3. Sign In</a>
+      <a href="screen4-dashboard.html">4. Dashboard</a>
+      <a href="screen5-pricing.html">5. Pricing</a>
+      <a href="screen5a-payment.html">5a. Payment</a>
+      <a href="screen6-leads.html">6. Lead Manager</a>
+      <a href="screen7-lead-form.html">7. Lead Form</a>
+      <a href="screen8-appointments.html">8. Appointments</a>
+      <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+      <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+      <a href="screen9-schedule.html">9. Schedule (Month)</a>
+      <a href="screen9a-schedule-day.html">9a. Schedule (Day)</a>
+      <a href="screen9b-schedule-week.html"><strong>9b. Schedule (Week)</strong></a>
+      <a href="screen10-estimates.html">10. Estimates</a>
+      <a href="screen11-estimate-form.html">11. Est Step 1</a>
+      <a href="screen11-step2.html">11-S2. Est Builder</a>
+      <a href="screen11-step3.html">11-S3. Terms</a>
+      <a href="screen11-step4.html">11-S4. Review</a>
+      <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+      <a href="screen12-floorplan.html">12. Floor Plan</a>
+      <a href="screen13-jobs.html">13. Jobs</a>
+      <a href="screen13a-job-form.html">13a. Job Form</a>
+      <a href="screen13b-job-detail.html">13b. Job Detail</a>
+      <a href="screen14a-invoicing.html">14a. Invoicing</a>
+      <a href="screen15-management.html">15. Management Master</a>
+      <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+      <a href="screen15b-materials.html">15b. Materials</a>
+      <a href="screen15c-services.html">15c. Services</a>
+      <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+      <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+      <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+      <a href="screen15g-currency-settings.html">15g. Currency</a>
+      <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+      <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+
   </div>
 
 </body>

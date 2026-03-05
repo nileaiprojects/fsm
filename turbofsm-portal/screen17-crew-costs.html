@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TurboFSM &mdash; Crew Costs</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .pay-status { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+    .pay-status.paid { background: #e8f5e9; color: #2e7d32; }
+    .pay-status.unpaid { background: #fff3e0; color: #e65100; }
+    .pay-status.partial { background: #e3f2fd; color: #1565c0; }
+
+    .mark-paid-btn { font-size: 11px; padding: 4px 10px; border: 1px solid #2e7d32; color: #2e7d32; background: #fff; border-radius: 4px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+    .mark-paid-btn:hover { background: #e8f5e9; }
+
+    .crew-group-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; background: #f0f4ff; border: 1px solid #d0daf7; border-radius: 8px; margin-top: 20px; margin-bottom: 0; cursor: pointer; user-select: none; transition: background 0.15s, border-radius 0.2s; }
+    .crew-group-header:hover { background: #e4ecfd; }
+    .crew-group-header.expanded { border-radius: 8px 8px 0 0; margin-bottom: 0; }
+    .crew-group-header .crew-chevron { font-size: 18px; color: var(--text-secondary); transition: transform 0.25s ease; flex-shrink: 0; width: 20px; text-align: center; }
+    .crew-group-header.expanded .crew-chevron { transform: rotate(90deg); }
+    .crew-group-header .crew-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .crew-group-header .crew-info { flex: 1; }
+    .crew-group-header .crew-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .crew-group-header .crew-meta { font-size: 12px; color: var(--text-secondary); }
+    .crew-group-header .crew-total { text-align: right; }
+    .crew-group-header .crew-total-value { font-size: 16px; font-weight: 700; color: var(--text-primary); }
+    .crew-group-header .crew-total-label { font-size: 11px; color: var(--text-secondary); }
+
+    .crew-detail { overflow: hidden; max-height: 2000px; opacity: 1; transition: max-height 0.35s ease, opacity 0.25s ease; border: 1px solid #d0daf7; border-top: none; border-radius: 0 0 8px 8px; }
+    .crew-detail.collapsed { max-height: 0; opacity: 0; border-color: transparent; }
+
+    .hours-cell { font-variant-numeric: tabular-nums; }
+    .amount-cell { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+    .summary-strip { display: flex; align-items: center; justify-content: flex-end; gap: 24px; padding: 12px 16px; background: #f8fafc; border: 1px solid rgba(0,0,0,.06); border-radius: 6px; margin-top: 16px; font-size: 13px; }
+    .summary-strip .ss-item { display: flex; align-items: center; gap: 6px; }
+    .summary-strip .ss-label { color: var(--text-secondary); }
+    .summary-strip .ss-value { font-weight: 700; color: var(--text-primary); }
+    .summary-strip .ss-value.green { color: #2e7d32; }
+    .summary-strip .ss-value.orange { color: #e65100; }
+
+    .checkin-out { font-size: 12px; line-height: 1.6; }
+    .checkin-out .time-label { color: var(--text-secondary); font-size: 11px; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item active"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Crew Costs</h1>
+        <span class="t-sub">Track crew hours, job costs &amp; payments</span>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn" style="font-size: 13px;">&#128424; Export CSV</button>
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- KPIs -->
+      <div class="kpi-section" style="margin-bottom: 20px;">
+        <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi-card">
+            <div class="kpi-value">$6,840</div>
+            <div class="kpi-label">Crew Cost MTD</div>
+            <div class="kpi-trend up">&uarr; 12%</div>
+            <div class="kpi-accent" style="background:#0f6fde;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$18,720</div>
+            <div class="kpi-label">Crew Cost YTD</div>
+            <div class="kpi-trend up">&uarr; 8%</div>
+            <div class="kpi-accent" style="background:#7c3aed;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$4,590</div>
+            <div class="kpi-label">Paid This Month</div>
+            <div class="kpi-accent" style="background:#16a34a;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$2,250</div>
+            <div class="kpi-label">Pending Payments</div>
+            <div class="kpi-trend" style="color: var(--orange);">&#9888; 3 unpaid</div>
+            <div class="kpi-accent" style="background:#e67e22;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-bar-left" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; width: 100%;">
+          <select class="form-select" style="width: auto; min-width: 160px; font-size: 13px; padding: 7px 8px;">
+            <option value="all">All Crew Members</option>
+            <option value="james">James Rodriguez</option>
+            <option value="carlos">Carlos Mendez</option>
+            <option value="sarah">Sarah Lee</option>
+            <option value="kevin">Kevin Park</option>
+          </select>
+          <select class="form-select" style="width: auto; min-width: 120px; font-size: 13px; padding: 7px 8px;">
+            <option value="all">All Jobs</option>
+            <option value="JOB-0001">JOB-0001</option>
+            <option value="JOB-0002">JOB-0002</option>
+            <option value="JOB-0003">JOB-0003</option>
+            <option value="JOB-0004">JOB-0004</option>
+            <option value="JOB-0006">JOB-0006</option>
+          </select>
+          <select class="form-select" style="width: auto; min-width: 130px; font-size: 13px; padding: 7px 8px;">
+            <option value="all">All Payments</option>
+            <option value="paid">Paid</option>
+            <option value="unpaid">Unpaid</option>
+            <option value="partial">Partial</option>
+          </select>
+          <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap;">From</span>
+          <input type="date" class="form-input" value="2026-02-01" style="width: 140px; font-size: 13px; padding: 7px 8px;">
+          <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap;">To</span>
+          <input type="date" class="form-input" value="2026-03-05" style="width: 140px; font-size: 13px; padding: 7px 8px;">
+          <button class="topbar-btn primary" style="font-size: 13px; padding: 7px 14px; white-space: nowrap;">Apply</button>
+        </div>
+      </div>
+
+      <!-- ==================== CREW GROUP 1: James Rodriguez ==================== -->
+      <div class="crew-group-header expanded" onclick="toggleCrew(this)">
+        <div class="crew-chevron">&#9654;</div>
+        <div class="crew-avatar">JR</div>
+        <div class="crew-info">
+          <div class="crew-name">James Rodriguez</div>
+          <div class="crew-meta">Crew Member &middot; Hourly @ $45/hr &middot; OT @ $67.50/hr &middot; <strong>5 entries</strong></div>
+        </div>
+        <div class="crew-total">
+          <div class="crew-total-value">$1,946.25</div>
+          <div class="crew-total-label">Total (filtered period)</div>
+        </div>
+      </div>
+      <div class="crew-detail">
+        <table class="data-table" style="margin-bottom: 0; border-radius: 0; border: none;">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Job ID</th>
+              <th>Job / Customer</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Std Hrs</th>
+              <th>OT Hrs</th>
+              <th>Rate</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mar 4, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0001</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">AC Install &mdash; Lisa Brown</div>
+                <div style="font-size: 11px; color: var(--muted);">Main Office</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 5:30 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">1.5</td>
+              <td style="font-size: 12px;">$45 + $67.50 OT</td>
+              <td class="amount-cell">$461.25</td>
+              <td><span class="pay-status unpaid">&#9675; Unpaid</span></td>
+              <td><button class="mark-paid-btn">&#10003; Mark Paid</button></td>
+            </tr>
+            <tr>
+              <td>Mar 3, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0001</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">AC Install &mdash; Lisa Brown</div>
+                <div style="font-size: 11px; color: var(--muted);">Main Office</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:15 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 4:45 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">0.5</td>
+              <td style="font-size: 12px;">$45 + $67.50 OT</td>
+              <td class="amount-cell">$393.75</td>
+              <td><span class="pay-status unpaid">&#9675; Unpaid</span></td>
+              <td><button class="mark-paid-btn">&#10003; Mark Paid</button></td>
+            </tr>
+            <tr>
+              <td>Mar 1, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0003</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">Pipe Repair &mdash; Amy Wilson</div>
+                <div style="font-size: 11px; color: var(--muted);">Residence</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 9:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 3:00 PM</td>
+              <td class="hours-cell">6.0</td>
+              <td class="hours-cell">&mdash;</td>
+              <td style="font-size: 12px;">$45/hr</td>
+              <td class="amount-cell">$270.00</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Mar 2</span></td>
+            </tr>
+            <tr>
+              <td>Feb 27, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0004</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">Kitchen Remodel &mdash; Robert Taylor</div>
+                <div style="font-size: 11px; color: var(--muted);">Kitchen</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 7:30 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 5:00 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">1.5</td>
+              <td style="font-size: 12px;">$45 + $67.50 OT</td>
+              <td class="amount-cell">$461.25</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Feb 28</span></td>
+            </tr>
+            <tr>
+              <td>Feb 25, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0002</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">Warehouse HVAC &mdash; Mike Williams</div>
+                <div style="font-size: 11px; color: var(--muted);">Warehouse</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 4:00 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">&mdash;</td>
+              <td style="font-size: 12px;">$45/hr</td>
+              <td class="amount-cell">$360.00</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Feb 28</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- James subtotal strip -->
+        <div class="summary-strip" style="border-radius: 0 0 8px 8px; margin-top: 0;">
+          <div class="ss-item"><span class="ss-label">Total Hours:</span><span class="ss-value">40.5 hrs</span></div>
+          <div class="ss-item"><span class="ss-label">Total Amount:</span><span class="ss-value">$1,946.25</span></div>
+          <div class="ss-item"><span class="ss-label">Paid:</span><span class="ss-value green">$1,091.25</span></div>
+          <div class="ss-item"><span class="ss-label">Unpaid:</span><span class="ss-value orange">$855.00</span></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== CREW GROUP 2: Carlos Mendez ==================== -->
+      <div class="crew-group-header" onclick="toggleCrew(this)">
+        <div class="crew-chevron">&#9654;</div>
+        <div class="crew-avatar" style="background: #7c3aed;">CM</div>
+        <div class="crew-info">
+          <div class="crew-name">Carlos Mendez</div>
+          <div class="crew-meta">Crew Member &middot; Hourly @ $35/hr &middot; OT @ $52.50/hr &middot; <strong>4 entries</strong></div>
+        </div>
+        <div class="crew-total">
+          <div class="crew-total-value">$1,277.50</div>
+          <div class="crew-total-label">Total (filtered period)</div>
+        </div>
+      </div>
+      <div class="crew-detail collapsed">
+        <table class="data-table" style="margin-bottom: 0; border-radius: 0; border: none;">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Job ID</th>
+              <th>Job / Customer</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Std Hrs</th>
+              <th>OT Hrs</th>
+              <th>Rate</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Mar 4, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0001</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">AC Install &mdash; Lisa Brown</div>
+                <div style="font-size: 11px; color: var(--muted);">Main Office</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 4:30 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">0.5</td>
+              <td style="font-size: 12px;">$35 + $52.50 OT</td>
+              <td class="amount-cell">$306.25</td>
+              <td><span class="pay-status unpaid">&#9675; Unpaid</span></td>
+              <td><button class="mark-paid-btn">&#10003; Mark Paid</button></td>
+            </tr>
+            <tr>
+              <td>Mar 3, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0001</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">AC Install &mdash; Lisa Brown</div>
+                <div style="font-size: 11px; color: var(--muted);">Main Office</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:30 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 4:30 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">&mdash;</td>
+              <td style="font-size: 12px;">$35/hr</td>
+              <td class="amount-cell">$280.00</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Mar 4</span></td>
+            </tr>
+            <tr>
+              <td>Feb 28, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0006</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">Floor Repair &mdash; Tom Davis</div>
+                <div style="font-size: 11px; color: var(--muted);">Shop Floor</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 7:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 5:30 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">2.5</td>
+              <td style="font-size: 12px;">$35 + $52.50 OT</td>
+              <td class="amount-cell">$411.25</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Mar 1</span></td>
+            </tr>
+            <tr>
+              <td>Feb 20, 2026</td>
+              <td><a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">JOB-0004</a></td>
+              <td>
+                <div style="font-size: 13px; font-weight: 500;">Kitchen Remodel &mdash; Robert Taylor</div>
+                <div style="font-size: 11px; color: var(--muted);">Kitchen</div>
+              </td>
+              <td class="checkin-out"><span class="time-label">In:</span> 8:00 AM</td>
+              <td class="checkin-out"><span class="time-label">Out:</span> 4:00 PM</td>
+              <td class="hours-cell">8.0</td>
+              <td class="hours-cell">&mdash;</td>
+              <td style="font-size: 12px;">$35/hr</td>
+              <td class="amount-cell">$280.00</td>
+              <td><span class="pay-status paid">&#10003; Paid</span></td>
+              <td><span style="font-size: 11px; color: var(--muted);">Paid Feb 21</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- Carlos subtotal strip -->
+        <div class="summary-strip" style="border-radius: 0 0 8px 8px; margin-top: 0;">
+          <div class="ss-item"><span class="ss-label">Total Hours:</span><span class="ss-value">35.0 hrs</span></div>
+          <div class="ss-item"><span class="ss-label">Total Amount:</span><span class="ss-value">$1,277.50</span></div>
+          <div class="ss-item"><span class="ss-label">Paid:</span><span class="ss-value green">$971.25</span></div>
+          <div class="ss-item"><span class="ss-label">Unpaid:</span><span class="ss-value orange">$306.25</span></div>
+        </div>
+      </div>
+
+
+      <!-- ==================== GRAND TOTALS ==================== -->
+      <div style="margin-top: 28px; padding: 16px 20px; background: linear-gradient(135deg, #f0f7ff 0%, #f5f0ff 100%); border: 2px solid #bbd0f7; border-radius: 10px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Grand Total &mdash; All Crew (Feb 1 &ndash; Mar 5, 2026)</div>
+          </div>
+          <div style="display: flex; gap: 32px; align-items: center;">
+            <div style="text-align: center;">
+              <div style="font-size: 12px; color: var(--text-secondary);">Total Hours</div>
+              <div style="font-size: 18px; font-weight: 700; color: var(--text-primary);">75.5 hrs</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 12px; color: var(--text-secondary);">Total Cost</div>
+              <div style="font-size: 18px; font-weight: 700; color: var(--accent);">$3,223.75</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 12px; color: var(--text-secondary);">Paid</div>
+              <div style="font-size: 18px; font-weight: 700; color: #2e7d32;">$2,062.50</div>
+            </div>
+            <div style="text-align: center;">
+              <div style="font-size: 12px; color: var(--text-secondary);">Unpaid</div>
+              <div style="font-size: 18px; font-weight: 700; color: #e65100;">$1,161.25</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- WIREFRAME NOTE -->
+      <div class="note-bar" style="margin-top: 20px;">
+        &#128221; <strong>Crew Cost Dashboard:</strong> Hours are auto-computed from crew member mobile app check-in / check-out timestamps. Standard vs overtime hours split based on the "Standard Hours / Day" configured per crew member in Crew Management. The contractor can filter by crew member name, job, payment status, and date range. Use "Mark Paid" to record payment for individual entries. Export CSV downloads the filtered view.
+      </div>
+
+    </div>
+
+    <!-- SCREEN NAVIGATION -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a>
+      <a href="screen2-registration.html">2. Registration</a>
+      <a href="screen3-signin.html">3. Sign In</a>
+      <a href="screen4-dashboard.html">4. Dashboard</a>
+      <a href="screen5-pricing.html">5. Pricing</a>
+      <a href="screen5a-payment.html">5a. Payment</a>
+      <a href="screen6-leads.html">6. Lead Manager</a>
+      <a href="screen7-lead-form.html">7. Lead Form</a>
+      <a href="screen8-appointments.html">8. Appointments</a>
+      <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+      <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+      <a href="screen9-schedule.html">9. Schedule</a>
+      <a href="screen10-estimates.html">10. Estimates</a>
+      <a href="screen11-estimate-form.html">11. Est Step 1</a>
+      <a href="screen11-step2.html">11-S2. Est Builder</a>
+      <a href="screen11-step3.html">11-S3. Terms</a>
+      <a href="screen11-step4.html">11-S4. Review</a>
+      <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+      <a href="screen12-floorplan.html">12. Floor Plan</a>
+      <a href="screen13-jobs.html">13. Jobs</a>
+      <a href="screen13a-job-form.html">13a. Job Form</a>
+      <a href="screen13b-job-detail.html">13b. Job Detail</a>
+      <a href="screen14a-invoicing.html">14a. Invoicing</a>
+      <a href="screen14b-invoice-detail.html">14b. Invoice Detail</a>
+      <a href="screen14c-invoice-preview.html">14c. Invoice Preview</a>
+      <a href="screen15-management.html">15. Management Master</a>
+      <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+      <a href="screen15b-materials.html">15b. Materials</a>
+      <a href="screen15c-services.html">15c. Services</a>
+      <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+      <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+      <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+      <a href="screen15g-currency-settings.html">15g. Currency</a>
+      <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+      <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html"><strong>17. Crew Costs</strong></a>
+    </div>
+
+  </div>
+
+<script>
+function toggleCrew(header) {
+  var detail = header.nextElementSibling;
+  var isExpanded = header.classList.contains('expanded');
+  if (isExpanded) {
+    header.classList.remove('expanded');
+    detail.classList.add('collapsed');
+  } else {
+    header.classList.add('expanded');
+    detail.classList.remove('collapsed');
+  }
+}
+</script>
+</body>
+</html>

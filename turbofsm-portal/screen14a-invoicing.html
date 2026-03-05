@@ -3,43 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Invoicing</title>
+  <title>TurboFSM — Invoicing</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .badge-sent { background: #e3f2fd; color: #1565c0; }
-    .badge-partial { background: #fff8e1; color: #f57f17; }
-    .badge-overdue { background: #ffebee; color: #c62828; }
-
-    .action-icon.view-invoice { color: var(--info); }
-    .action-icon.send-invoice { color: var(--success); }
-    .action-icon.payment { color: var(--warning); }
-
-    .action-icon[title]::after { content: none; }
-
     .ageing-legend {
       display: flex;
       align-items: center;
       gap: 20px;
       padding: 10px 16px;
       background: #f8f9fa;
-      border: 1px solid var(--border);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 6px;
       margin-top: 12px;
       margin-bottom: 24px;
       font-size: 12px;
-      color: var(--text-light);
+      color: var(--muted);
     }
 
     .ageing-legend-item {
@@ -54,9 +33,9 @@
       border-radius: 50%;
     }
 
-    .ageing-legend-dot.green { background: var(--success); }
-    .ageing-legend-dot.amber { background: var(--warning); }
-    .ageing-legend-dot.red { background: var(--danger); }
+    .ageing-legend-dot.green { background: var(--green); }
+    .ageing-legend-dot.amber { background: var(--orange); }
+    .ageing-legend-dot.red { background: var(--red); }
 
     .warning-box {
       background: #fff8e1;
@@ -67,22 +46,6 @@
       color: #795548;
       margin-top: 12px;
       margin-bottom: 12px;
-    }
-
-    .auto-field {
-      background: #f5f5f5;
-    }
-
-    .payment-receipt-row {
-      display: flex;
-      gap: 16px;
-      align-items: flex-end;
-    }
-
-    .button-row {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
     }
 
     /* Recurring invoice indicators */
@@ -96,531 +59,352 @@
     .recurring-job-indicator .recur-icon {
       font-size: 13px;
     }
-
-    .billing-type-banner {
-      background: #e0f2f1;
-      border: 1px solid #b2dfdb;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #00695c;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .billing-type-banner .recur-icon {
-      font-size: 16px;
-    }
-
-    .batch-invoice-banner {
-      background: #f3e5f5;
-      border: 1px solid #ce93d8;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #6a1b9a;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .batch-invoice-btn {
-      padding: 5px 14px;
-      background: #7b1fa2;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-    }
   </style>
 </head>
 <body>
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html" class="active">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item active"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+  <!-- MAIN AREA -->
+  <div class="main">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
-              </div>
-            </div>
-            <button class="btn-sm">Buy More Space</button>
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Invoicing</h1>
+        <span class="t-sub">Generate and manage invoices</span>
+      </div>
+      <div class="topbar-right">
+        <a href="screen14b-invoice-detail.html" class="topbar-btn primary" style="text-decoration:none;">+ Create Invoice</a>
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- INVOICE KPIs -->
+      <div class="kpi-section" style="margin-bottom: 20px;">
+        <div class="kpi-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="kpi-card">
+            <div class="kpi-value">$12,200</div>
+            <div class="kpi-label">Invoices MTD</div>
+            <div class="kpi-trend up">&uarr; 15%</div>
+            <div class="kpi-accent" style="background:#0f6fde;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$54,975</div>
+            <div class="kpi-label">Invoices YTD</div>
+            <div class="kpi-trend up">&uarr; 22%</div>
+            <div class="kpi-accent" style="background:#7c3aed;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$9,100</div>
+            <div class="kpi-label">Payments MTD</div>
+            <div class="kpi-trend up">&uarr; 10%</div>
+            <div class="kpi-accent" style="background:#16a34a;"></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-value">$42,600</div>
+            <div class="kpi-label">Payments YTD</div>
+            <div class="kpi-trend up">&uarr; 18%</div>
+            <div class="kpi-accent" style="background:#0d9488;"></div>
           </div>
         </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
-          </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- PAGE TITLE -->
-        <div class="page-title">Invoicing</div>
-        <div class="page-subtitle">Generate and manage invoices</div>
-
-        <!-- TOOLBAR -->
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <div class="search-box">
-              <input type="text" placeholder="Search invoices...">
-              <button>&#128269;</button>
-            </div>
-            <select class="filter-select">
-              <option value="all">All Statuses</option>
-              <option value="draft">Draft</option>
-              <option value="sent">Sent</option>
-              <option value="paid">Paid</option>
-              <option value="partial">Partial</option>
-              <option value="overdue">Overdue</option>
-              <option value="recurring">Recurring Only</option>
-            </select>
-          </div>
-          <div class="toolbar-right">
-            <a href="#create-invoice" class="btn btn-primary">+ Create Invoice</a>
-          </div>
-        </div>
-
-        <!-- INVOICES TABLE -->
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Invoice No.</th>
-                <th>Date</th>
-                <th>Customer</th>
-                <th>Service Site</th>
-                <th>Job ID</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Due Date</th>
-                <th>Ageing</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Row 1: Sent -->
-              <tr>
-                <td>INV-20260301-0001</td>
-                <td>Mar 1, 2026</td>
-                <td>Lisa Brown</td>
-                <td style="font-size: 12px;">Main Office</td>
-                <td><a href="screen13-jobs.html" style="color: var(--primary); text-decoration: underline;">JOB-0001</a></td>
-                <td>$11,000.00</td>
-                <td><span class="badge badge-sent">Sent</span></td>
-                <td>Mar 15, 2026</td>
-                <td><span class="age-green">5 days</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 2: Paid -->
-              <tr>
-                <td>INV-20260228-0002</td>
-                <td>Feb 28, 2026</td>
-                <td>Amy Wilson</td>
-                <td style="font-size: 12px;">Residence</td>
-                <td><a href="screen13-jobs.html" style="color: var(--primary); text-decoration: underline;">JOB-0003</a></td>
-                <td>$7,900.00</td>
-                <td><span class="badge badge-approved">Paid</span></td>
-                <td>Mar 10, 2026</td>
-                <td><span class="age-green">Paid</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 3: Paid -->
-              <tr>
-                <td>INV-20260220-0003</td>
-                <td>Feb 20, 2026</td>
-                <td>Robert Taylor</td>
-                <td style="font-size: 12px;">Kitchen</td>
-                <td><a href="screen13-jobs.html" style="color: var(--primary); text-decoration: underline;">JOB-0004</a></td>
-                <td>$3,600.00</td>
-                <td><span class="badge badge-approved">Paid</span></td>
-                <td>Mar 5, 2026</td>
-                <td><span class="age-green">Paid</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 4: Partial -->
-              <tr>
-                <td>INV-20260215-0004</td>
-                <td>Feb 15, 2026</td>
-                <td>Mike Williams</td>
-                <td style="font-size: 12px;">Warehouse</td>
-                <td><a href="screen13-jobs.html" style="color: var(--primary); text-decoration: underline;">JOB-0002</a></td>
-                <td>$2,875.00</td>
-                <td><span class="badge badge-inprogress">Partial</span></td>
-                <td>Mar 1, 2026</td>
-                <td><span class="age-amber">35 days</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 5: Overdue -->
-              <tr>
-                <td>INV-20260110-0005</td>
-                <td>Jan 10, 2026</td>
-                <td>Tom Davis</td>
-                <td style="font-size: 12px;">Shop Floor</td>
-                <td><a href="screen13-jobs.html" style="color: var(--primary); text-decoration: underline;">JOB-0006</a></td>
-                <td>$4,200.00</td>
-                <td><span class="badge badge-rejected">Overdue</span></td>
-                <td>Feb 10, 2026</td>
-                <td><span class="age-red">75 days</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 6: Recurring - Paid (JOB-0007, Billing Period #2, Feb 2026) -->
-              <tr>
-                <td>INV-20260228-0011</td>
-                <td>Feb 28, 2026</td>
-                <td>David Park</td>
-                <td style="font-size: 12px;">Residential</td>
-                <td>
-                  <a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">
-                    <span class="recurring-job-indicator"><span class="recur-icon">🔄</span> JOB-0007</span>
-                  </a>
-                  <div style="font-size: 10px; color: var(--text-light);">Job #2 of 12 &middot; Feb 2026 &middot; 4 visits &times; $300</div>
-                </td>
-                <td>$1,200.00</td>
-                <td><span class="badge badge-approved">Paid</span></td>
-                <td>Mar 14, 2026</td>
-                <td><span class="age-green">Paid</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 7: Recurring - Sent (JOB-0007, Billing Period #3, Mar 2026) -->
-              <tr>
-                <td>INV-20260301-0012</td>
-                <td>Mar 1, 2026</td>
-                <td>David Park</td>
-                <td style="font-size: 12px;">Residential</td>
-                <td>
-                  <a href="screen13b-job-detail.html" style="color: var(--primary); text-decoration: underline;">
-                    <span class="recurring-job-indicator"><span class="recur-icon">🔄</span> JOB-0007</span>
-                  </a>
-                  <div style="font-size: 10px; color: var(--text-light);">Job #3 of 12 &middot; Mar 2026 &middot; 4 visits &times; $300</div>
-                </td>
-                <td>$1,200.00</td>
-                <td><span class="badge badge-sent">Sent</span></td>
-                <td>Mar 31, 2026</td>
-                <td><span class="age-green">3 days</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="#" class="action-icon view-invoice" title="View Invoice">&#128196;</a>
-                    <a href="#" class="action-icon send-invoice" title="Send Invoice">&#9993;</a>
-                    <a href="#" class="action-icon payment" title="Record Payment">&#128176;</a>
-                    <a href="#" class="action-icon edit" title="Edit">&#9998;</a>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- AGEING LEGEND -->
-        <div class="ageing-legend">
-          <strong>Ageing Legend:</strong>
-          <div class="ageing-legend-item">
-            <div class="ageing-legend-dot green"></div>
-            <span>Green: 0-30 days</span>
-          </div>
-          <div class="ageing-legend-item">
-            <div class="ageing-legend-dot amber"></div>
-            <span>Amber: 31-60 days</span>
-          </div>
-          <div class="ageing-legend-item">
-            <div class="ageing-legend-dot red"></div>
-            <span>Red: 60+ days</span>
-          </div>
-        </div>
-
-        <!-- WIREFRAME NOTE -->
-        <div class="wireframe-note">
-          &#128221; <strong>Invoicing — Billing-Period-Based Recurring Model:</strong>
-          <ul style="margin: 6px 0 0 16px; line-height: 1.8;">
-            <li><strong>Billing-Period Invoices:</strong> Each recurring invoice corresponds to one billing period (e.g., "Job #3 of 12 &middot; Mar 2026 &middot; 4 visits &times; $300"). The invoice amount = rate per visit &times; visits in the billing period.</li>
-            <li><strong>Billing Context Banner:</strong> When creating an invoice for a recurring job, a teal banner shows the billing period number, visit count, rate per visit, and calculated total (e.g., "4 visits &times; $300/visit = $1,200").</li>
-            <li><strong>Batch Invoice:</strong> A purple banner offers to create invoices for all completed billing periods in one action (e.g., "1 completed billing period found for JOB-0007").</li>
-            <li><strong>Auto-Calculated Amount:</strong> Invoice amount fields show Rate per Visit, Visits in Billing Period, and auto-calculated Invoice Amount (readonly).</li>
-            <li><strong>Job Dropdown:</strong> Recurring jobs in the dropdown show billing period context (e.g., "JOB-0007 - David Park - Lawn Service (🔄 Job #3 &middot; Mar 2026 &middot; 4 visits)").</li>
-            <li><strong>Filter:</strong> "Recurring Only" filter option in status dropdown to isolate recurring job invoices.</li>
-          </ul>
-        </div>
-
-        <!-- CREATE INVOICE FORM -->
-        <div id="create-invoice" class="card">
-          <div class="card-title">Create Invoice</div>
-
-          <!-- Recurring Billing Context (Billing-Period Model) -->
-          <div class="billing-type-banner">
-            <span class="recur-icon">🔄</span>
-            <div>
-              <strong>Recurring Job Invoice &mdash; Billing Period #3 (March 2026)</strong><br>
-              4 visits &times; $300/visit = <strong>$1,200.00</strong> &middot; JOB-0007 &middot; Lawn Service &middot; David Park &middot; Weekly visits &middot; Monthly billing
-            </div>
-          </div>
-
-          <!-- Batch Invoice Option -->
-          <div class="batch-invoice-banner">
-            <div>
-              <strong>&#128203; Batch Invoice Available:</strong> 1 completed billing period found for JOB-0007 (Feb 2026, 4 visits).
-              <span style="opacity: 0.8;">Create invoices for all completed billing periods at once.</span>
-            </div>
-            <button class="batch-invoice-btn">Create Batch Invoice</button>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Invoice No.</label>
-              <input type="text" class="form-control auto-field" value="INV-20260302-0006" readonly>
-            </div>
-            <div class="form-group">
-              <label>Job ID</label>
-              <select class="form-control">
-                <option value="">-- Select Job --</option>
-                <option>JOB-0005 - John Smith - Pipe Replace</option>
-                <option>JOB-0001 - Lisa Brown - Full Re-pipe</option>
-                <option>JOB-0002 - Mike Williams - Water Heater</option>
-                <option>JOB-0003 - Amy Wilson - Bathroom Reno</option>
-                <option>JOB-0004 - Robert Taylor - Kitchen Plumbing</option>
-                <option selected>JOB-0007 - David Park - Lawn Service (🔄 Job #3 &middot; Mar 2026 &middot; 4 visits)</option>
-                <option>JOB-0008 - Sarah Chen - Office Cleaning (🔄 Job #1 &middot; Mar 2026 &middot; 8 visits)</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="form-row-3">
-            <div class="form-group">
-              <label>Estimate ID</label>
-              <input type="text" class="form-control auto-field" value="EST-20260215-0001" readonly>
-            </div>
-            <div class="form-group">
-              <label>Lead ID</label>
-              <input type="text" class="form-control auto-field" value="LD-20260215-0001" readonly>
-            </div>
-            <div class="form-group">
-              <label>Customer Name</label>
-              <input type="text" class="form-control auto-field" value="John Smith" readonly>
-            </div>
-          </div>
-
-          <!-- Billing & Service Site -->
-          <div class="form-row">
-            <div class="form-group">
-              <label>Billing Address</label>
-              <input type="text" class="form-control auto-field" value="100 Park Blvd, San Antonio TX 78201" readonly>
-              <small style="font-size: 10px; color: var(--text-light);">Invoice will be sent to this address</small>
-            </div>
-            <div class="form-group">
-              <label>Service Site</label>
-              <div style="padding: 8px 12px; background: #f0f7ff; border: 1px solid #bbd0f7; border-radius: 6px; font-size: 13px;">
-                <span style="font-weight: 600;">&#128205; Residential Property</span><br>
-                <span style="font-size: 12px; color: var(--text-light);">123 Green St, San Antonio TX 78205</span>
-              </div>
-              <small style="font-size: 10px; color: var(--text-light);">Auto-filled from linked job</small>
-            </div>
-          </div>
-
-          <div class="form-row-3">
-            <div class="form-group">
-              <label>Rate per Visit</label>
-              <input type="text" class="form-control auto-field" value="$300.00" readonly>
-            </div>
-            <div class="form-group">
-              <label>Visits in Billing Period</label>
-              <input type="text" class="form-control auto-field" value="4" readonly>
-            </div>
-            <div class="form-group">
-              <label>Invoice Amount</label>
-              <input type="text" class="form-control auto-field" value="$1,200.00" readonly>
-              <small style="color: var(--text-light); font-size: 10px;">= $300 &times; 4 visits</small>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Balance Due</label>
-              <input type="text" class="form-control auto-field" value="$0.00" readonly>
-            </div>
-            <div class="form-group">
-              <label>Due Date</label>
-              <input type="date" class="form-control" value="2026-03-16">
-            </div>
-          </div>
-
-          <!-- Warning Box -->
-          <div class="warning-box">
-            &#9888; <strong>Warning:</strong> Invoice amount exceeds remaining balance.
-          </div>
-
-          <!-- Payment Receipt -->
-          <div class="section-header" style="margin-top: 20px;">Payment Receipt</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Payment Date</label>
-              <input type="date" class="form-control">
-            </div>
-            <div class="form-group">
-              <label>Payment Mode</label>
-              <select class="form-control">
-                <option value="">-- Select Mode --</option>
-                <option>Cash</option>
-                <option>Check</option>
-                <option>Bank Transfer</option>
-                <option>PayPal</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="button-row">
-            <button class="btn btn-primary">Save Invoice</button>
-            <button class="btn btn-success">Send Invoice by Email</button>
-            <a href="screen13-jobs.html" class="btn btn-outline">Cancel</a>
-          </div>
-        </div>
-
       </div>
 
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html"><strong>14a. Invoicing</strong></a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-bar-left" style="display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; width: 100%;">
+          <div class="search-input" style="min-width: 0; flex: 1 1 180px; max-width: 220px;">
+            <input type="text" placeholder="Search invoices..." style="font-size: 13px;">
+          </div>
+          <select class="form-select" style="width: auto; min-width: 120px; font-size: 13px; padding: 7px 8px;">
+            <option value="all">All Statuses</option>
+            <option value="draft">Draft</option>
+            <option value="sent">Sent</option>
+            <option value="paid">Paid</option>
+            <option value="partial">Partial</option>
+            <option value="overdue">Overdue</option>
+            <option value="recurring">Recurring Only</option>
+          </select>
+          <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap;">From</span>
+          <input type="date" class="form-input" value="2026-01-01" style="width: 140px; font-size: 13px; padding: 7px 8px;">
+          <span style="font-size: 12px; font-weight: 500; color: var(--text-secondary); white-space: nowrap;">To</span>
+          <input type="date" class="form-input" value="2026-03-05" style="width: 140px; font-size: 13px; padding: 7px 8px;">
+          <button class="topbar-btn primary" style="font-size: 13px; padding: 7px 14px; white-space: nowrap;">Apply</button>
+        </div>
+      </div>
+
+      <!-- INVOICES TABLE -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Invoice No.</th>
+            <th>Date</th>
+            <th>Customer</th>
+            <th>Service Site</th>
+            <th>Job ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Due Date</th>
+            <th>Ageing</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: Sent -->
+          <tr>
+            <td>INV-20260301-0001</td>
+            <td>Mar 1, 2026</td>
+            <td>Lisa Brown</td>
+            <td style="font-size: 12px;">Main Office</td>
+            <td><a href="screen13-jobs.html" style="color: var(--accent); text-decoration: underline;">JOB-0001</a></td>
+            <td>$11,000.00</td>
+            <td><span class="status-pill sent">Sent</span></td>
+            <td>Mar 15, 2026</td>
+            <td><span class="age-green">5 days</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 2: Paid -->
+          <tr>
+            <td>INV-20260228-0002</td>
+            <td>Feb 28, 2026</td>
+            <td>Amy Wilson</td>
+            <td style="font-size: 12px;">Residence</td>
+            <td><a href="screen13-jobs.html" style="color: var(--accent); text-decoration: underline;">JOB-0003</a></td>
+            <td>$7,900.00</td>
+            <td><span class="status-pill approved">Paid</span></td>
+            <td>Mar 10, 2026</td>
+            <td><span class="age-green">Paid</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 3: Paid -->
+          <tr>
+            <td>INV-20260220-0003</td>
+            <td>Feb 20, 2026</td>
+            <td>Robert Taylor</td>
+            <td style="font-size: 12px;">Kitchen</td>
+            <td><a href="screen13-jobs.html" style="color: var(--accent); text-decoration: underline;">JOB-0004</a></td>
+            <td>$3,600.00</td>
+            <td><span class="status-pill approved">Paid</span></td>
+            <td>Mar 5, 2026</td>
+            <td><span class="age-green">Paid</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 4: Partial -->
+          <tr>
+            <td>INV-20260215-0004</td>
+            <td>Feb 15, 2026</td>
+            <td>Mike Williams</td>
+            <td style="font-size: 12px;">Warehouse</td>
+            <td><a href="screen13-jobs.html" style="color: var(--accent); text-decoration: underline;">JOB-0002</a></td>
+            <td>$2,875.00</td>
+            <td><span class="status-pill pending">Partial</span></td>
+            <td>Mar 1, 2026</td>
+            <td><span class="age-amber">35 days</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 5: Overdue -->
+          <tr>
+            <td>INV-20260110-0005</td>
+            <td>Jan 10, 2026</td>
+            <td>Tom Davis</td>
+            <td style="font-size: 12px;">Shop Floor</td>
+            <td><a href="screen13-jobs.html" style="color: var(--accent); text-decoration: underline;">JOB-0006</a></td>
+            <td>$4,200.00</td>
+            <td><span class="status-pill lost">Overdue</span></td>
+            <td>Feb 10, 2026</td>
+            <td><span class="age-red">75 days</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 6: Recurring - Paid (JOB-0007, Billing Period #2, Feb 2026) -->
+          <tr>
+            <td>INV-20260228-0011</td>
+            <td>Feb 28, 2026</td>
+            <td>David Park</td>
+            <td style="font-size: 12px;">Residential</td>
+            <td>
+              <a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">
+                <span class="recurring-job-indicator"><span class="recur-icon">&#128260;</span> JOB-0007</span>
+              </a>
+              <div style="font-size: 10px; color: var(--muted);">Job #2 of 12 &middot; Feb 2026 &middot; 4 visits &times; $300</div>
+            </td>
+            <td>$1,200.00</td>
+            <td><span class="status-pill approved">Paid</span></td>
+            <td>Mar 14, 2026</td>
+            <td><span class="age-green">Paid</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 7: Recurring - Sent (JOB-0007, Billing Period #3, Mar 2026) -->
+          <tr>
+            <td>INV-20260301-0012</td>
+            <td>Mar 1, 2026</td>
+            <td>David Park</td>
+            <td style="font-size: 12px;">Residential</td>
+            <td>
+              <a href="screen13b-job-detail.html" style="color: var(--accent); text-decoration: underline;">
+                <span class="recurring-job-indicator"><span class="recur-icon">&#128260;</span> JOB-0007</span>
+              </a>
+              <div style="font-size: 10px; color: var(--muted);">Job #3 of 12 &middot; Mar 2026 &middot; 4 visits &times; $300</div>
+            </td>
+            <td>$1,200.00</td>
+            <td><span class="status-pill sent">Sent</span></td>
+            <td>Mar 31, 2026</td>
+            <td><span class="age-green">3 days</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen14c-invoice-preview.html" class="icon-btn" title="View Invoice">&#128196;</a>
+                <a href="#" class="icon-btn" title="Send Invoice">&#9993;</a>
+                <a href="#" class="icon-btn" title="Record Payment">&#128176;</a>
+                <a href="screen14b-invoice-detail.html" class="icon-btn" title="Edit">&#9998;</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- AGEING LEGEND -->
+      <div class="ageing-legend">
+        <strong>Ageing Legend:</strong>
+        <div class="ageing-legend-item">
+          <div class="ageing-legend-dot green"></div>
+          <span>Green: 0-30 days</span>
+        </div>
+        <div class="ageing-legend-item">
+          <div class="ageing-legend-dot amber"></div>
+          <span>Amber: 31-60 days</span>
+        </div>
+        <div class="ageing-legend-item">
+          <div class="ageing-legend-dot red"></div>
+          <span>Red: 60+ days</span>
+        </div>
+      </div>
+
+      <!-- WIREFRAME NOTE -->
+      <div class="note-bar">
+        &#128221; <strong>Invoicing Dashboard:</strong> Shows all invoices with ageing indicators. Click the View icon on any row to see invoice details. Use "+ Create Invoice" to generate a new invoice. Recurring job invoices show billing period context.
       </div>
 
     </div>
+
+    <!-- SCREEN NAVIGATION -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a>
+      <a href="screen2-registration.html">2. Registration</a>
+      <a href="screen3-signin.html">3. Sign In</a>
+      <a href="screen4-dashboard.html">4. Dashboard</a>
+      <a href="screen5-pricing.html">5. Pricing</a>
+      <a href="screen5a-payment.html">5a. Payment</a>
+      <a href="screen6-leads.html">6. Lead Manager</a>
+      <a href="screen7-lead-form.html">7. Lead Form</a>
+      <a href="screen8-appointments.html">8. Appointments</a>
+      <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+      <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+      <a href="screen9-schedule.html">9. Schedule</a>
+      <a href="screen10-estimates.html">10. Estimates</a>
+      <a href="screen11-estimate-form.html">11. Est Step 1</a>
+      <a href="screen11-step2.html">11-S2. Est Builder</a>
+      <a href="screen11-step3.html">11-S3. Terms</a>
+      <a href="screen11-step4.html">11-S4. Review</a>
+      <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+      <a href="screen12-floorplan.html">12. Floor Plan</a>
+      <a href="screen13-jobs.html">13. Jobs</a>
+      <a href="screen13a-job-form.html">13a. Job Form</a>
+      <a href="screen13b-job-detail.html">13b. Job Detail</a>
+      <a href="screen14a-invoicing.html"><strong>14a. Invoicing</strong></a>
+      <a href="screen15-management.html">15. Management Master</a>
+      <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+      <a href="screen15b-materials.html">15b. Materials</a>
+      <a href="screen15c-services.html">15c. Services</a>
+      <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+      <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+      <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+      <a href="screen15g-currency-settings.html">15g. Currency</a>
+      <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+      <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+
   </div>
 
 </body>

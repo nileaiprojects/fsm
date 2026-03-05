@@ -3,105 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Appointment Details</title>
+  <title>TurboFSM — Appointment Details</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .detail-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-
-    .detail-header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .detail-header-left .status-indicator {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-    }
-
-    .detail-header-left .status-indicator.completed { background: #27ae60; }
-    .detail-header-left .status-indicator.pending { background: #e65100; }
-    .detail-header-left .status-indicator.cancelled { background: #c62828; }
-
-    .detail-header-right {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    /* Detail cards */
-    .detail-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 24px;
-      margin-bottom: 20px;
-    }
-
-    .detail-card-title {
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .detail-card-title .edit-toggle {
-      font-size: 12px;
-      color: var(--primary);
-      cursor: pointer;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .detail-card-title .edit-toggle:hover { text-decoration: underline; }
-
-    /* Read-only detail rows */
-    .detail-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    .detail-field {
-      margin-bottom: 4px;
-    }
-
-    .detail-field .field-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
-      margin-bottom: 3px;
-    }
-
-    .detail-field .field-value {
-      font-size: 14px;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .detail-field.full-width {
-      grid-column: 1 / -1;
-    }
-
-    /* Status badges */
-    .badge-pending { background: #fff3e0; color: #e65100; }
-    .badge-cancelled { background: #ffebee; color: #c62828; }
-    .badge-completed-status { background: #e8f5e9; color: #2e7d32; }
-
+    /* Status badge (large) */
     .status-badge-lg {
       display: inline-flex;
       align-items: center;
@@ -111,29 +17,26 @@
       font-size: 13px;
       font-weight: 600;
     }
+    .status-badge-lg.pending { background: var(--orange-light); color: var(--orange); }
+    .status-badge-lg.completed { background: var(--green-light); color: var(--green); }
+    .status-badge-lg.cancelled { background: var(--red-light); color: var(--red); }
 
-    .status-badge-lg.pending { background: #fff3e0; color: #e65100; }
-    .status-badge-lg.completed { background: #e8f5e9; color: #2e7d32; }
-    .status-badge-lg.cancelled { background: #ffebee; color: #c62828; }
-
-    /* Post-appointment section */
+    /* Post-appointment divider */
     .post-appt-divider {
       display: flex;
       align-items: center;
       gap: 12px;
       margin: 8px 0 20px;
     }
-
     .post-appt-divider .divider-line {
       flex: 1;
       height: 2px;
       background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px);
     }
-
     .post-appt-divider .divider-label {
       font-size: 12px;
       font-weight: 600;
-      color: var(--text-light);
+      color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.5px;
       white-space: nowrap;
@@ -142,42 +45,23 @@
     /* Upload zone */
     .upload-zone {
       border: 2px dashed var(--border);
-      border-radius: 8px;
+      border-radius: var(--radius);
       padding: 24px;
       text-align: center;
-      color: var(--text-light);
+      color: var(--text-muted);
       font-size: 13px;
       cursor: pointer;
-      transition: border-color 0.2s;
+      transition: border-color var(--transition);
     }
-
-    .upload-zone:hover { border-color: var(--primary); }
-
-    .upload-zone .upload-icon {
-      font-size: 28px;
-      display: block;
-      margin-bottom: 8px;
-    }
+    .upload-zone:hover { border-color: var(--accent); }
+    .upload-zone .upload-icon { font-size: 28px; display: block; margin-bottom: 8px; }
 
     /* Uploaded images preview */
-    .uploaded-images {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
-
+    .uploaded-images { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
     .uploaded-img {
-      width: 80px;
-      height: 80px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: var(--text-light);
-      background: #f8f9fa;
+      width: 80px; height: 80px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--text-muted); background: var(--bg);
     }
 
     /* Slider */
@@ -185,103 +69,44 @@
     .slider-container input[type="range"] { flex: 1; }
     .slider-container .slider-value { font-weight: 600; min-width: 40px; }
 
-    /* Checkbox */
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: 16px;
-      height: 16px;
-    }
-
     /* Notes display */
     .notes-display {
-      background: #f8f9fa;
-      border: 1px solid #eee;
-      border-radius: 6px;
-      padding: 14px 16px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text);
-      min-height: 60px;
+      background: var(--bg); border: 1px solid var(--border-light); border-radius: var(--radius-sm);
+      padding: 14px 16px; font-size: 13px; line-height: 1.6; color: var(--text-primary); min-height: 60px;
     }
 
-    /* Action buttons strip */
+    /* Action strip */
     .action-strip {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 20px 24px;
-      margin-bottom: 20px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 20px 24px; margin-bottom: 16px;
     }
-
     .action-strip-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-light);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 12px;
+      text-transform: uppercase; letter-spacing: 0.3px;
     }
-
-    .action-strip-buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
+    .action-strip-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
     .action-strip-btn {
-      padding: 8px 18px;
-      font-size: 13px;
-      font-weight: 500;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      padding: 8px 18px; font-size: 13px; font-weight: 500; border-radius: var(--radius-sm);
+      border: none; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      font-family: inherit;
     }
-
-    .action-strip-btn.primary { background: var(--primary); color: #fff; }
-    .action-strip-btn.success { background: var(--success); color: #fff; }
-    .action-strip-btn.warning { background: var(--warning); color: #fff; }
-    .action-strip-btn.info { background: var(--info); color: #fff; }
-    .action-strip-btn.outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
+    .action-strip-btn.primary { background: var(--accent); color: #fff; }
+    .action-strip-btn.success { background: var(--green); color: #fff; }
+    .action-strip-btn.warning { background: var(--orange); color: #fff; }
+    .action-strip-btn.info { background: var(--teal); color: #fff; }
+    .action-strip-btn.outline { background: var(--surface); border: 1px solid var(--border); color: var(--text-primary); }
     .action-strip-btn.mark-complete { background: #e65100; color: #fff; }
 
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* ==========================================
-       APPOINTMENT CHAIN BREADCRUMB
-       ========================================== */
-    .appt-chain-breadcrumb {
-      display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px;
-    }
+    /* Appointment chain breadcrumb */
+    .appt-chain-breadcrumb { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; }
     .appt-chain-link { padding: 2px 8px; border-radius: 4px; font-weight: 500; }
-    .appt-chain-link.completed { background: #e8f5e9; color: #2e7d32; cursor: pointer; }
+    .appt-chain-link.completed { background: var(--green-light); color: var(--green); cursor: pointer; }
     .appt-chain-link.completed:hover { text-decoration: underline; }
-    .appt-chain-link.current { background: #e0f2f1; color: #00695c; font-weight: 600; }
-    .appt-chain-arrow { color: var(--text-light); font-size: 14px; }
-    .appt-chain-badge { font-size: 11px; color: var(--text-light); font-style: italic; }
+    .appt-chain-link.current { background: var(--teal-light); color: #00695c; font-weight: 600; }
+    .appt-chain-arrow { color: var(--text-muted); font-size: 14px; }
+    .appt-chain-badge { font-size: 11px; color: var(--text-muted); font-style: italic; }
 
-    /* ==========================================
-       APPOINTMENT TRAIL / HISTORY TIMELINE
-       ========================================== */
+    /* Appointment trail / history timeline */
     .appt-trail { position: relative; padding-left: 28px; }
     .appt-trail::before {
       content: ''; position: absolute; left: 10px; top: 0; bottom: 0;
@@ -289,716 +114,532 @@
     }
     .appt-trail-entry { position: relative; padding-bottom: 20px; }
     .appt-trail-entry:last-child { padding-bottom: 0; }
-
     .appt-trail-dot {
       position: absolute; left: -23px; top: 4px; width: 12px; height: 12px;
       border-radius: 50%; border: 2px solid #fff; z-index: 1;
     }
-    .appt-trail-dot-followup { background: #00897b; box-shadow: 0 0 0 2px #00897b; }
-    .appt-trail-dot-original { background: #4a90d9; box-shadow: 0 0 0 2px #4a90d9; }
+    .appt-trail-dot-followup { background: var(--teal); box-shadow: 0 0 0 2px var(--teal); }
+    .appt-trail-dot-original { background: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
     .appt-trail-dot-note { background: #999; box-shadow: 0 0 0 2px #999; width: 8px; height: 8px; top: 6px; left: -21px; }
-
     .appt-trail-timestamp { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .appt-trail-date-badge {
-      font-size: 11px; font-weight: 600; color: var(--text);
-      background: #f0f0f0; padding: 2px 8px; border-radius: 4px;
+      font-size: 11px; font-weight: 600; color: var(--text-primary);
+      background: var(--bg); padding: 2px 8px; border-radius: 4px;
     }
-    .appt-trail-author { font-size: 11px; color: var(--text-light); font-style: italic; }
-
+    .appt-trail-author { font-size: 11px; color: var(--text-muted); font-style: italic; }
     .appt-trail-text {
-      font-size: 13px; line-height: 1.6; color: var(--text);
-      background: #f8f9fa; border: 1px solid #eee; border-radius: 6px; padding: 10px 14px;
+      font-size: 13px; line-height: 1.6; color: var(--text-primary);
+      background: var(--bg); border: 1px solid var(--border-light); border-radius: var(--radius-sm); padding: 10px 14px;
       white-space: pre-line;
     }
     .appt-trail-appt-card {
-      background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px;
     }
     .appt-trail-appt-header {
       display: flex; align-items: center; gap: 6px; font-size: 13px; margin-bottom: 8px;
     }
     .appt-trail-appt-details {
-      display: flex; gap: 16px; font-size: 12px; color: var(--text-light); flex-wrap: wrap;
+      display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); flex-wrap: wrap;
     }
     .appt-trail-appt-note {
-      font-size: 12px; color: var(--text-light); margin-top: 8px; padding-top: 8px;
-      border-top: 1px dashed #eee; line-height: 1.5;
+      font-size: 12px; color: var(--text-muted); margin-top: 8px; padding-top: 8px;
+      border-top: 1px dashed var(--border-light); line-height: 1.5;
     }
 
     /* Type dots (for trail) */
     .type-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; }
-    .type-dot.survey { background: #4a90d9; }
-    .type-dot.follow-up { background: #00897b; }
+    .type-dot.survey { background: var(--accent); }
+    .type-dot.follow-up { background: var(--teal); }
 
-    /* ==========================================
-       FOLLOW-UP CREATION CARD
-       ========================================== */
-    .followup-create-card { border-left: 4px solid #00897b; }
+    /* Follow-up creation card */
+    .followup-create-card { border-left: 4px solid var(--teal); }
     .followup-inherit-banner {
       display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; font-size: 13px; color: var(--text);
+      background: var(--green-light); border: 1px solid #bbf7d0; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-primary);
     }
     .followup-inherit-icon { font-size: 18px; }
-
-    /* Form helpers (for follow-up section) */
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-    .form-info-text { font-size: 12px; color: var(--text-light); margin-top: 4px; font-style: italic; }
-    .form-actions { display: flex; gap: 12px; margin-top: 16px; }
-
-    /* ==========================================
-       CREW GANTT AVAILABILITY CHART
-       ========================================== */
-    .crew-gantt-section { margin-top: 8px; }
-    .crew-gantt-subheader { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .crew-gantt-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; background: var(--card-bg); }
-    .crew-gantt-grid {
-      display: grid; grid-template-columns: 180px repeat(15, minmax(52px, 1fr)) 120px; min-width: 1080px;
-    }
-    .crew-gantt-corner {
-      padding: 10px 12px; font-size: 11px; font-weight: 600; color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa;
-      border-bottom: 2px solid var(--border); border-right: 1px solid #eee; display: flex; align-items: center;
-    }
-    .crew-gantt-date-header {
-      padding: 8px 4px; text-align: center; font-size: 11px; font-weight: 600;
-      color: var(--text); background: #f8f9fa; border-bottom: 2px solid var(--border);
-      border-right: 1px solid #eee; line-height: 1.3;
-    }
-    .crew-gantt-date-header.appt-date { background: #e3f2fd; border-bottom-color: #4a90d9; }
-    .crew-gantt-day { font-size: 9px; font-weight: 400; color: var(--text-light); text-transform: uppercase; }
-    .crew-gantt-status-header {
-      padding: 10px 8px; font-size: 11px; font-weight: 600; color: var(--text-light);
-      text-transform: uppercase; letter-spacing: 0.5px; background: #f8f9fa;
-      border-bottom: 2px solid var(--border); text-align: center;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .crew-gantt-name {
-      padding: 10px 12px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;
-      background: #fff; display: flex; align-items: center; gap: 10px;
-    }
-    .crew-gantt-name input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
-    .crew-gantt-name-info { display: flex; flex-direction: column; justify-content: center; }
-    .crew-gantt-name-text { font-size: 13px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 6px; }
-    .crew-gantt-role-text { font-size: 11px; color: var(--text-light); }
-    .crew-gantt-selected-badge {
-      display: inline-block; padding: 1px 6px; border-radius: 8px; font-size: 9px;
-      font-weight: 600; background: #dbeafe; color: #1d4ed8;
-    }
-    .crew-gantt-cell {
-      padding: 8px 3px; border-bottom: 1px solid #eee; border-right: 1px solid #eee;
-      font-size: 9px; font-weight: 600; text-align: center; display: flex;
-      align-items: center; justify-content: center; min-height: 44px;
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .crew-gantt-available { background: #f0faf0; }
-    .crew-gantt-busy-job { background: #8e44ad; color: #fff; border-radius: 3px; margin: 3px 2px; }
-    .crew-gantt-busy-appt { background: #4a90d9; color: #fff; border-radius: 3px; margin: 3px 2px; }
-    .crew-gantt-busy-training { background: #e67e22; color: #fff; border-radius: 3px; margin: 3px 2px; }
-    .crew-gantt-status {
-      padding: 10px 8px; border-bottom: 1px solid #eee; font-size: 11px;
-      font-weight: 600; display: flex; align-items: center; justify-content: center; text-align: center;
-    }
-    .crew-gantt-status-ok { color: #2e7d32; background: #f0faf0; }
-    .crew-gantt-status-warning { color: #e65100; background: #fff8e1; }
-    .crew-gantt-status-danger { color: #c62828; background: #ffebee; }
-    .crew-gantt-legend {
-      display: flex; align-items: center; gap: 20px; padding: 10px 16px; margin-top: 10px;
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; font-size: 12px; flex-wrap: wrap;
-    }
-    .crew-gantt-legend-item { display: flex; align-items: center; gap: 6px; }
-    .crew-gantt-legend-dot { width: 12px; height: 12px; border-radius: 3px; }
-    .crew-gantt-legend-available { background: #f0faf0; border: 1px solid #c8e6c9; }
-    .crew-gantt-legend-job { background: #8e44ad; }
-    .crew-gantt-legend-appt { background: #4a90d9; }
-    .crew-gantt-legend-training { background: #e67e22; }
-
-    /* Multi-select LOV */
-    .crew-lov-container { margin-bottom: 16px; }
-    .crew-lov-input {
-      display: flex; align-items: center; gap: 0;
-      border: 1px solid var(--border); border-radius: 6px; overflow: hidden;
-    }
-    .crew-lov-input input { border: none; padding: 8px 12px; font-size: 13px; outline: none; flex: 1; }
-    .crew-lov-input .crew-lov-icon {
-      padding: 8px 12px; background: #f8f9fa; color: var(--primary);
-      border-left: 1px solid var(--border); cursor: pointer; font-size: 14px;
-    }
-    .crew-selected-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-    .crew-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 10px 5px 12px; border-radius: 16px;
-      background: #e8f0fe; border: 1px solid #bbd0f7; font-size: 12px; font-weight: 500; color: var(--text);
-    }
-    .crew-chip .chip-role { color: var(--text-light); font-weight: 400; }
-    .crew-chip .chip-remove {
-      width: 16px; height: 16px; border-radius: 50%; background: #c5cdd8;
-      color: #fff; font-size: 10px; font-weight: 700; cursor: pointer;
-      display: inline-flex; align-items: center; justify-content: center; line-height: 1; border: none;
-    }
-    .crew-chip .chip-remove:hover { background: #e74c3c; }
   </style>
 </head>
 <body>
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html" class="active">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item active"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">7</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="screen8-appointments.html" style="font-size:18px; color:var(--text-secondary); text-decoration:none;">&larr;</a>
+        <h1>Appointment Detail</h1>
+        <span class="status-badge-lg completed">&#9679; Completed</span>
+      </div>
+      <div class="topbar-right">
+        <button class="topbar-btn">&#128438; Export PDF</button>
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- SUBTITLE & CHAIN BREADCRUMB -->
+      <div style="margin-bottom: 20px;">
+        <div style="font-size: 13px; color: var(--text-secondary);">Site Survey &middot; Feb 28, 2026 at 2:00 PM &middot; Assigned to Sarah Lee</div>
+        <div class="appt-chain-breadcrumb">
+          <span class="appt-chain-link completed">&#128279; Site Survey (Feb 28)</span>
+          <span class="appt-chain-arrow">&rarr;</span>
+          <span class="appt-chain-link current">Follow-up #1 (Mar 10)</span>
+          <span class="appt-chain-badge">2 of 2 in chain</span>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- APPOINTMENT INFO CARD (Read-Only + Edit Toggle) -->
+      <!-- ============================================ -->
+      <div class="detail-card">
+        <div class="detail-card-title">
+          Appointment Information
+          <span class="edit-toggle">&#9998; Edit Details</span>
+        </div>
+
+        <div class="field-grid">
+          <div class="field-item">
+            <div class="field-label">Customer Type</div>
+            <div class="field-value"><span class="type-badge existing">Existing Customer</span></div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Customer Name</div>
+            <div class="field-value">Sarah Johnson</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Appointment Type</div>
+            <div class="field-value">Site Survey</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Status</div>
+            <div class="field-value"><span class="status-pill completed">Completed</span></div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Service Site</div>
+            <div class="field-value">
+              <span style="font-weight: 600;">Downtown Office</span><br>
+              456 Pine Ave, Dallas TX 75201
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Contact: Mike Johnson &middot; (555) 111-2222</div>
+            </div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Assigned To</div>
+            <div class="field-value">Sarah Lee</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Email</div>
+            <div class="field-value">sarah@email.com</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Phone</div>
+            <div class="field-value">(555) 234-5678</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Date &amp; Time</div>
+            <div class="field-value">February 28, 2026 at 2:00 PM</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Linked Lead</div>
+            <div class="field-value">LEAD-0042 &middot; Sarah Johnson</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- POST-APPOINTMENT FIELDS -->
+      <!-- ============================================ -->
+      <div class="post-appt-divider">
+        <div class="divider-line"></div>
+        <div class="divider-label">Post-Appointment Details</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="detail-card">
+        <div class="detail-card-title">
+          Post-Appointment Information
+          <span class="edit-toggle">&#9998; Edit Details</span>
+        </div>
+
+        <div class="field-grid">
+          <div class="field-item">
+            <div class="field-label">Follow-up Required</div>
+            <div class="field-value" style="color: var(--orange);">Yes &mdash; March 10, 2026</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Budget</div>
+            <div class="field-value">$8,500.00</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Service Site</div>
+            <div class="field-value">Downtown Office &mdash; 456 Pine Ave, Dallas TX 75201</div>
+          </div>
+          <div class="field-item">
+            <div class="field-label">Probability of Closure</div>
+            <div class="field-value">
+              <div class="slider-container" style="pointer-events: none;">
+                <input type="range" min="0" max="100" value="75" disabled>
+                <span class="slider-value">75%</span>
               </div>
             </div>
-            <a href="screen5-pricing.html" class="btn-sm" style="text-decoration:none;">Buy More Space</a>
           </div>
-        </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
+          <div class="field-item">
+            <div class="field-label">Expected Start Date</div>
+            <div class="field-value">March 15, 2026</div>
           </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- BACK LINK -->
-        <div style="margin-bottom: 12px;">
-          <a href="screen8-appointments.html" class="btn btn-link" style="font-size: 13px;">&larr; Back to Appointments</a>
-        </div>
-
-        <!-- DETAIL HEADER -->
-        <div class="detail-header">
-          <div>
-            <div class="page-title" style="display: flex; align-items: center; gap: 12px;">
-              Appointment Details
-              <span class="status-badge-lg completed">&#9679; Completed</span>
-            </div>
-            <div class="page-subtitle">Site Survey &middot; Feb 28, 2026 at 2:00 PM &middot; Assigned to Sarah Lee</div>
-            <div class="appt-chain-breadcrumb">
-              <span class="appt-chain-link completed">&#128279; Site Survey (Feb 28)</span>
-              <span class="appt-chain-arrow">&rarr;</span>
-              <span class="appt-chain-link current">Follow-up #1 (Mar 10)</span>
-              <span class="appt-chain-badge">2 of 2 in chain</span>
-            </div>
-          </div>
-          <div class="detail-header-right">
-            <button class="btn btn-outline" style="font-size: 12px;">&#128438; Export PDF</button>
+          <div class="field-item">
+            <div class="field-label">Expected Timeline</div>
+            <div class="field-value">2 weeks</div>
           </div>
         </div>
 
-        <!-- ============================================ -->
-        <!-- APPOINTMENT INFO CARD (Read-Only + Edit Toggle) -->
-        <!-- ============================================ -->
-        <div class="detail-card">
-          <div class="detail-card-title">
-            Appointment Information
-            <span class="edit-toggle">&#9998; Edit Details</span>
+        <!-- Uploaded Pictures -->
+        <div style="margin-top: 20px;">
+          <div class="field-label" style="margin-bottom: 8px;">Site Photos</div>
+          <div class="uploaded-images">
+            <div class="uploaded-img">photo_1.jpg</div>
+            <div class="uploaded-img">photo_2.jpg</div>
+            <div class="uploaded-img">photo_3.jpg</div>
+          </div>
+          <div class="upload-zone" style="margin-top: 12px;">
+            <span class="upload-icon">&#128247;</span>
+            Drag &amp; drop or click to upload more photos<br>
+            <small style="color: var(--text-muted);">JPG, PNG, HEIC up to 10MB each</small>
+          </div>
+        </div>
+
+        <!-- Appointment Trail / History Timeline -->
+        <div id="notes" style="margin-top: 20px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <div class="field-label">Appointment Trail &amp; Notes</div>
+            <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;">+ Add Note</button>
           </div>
 
-          <div class="detail-grid">
-            <div class="detail-field">
-              <div class="field-label">Customer Type</div>
-              <div class="field-value"><span class="badge badge-existing-customer" style="font-size: 12px;">Existing Customer</span></div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Customer Name</div>
-              <div class="field-value">Sarah Johnson</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Appointment Type</div>
-              <div class="field-value">Site Survey</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Status</div>
-              <div class="field-value"><span class="badge badge-completed-status">Completed</span></div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Service Site</div>
-              <div class="field-value">
-                <span style="font-weight: 600;">Downtown Office</span><br>
-                456 Pine Ave, Dallas TX 75201
-                <div style="font-size: 11px; color: var(--text-light); margin-top: 2px;">Contact: Mike Johnson &middot; (555) 111-2222</div>
+          <div class="appt-trail">
+
+            <!-- ENTRY 1 (newest): Note — Mar 3, 2026 -->
+            <div class="appt-trail-entry">
+              <div class="appt-trail-dot appt-trail-dot-note"></div>
+              <div class="appt-trail-content">
+                <div class="appt-trail-timestamp">
+                  <span class="appt-trail-date-badge">Mar 3, 2026 &middot; 4:15 PM</span>
+                  <span class="appt-trail-author">by John Smith</span>
+                </div>
+                <div class="appt-trail-text">Called customer to confirm follow-up appointment on Mar 10. She confirmed availability at 10:00 AM. Will bring ceramic tile samples and updated tankless water heater pricing.</div>
               </div>
             </div>
-            <div class="detail-field">
-              <div class="field-label">Assigned To</div>
-              <div class="field-value">Sarah Lee</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Email</div>
-              <div class="field-value">sarah@email.com</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Phone</div>
-              <div class="field-value">(555) 234-5678</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Date &amp; Time</div>
-              <div class="field-value">February 28, 2026 at 2:00 PM</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Linked Lead</div>
-              <div class="field-value">LEAD-0042 &middot; Sarah Johnson</div>
-            </div>
-          </div>
-        </div>
 
-        <!-- ============================================ -->
-        <!-- POST-APPOINTMENT FIELDS -->
-        <!-- ============================================ -->
-        <div class="post-appt-divider">
-          <div class="divider-line"></div>
-          <div class="divider-label">Post-Appointment Details</div>
-          <div class="divider-line"></div>
-        </div>
-
-        <div class="detail-card">
-          <div class="detail-card-title">
-            Post-Appointment Information
-            <span class="edit-toggle">&#9998; Edit Details</span>
-          </div>
-
-          <div class="detail-grid">
-            <!-- Follow-up Visit -->
-            <div class="detail-field">
-              <div class="field-label">Follow-up Required</div>
-              <div class="field-value" style="color: #e65100;">Yes &mdash; March 10, 2026</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Budget</div>
-              <div class="field-value">$8,500.00</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Service Site</div>
-              <div class="field-value">Downtown Office &mdash; 456 Pine Ave, Dallas TX 75201</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Probability of Closure</div>
-              <div class="field-value">
-                <div class="slider-container" style="pointer-events: none;">
-                  <input type="range" min="0" max="100" value="75" disabled>
-                  <span class="slider-value">75%</span>
+            <!-- ENTRY 2: Follow-up Appointment Created — Mar 3, 2026 -->
+            <div class="appt-trail-entry">
+              <div class="appt-trail-dot appt-trail-dot-followup"></div>
+              <div class="appt-trail-content">
+                <div class="appt-trail-timestamp">
+                  <span class="appt-trail-date-badge">Mar 3, 2026 &middot; 2:30 PM</span>
+                  <span class="appt-trail-author">by Sarah Lee</span>
+                </div>
+                <div class="appt-trail-appt-card">
+                  <div class="appt-trail-appt-header">
+                    <span class="type-dot follow-up"></span>
+                    <strong>Follow-up Appointment Scheduled</strong>
+                    <span class="status-pill pending" style="margin-left: 8px;">Pending</span>
+                  </div>
+                  <div class="appt-trail-appt-details">
+                    <span>&#128197; Mar 10, 2026 at 10:00 AM</span>
+                    <span>&#128338; 1 hour</span>
+                    <span>&#128101; Sarah Lee</span>
+                  </div>
+                  <div class="appt-trail-appt-note">Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.</div>
                 </div>
               </div>
             </div>
-            <div class="detail-field">
-              <div class="field-label">Expected Start Date</div>
-              <div class="field-value">March 15, 2026</div>
-            </div>
-            <div class="detail-field">
-              <div class="field-label">Expected Timeline</div>
-              <div class="field-value">2 weeks</div>
-            </div>
-          </div>
 
-          <!-- Uploaded Pictures -->
-          <div style="margin-top: 20px;">
-            <div class="field-label" style="font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 8px;">Site Photos</div>
-            <div class="uploaded-images">
-              <div class="uploaded-img">photo_1.jpg</div>
-              <div class="uploaded-img">photo_2.jpg</div>
-              <div class="uploaded-img">photo_3.jpg</div>
-            </div>
-            <div class="upload-zone" style="margin-top: 12px;">
-              <span class="upload-icon">&#128247;</span>
-              Drag &amp; drop or click to upload more photos<br>
-              <small style="color: var(--text-light);">JPG, PNG, HEIC up to 10MB each</small>
-            </div>
-          </div>
-
-          <!-- Appointment Trail / History Timeline -->
-          <div id="notes" style="margin-top: 20px;">
-            <div class="field-label" style="font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
-              Appointment Trail &amp; Notes
-              <button class="btn-sm" style="font-size: 11px; padding: 4px 10px; cursor: pointer; border: 1px solid var(--border); border-radius: 4px; background: #fff;">+ Add Note</button>
-            </div>
-
-            <div class="appt-trail">
-
-              <!-- ENTRY 1 (newest): Note — Mar 3, 2026 -->
-              <div class="appt-trail-entry">
-                <div class="appt-trail-dot appt-trail-dot-note"></div>
-                <div class="appt-trail-content">
-                  <div class="appt-trail-timestamp">
-                    <span class="appt-trail-date-badge">Mar 3, 2026 &middot; 4:15 PM</span>
-                    <span class="appt-trail-author">by John Smith</span>
-                  </div>
-                  <div class="appt-trail-text">Called customer to confirm follow-up appointment on Mar 10. She confirmed availability at 10:00 AM. Will bring ceramic tile samples and updated tankless water heater pricing.</div>
+            <!-- ENTRY 3: Original Appointment Note — Feb 28, 2026 -->
+            <div class="appt-trail-entry">
+              <div class="appt-trail-dot appt-trail-dot-note"></div>
+              <div class="appt-trail-content">
+                <div class="appt-trail-timestamp">
+                  <span class="appt-trail-date-badge">Feb 28, 2026 &middot; 3:45 PM</span>
+                  <span class="appt-trail-author">by Sarah Lee</span>
                 </div>
-              </div>
-
-              <!-- ENTRY 2: Follow-up Appointment Created — Mar 3, 2026 -->
-              <div class="appt-trail-entry">
-                <div class="appt-trail-dot appt-trail-dot-followup"></div>
-                <div class="appt-trail-content">
-                  <div class="appt-trail-timestamp">
-                    <span class="appt-trail-date-badge">Mar 3, 2026 &middot; 2:30 PM</span>
-                    <span class="appt-trail-author">by Sarah Lee</span>
-                  </div>
-                  <div class="appt-trail-appt-card">
-                    <div class="appt-trail-appt-header">
-                      <span class="type-dot follow-up"></span>
-                      <strong>Follow-up Appointment Scheduled</strong>
-                      <span class="badge badge-pending" style="margin-left: 8px;">Pending</span>
-                    </div>
-                    <div class="appt-trail-appt-details">
-                      <span>&#128197; Mar 10, 2026 at 10:00 AM</span>
-                      <span>&#128338; 1 hour</span>
-                      <span>&#128101; Sarah Lee</span>
-                    </div>
-                    <div class="appt-trail-appt-note">Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ENTRY 3: Original Appointment Note — Feb 28, 2026 -->
-              <div class="appt-trail-entry">
-                <div class="appt-trail-dot appt-trail-dot-note"></div>
-                <div class="appt-trail-content">
-                  <div class="appt-trail-timestamp">
-                    <span class="appt-trail-date-badge">Feb 28, 2026 &middot; 3:45 PM</span>
-                    <span class="appt-trail-author">by Sarah Lee</span>
-                  </div>
-                  <div class="appt-trail-text">Customer wants full bathroom renovation on the second floor. Existing pipes are copper and in good condition.
+                <div class="appt-trail-text">Customer wants full bathroom renovation on the second floor. Existing pipes are copper and in good condition.
 Main concern is the water heater — currently a 40-gallon unit, wants to upgrade to 50-gallon tankless system.
 Tile work needed for shower area (approx 60 sq ft). Customer prefers ceramic tiles.
 Budget is flexible but prefers to stay under $10K.
 Follow-up needed to finalize material selections and provide detailed estimate.</div>
+              </div>
+            </div>
+
+            <!-- ENTRY 4 (oldest): Original Appointment — Feb 28, 2026 -->
+            <div class="appt-trail-entry">
+              <div class="appt-trail-dot appt-trail-dot-original"></div>
+              <div class="appt-trail-content">
+                <div class="appt-trail-timestamp">
+                  <span class="appt-trail-date-badge">Feb 28, 2026 &middot; 2:00 PM</span>
+                  <span class="appt-trail-author">by Sarah Lee</span>
                 </div>
-              </div>
-
-              <!-- ENTRY 4 (oldest): Original Appointment — Feb 28, 2026 -->
-              <div class="appt-trail-entry">
-                <div class="appt-trail-dot appt-trail-dot-original"></div>
-                <div class="appt-trail-content">
-                  <div class="appt-trail-timestamp">
-                    <span class="appt-trail-date-badge">Feb 28, 2026 &middot; 2:00 PM</span>
-                    <span class="appt-trail-author">by Sarah Lee</span>
+                <div class="appt-trail-appt-card">
+                  <div class="appt-trail-appt-header">
+                    <span class="type-dot survey"></span>
+                    <strong>Site Survey</strong>
+                    <span class="status-pill completed" style="margin-left: 8px;">Completed</span>
+                    <span style="font-size: 11px; color: var(--text-muted); margin-left: auto;">Original Appointment</span>
                   </div>
-                  <div class="appt-trail-appt-card">
-                    <div class="appt-trail-appt-header">
-                      <span class="type-dot survey"></span>
-                      <strong>Site Survey</strong>
-                      <span class="badge badge-completed-status" style="margin-left: 8px;">Completed</span>
-                      <span style="font-size: 11px; color: var(--text-light); margin-left: auto;">Original Appointment</span>
-                    </div>
-                    <div class="appt-trail-appt-details">
-                      <span>&#128197; Feb 28, 2026 at 2:00 PM</span>
-                      <span>&#128338; 1 hour</span>
-                      <span>&#128101; Sarah Lee</span>
-                    </div>
+                  <div class="appt-trail-appt-details">
+                    <span>&#128197; Feb 28, 2026 at 2:00 PM</span>
+                    <span>&#128338; 1 hour</span>
+                    <span>&#128101; Sarah Lee</span>
                   </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- ACTION STRIP: Completed Appointment Actions -->
-        <!-- ============================================ -->
-        <div class="action-strip">
-          <div class="action-strip-title">Appointment Actions</div>
-          <div class="action-strip-buttons">
-            <a href="screen11-estimate-form.html" class="action-strip-btn success" style="text-decoration:none;">&#128196; Create Estimate</a>
-            <button class="action-strip-btn info" onclick="document.getElementById('followup-section').style.display='block'; document.getElementById('followup-section').scrollIntoView({behavior:'smooth'}); this.disabled=true; this.style.opacity='0.5';">&#128339; Create Follow-up Appointment</button>
-            <a href="screen13-jobs.html" class="action-strip-btn warning" style="text-decoration:none;">&#128736; Create Job</a>
-            <button class="action-strip-btn outline">&#128438; Export as PDF</button>
-          </div>
-        </div>
-
-        <!-- ============================================ -->
-        <!-- FOLLOW-UP CREATION SECTION (inline, hidden) -->
-        <!-- ============================================ -->
-        <div id="followup-section" class="detail-card followup-create-card" style="display: none;">
-          <div class="detail-card-title">
-            <span style="display: flex; align-items: center; gap: 8px;">
-              &#128339; Create Follow-up Appointment
-              <span class="badge" style="background: #e0f2f1; color: #00695c; font-size: 11px; padding: 2px 8px;">Follow-up #2</span>
-            </span>
-            <button class="edit-toggle" onclick="this.closest('.followup-create-card').style.display='none';" style="color: #c62828; cursor: pointer; border: none; background: none;">&#10005; Cancel</button>
-          </div>
-
-          <!-- Inherited info banner -->
-          <div class="followup-inherit-banner">
-            <span class="followup-inherit-icon">&#128279;</span>
-            <span>Inheriting from: <strong>Site Survey</strong> &middot; Sarah Johnson &middot; 456 Pine Ave, Dallas TX 75201</span>
-          </div>
-
-          <!-- Date & Time + Duration -->
-          <div class="form-row" style="margin-top: 16px;">
-            <div class="form-group">
-              <label><span class="required">Follow-up Date &amp; Time</span></label>
-              <input type="datetime-local" class="form-control" value="2026-03-10T10:00">
-            </div>
-            <div class="form-group">
-              <label>Duration</label>
-              <select class="form-control">
-                <option value="30">30 minutes</option>
-                <option value="60" selected>1 hour</option>
-                <option value="90">1.5 hours</option>
-                <option value="120">2 hours</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Crew Assignment with Gantt -->
-          <div class="form-group">
-            <label><span class="required">Assign Crew</span></label>
-            <div class="form-info-text" style="margin-bottom: 12px;">Select crew members for the follow-up. The Gantt chart shows their availability around the selected date.</div>
-
-            <div class="crew-lov-container">
-              <div class="crew-lov-input">
-                <input type="text" placeholder="Search crew members...">
-                <span class="crew-lov-icon" title="Search Crew">&#128269;</span>
-              </div>
-              <div class="crew-selected-chips">
-                <div class="crew-chip">
-                  Sarah Lee <span class="chip-role">&middot; Office Manager</span>
-                  <button class="chip-remove" title="Remove">&times;</button>
                 </div>
               </div>
             </div>
 
-            <div class="crew-gantt-section">
-              <div class="crew-gantt-subheader">&#128197; Crew Availability &mdash; Mar 8 &ndash; 22, 2026</div>
-              <div class="crew-gantt-container">
-                <div class="crew-gantt-grid">
-                  <!-- HEADER ROW -->
-                  <div class="crew-gantt-corner">Crew Member</div>
-                  <div class="crew-gantt-date-header">8<br><span class="crew-gantt-day">Sun</span></div>
-                  <div class="crew-gantt-date-header">9<br><span class="crew-gantt-day">Mon</span></div>
-                  <div class="crew-gantt-date-header appt-date" title="Follow-up date">10<br><span class="crew-gantt-day">Tue &#9733;</span></div>
-                  <div class="crew-gantt-date-header">11<br><span class="crew-gantt-day">Wed</span></div>
-                  <div class="crew-gantt-date-header">12<br><span class="crew-gantt-day">Thu</span></div>
-                  <div class="crew-gantt-date-header">13<br><span class="crew-gantt-day">Fri</span></div>
-                  <div class="crew-gantt-date-header">14<br><span class="crew-gantt-day">Sat</span></div>
-                  <div class="crew-gantt-date-header">15<br><span class="crew-gantt-day">Sun</span></div>
-                  <div class="crew-gantt-date-header">16<br><span class="crew-gantt-day">Mon</span></div>
-                  <div class="crew-gantt-date-header">17<br><span class="crew-gantt-day">Tue</span></div>
-                  <div class="crew-gantt-date-header">18<br><span class="crew-gantt-day">Wed</span></div>
-                  <div class="crew-gantt-date-header">19<br><span class="crew-gantt-day">Thu</span></div>
-                  <div class="crew-gantt-date-header">20<br><span class="crew-gantt-day">Fri</span></div>
-                  <div class="crew-gantt-date-header">21<br><span class="crew-gantt-day">Sat</span></div>
-                  <div class="crew-gantt-date-header">22<br><span class="crew-gantt-day">Sun</span></div>
-                  <div class="crew-gantt-status-header">Status</div>
-
-                  <!-- Sarah Lee (pre-selected from parent) -->
-                  <div class="crew-gantt-name">
-                    <input type="checkbox" checked>
-                    <div class="crew-gantt-name-info">
-                      <span class="crew-gantt-name-text">Sarah Lee <span class="crew-gantt-selected-badge">Assigned</span></span>
-                      <span class="crew-gantt-role-text">Office Manager</span>
-                    </div>
-                  </div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-status crew-gantt-status-ok">&#10003; Available</div>
-
-                  <!-- John Smith -->
-                  <div class="crew-gantt-name">
-                    <input type="checkbox">
-                    <div class="crew-gantt-name-info">
-                      <span class="crew-gantt-name-text">John Smith</span>
-                      <span class="crew-gantt-role-text">Master Plumber</span>
-                    </div>
-                  </div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Follow Up">Appt</div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 1 Conflict</div>
-
-                  <!-- James Rodriguez -->
-                  <div class="crew-gantt-name">
-                    <input type="checkbox">
-                    <div class="crew-gantt-name-info">
-                      <span class="crew-gantt-name-text">James Rodriguez</span>
-                      <span class="crew-gantt-role-text">Master Plumber</span>
-                    </div>
-                  </div>
-                  <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Site Survey">Appt</div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-cell crew-gantt-available"></div>
-                  <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 1 Conflict</div>
-                </div>
-              </div>
-
-              <div class="crew-gantt-legend">
-                <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-available"></div><span>Available</span></div>
-                <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-job"></div><span>Assigned Job</span></div>
-                <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-appt"></div><span>Appointment</span></div>
-                <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-training"></div><span>Training</span></div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Follow-up Notes -->
-          <div class="form-group">
-            <label>Follow-up Notes</label>
-            <textarea class="form-control" placeholder="Reason for follow-up, items to discuss...">Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.</textarea>
-          </div>
-
-          <!-- Save / Cancel -->
-          <div class="form-actions" style="border-top: 1px solid var(--border); padding-top: 16px; margin-top: 8px;">
-            <button class="btn btn-primary">&#10003; Create Follow-up Appointment</button>
-            <button class="btn btn-outline" onclick="this.closest('.followup-create-card').style.display='none';">Cancel</button>
           </div>
         </div>
-
-        <!-- SAVE BAR (for when editing) -->
-        <div style="display: flex; gap: 12px; margin-bottom: 16px;">
-          <a href="screen8-appointments.html" class="btn btn-primary" style="text-decoration:none;">Save Changes</a>
-          <a href="screen8-appointments.html" class="btn btn-outline" style="text-decoration:none;">Cancel</a>
-        </div>
-
-        <!-- WIREFRAME NOTE -->
-        <div class="wireframe-note">
-          &#128221; <strong>Appointment Detail Page:</strong> Read-only by default with "Edit Details" toggles per section.<br><br>
-          <strong>NEW &mdash; Follow-up Creation:</strong> "Create Follow-up Appointment" opens an inline expandable section (not a separate page) with revised date/time, duration, crew assignment with Gantt calendar, and notes. Customer/address/type inherit from the parent appointment.<br>
-          <strong>NEW &mdash; Appointment Trail:</strong> Replaces the old "Meeting Notes" section. Shows a vertical timeline of all appointments in the chain plus notes, newest-first. Each entry is auto-stamped with date, time, and author. Appointment events show type badges and status. Notes appear in gray card blocks.<br>
-          <strong>NEW &mdash; Chain Breadcrumb:</strong> Shows position within a follow-up chain (e.g., "2 of 2 in chain") with clickable links to related appointments.<br><br>
-          <strong>Status-specific actions:</strong><br>
-          &bull; <strong>Completed:</strong> Create Estimate, Create Follow-up Appointment, Create Job<br>
-          &bull; <strong>Pending / Cancelled:</strong> Would show a "Mark as Completed" button instead
-        </div>
-
       </div>
 
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html"><strong>8b. Appt Detail</strong></a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
+      <!-- ============================================ -->
+      <!-- ACTION STRIP: Completed Appointment Actions -->
+      <!-- ============================================ -->
+      <div class="action-strip">
+        <div class="action-strip-title">Appointment Actions</div>
+        <div class="action-strip-buttons">
+          <a href="screen11-estimate-form.html" class="action-strip-btn success">&#128196; Create Estimate</a>
+          <button class="action-strip-btn info" onclick="document.getElementById('followup-section').style.display='block'; document.getElementById('followup-section').scrollIntoView({behavior:'smooth'}); this.disabled=true; this.style.opacity='0.5';">&#128339; Create Follow-up Appointment</button>
+          <a href="screen13-jobs.html" class="action-strip-btn warning">&#128736; Create Job</a>
+          <button class="action-strip-btn outline">&#128438; Export as PDF</button>
+        </div>
+      </div>
+
+      <!-- ============================================ -->
+      <!-- FOLLOW-UP CREATION SECTION (inline, hidden) -->
+      <!-- ============================================ -->
+      <div id="followup-section" class="detail-card followup-create-card" style="display: none;">
+        <div class="detail-card-title">
+          <span style="display: flex; align-items: center; gap: 8px;">
+            &#128339; Create Follow-up Appointment
+            <span class="status-pill" style="background: var(--teal-light); color: #00695c;">Follow-up #2</span>
+          </span>
+          <button class="edit-toggle" onclick="this.closest('.followup-create-card').style.display='none';" style="color: var(--red); cursor: pointer; border: none; background: none; font-family: inherit;">&#10005; Cancel</button>
+        </div>
+
+        <!-- Inherited info banner -->
+        <div class="followup-inherit-banner">
+          <span class="followup-inherit-icon">&#128279;</span>
+          <span>Inheriting from: <strong>Site Survey</strong> &middot; Sarah Johnson &middot; 456 Pine Ave, Dallas TX 75201</span>
+        </div>
+
+        <!-- Date & Time + Duration -->
+        <div class="form-row" style="margin-top: 16px;">
+          <div class="form-group">
+            <label class="form-label">Follow-up Date &amp; Time *</label>
+            <input type="datetime-local" class="form-input" value="2026-03-10T10:00">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Duration</label>
+            <select class="form-select">
+              <option value="30">30 minutes</option>
+              <option value="60" selected>1 hour</option>
+              <option value="90">1.5 hours</option>
+              <option value="120">2 hours</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Crew Assignment with Gantt -->
+        <div class="form-group">
+          <label class="form-label">Assign Crew *</label>
+          <div class="form-info-text" style="margin-bottom: 12px;">Select crew members for the follow-up. The Gantt chart shows their availability around the selected date.</div>
+
+          <div class="crew-lov-container">
+            <div class="crew-lov-input">
+              <input type="text" placeholder="Search crew members...">
+              <span class="crew-lov-icon" title="Search Crew">&#128269;</span>
+            </div>
+            <div class="crew-selected-chips">
+              <div class="crew-chip">
+                Sarah Lee <span class="chip-role">&middot; Office Manager</span>
+                <button class="chip-remove" title="Remove">&times;</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="crew-gantt-section">
+            <div class="crew-gantt-subheader">&#128197; Crew Availability &mdash; Mar 8 &ndash; 22, 2026</div>
+            <div class="crew-gantt-container">
+              <div class="crew-gantt-grid">
+                <!-- HEADER ROW -->
+                <div class="crew-gantt-corner">Crew Member</div>
+                <div class="crew-gantt-date-header">8<br><span class="crew-gantt-day">Sun</span></div>
+                <div class="crew-gantt-date-header">9<br><span class="crew-gantt-day">Mon</span></div>
+                <div class="crew-gantt-date-header appt-date" title="Follow-up date">10<br><span class="crew-gantt-day">Tue &#9733;</span></div>
+                <div class="crew-gantt-date-header">11<br><span class="crew-gantt-day">Wed</span></div>
+                <div class="crew-gantt-date-header">12<br><span class="crew-gantt-day">Thu</span></div>
+                <div class="crew-gantt-date-header">13<br><span class="crew-gantt-day">Fri</span></div>
+                <div class="crew-gantt-date-header">14<br><span class="crew-gantt-day">Sat</span></div>
+                <div class="crew-gantt-date-header">15<br><span class="crew-gantt-day">Sun</span></div>
+                <div class="crew-gantt-date-header">16<br><span class="crew-gantt-day">Mon</span></div>
+                <div class="crew-gantt-date-header">17<br><span class="crew-gantt-day">Tue</span></div>
+                <div class="crew-gantt-date-header">18<br><span class="crew-gantt-day">Wed</span></div>
+                <div class="crew-gantt-date-header">19<br><span class="crew-gantt-day">Thu</span></div>
+                <div class="crew-gantt-date-header">20<br><span class="crew-gantt-day">Fri</span></div>
+                <div class="crew-gantt-date-header">21<br><span class="crew-gantt-day">Sat</span></div>
+                <div class="crew-gantt-date-header">22<br><span class="crew-gantt-day">Sun</span></div>
+                <div class="crew-gantt-status-header">Status</div>
+
+                <!-- Sarah Lee (pre-selected from parent) -->
+                <div class="crew-gantt-name">
+                  <input type="checkbox" checked>
+                  <div class="crew-gantt-name-info">
+                    <span class="crew-gantt-name-text">Sarah Lee <span class="crew-gantt-selected-badge">Assigned</span></span>
+                    <span class="crew-gantt-role-text">Office Manager</span>
+                  </div>
+                </div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-status crew-gantt-status-ok">&#10003; Available</div>
+
+                <!-- John Smith -->
+                <div class="crew-gantt-name">
+                  <input type="checkbox">
+                  <div class="crew-gantt-name-info">
+                    <span class="crew-gantt-name-text">John Smith</span>
+                    <span class="crew-gantt-role-text">Master Plumber</span>
+                  </div>
+                </div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Follow Up">Appt</div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 1 Conflict</div>
+
+                <!-- James Rodriguez -->
+                <div class="crew-gantt-name">
+                  <input type="checkbox">
+                  <div class="crew-gantt-name-info">
+                    <span class="crew-gantt-name-text">James Rodriguez</span>
+                    <span class="crew-gantt-role-text">Master Plumber</span>
+                  </div>
+                </div>
+                <div class="crew-gantt-cell crew-gantt-busy-appt" title="Appointment: Site Survey">Appt</div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-cell crew-gantt-available"></div>
+                <div class="crew-gantt-status crew-gantt-status-warning">&#9888; 1 Conflict</div>
+              </div>
+            </div>
+
+            <div class="crew-gantt-legend">
+              <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-available"></div><span>Available</span></div>
+              <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-job"></div><span>Assigned Job</span></div>
+              <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-appt"></div><span>Appointment</span></div>
+              <div class="crew-gantt-legend-item"><div class="crew-gantt-legend-dot crew-gantt-legend-training"></div><span>Training</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Follow-up Notes -->
+        <div class="form-group">
+          <label class="form-label">Follow-up Notes</label>
+          <textarea class="form-input form-textarea">Finalize material selections for bathroom tiles. Customer wants to see ceramic tile samples. Bring updated pricing sheet for tankless water heater options.</textarea>
+        </div>
+
+        <!-- Save / Cancel -->
+        <div class="form-footer" style="border: none; padding: 16px 0 0; margin-top: 8px; border-top: 1px solid var(--border);">
+          <a href="screen8-appointments.html" class="fb cancel">Cancel</a>
+          <a href="screen8-appointments.html" class="fb primary">&#10003; Create Follow-up Appointment</a>
+        </div>
+      </div>
+
+      <!-- SAVE BAR (for when editing) -->
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-bottom: 16px;">
+        <a href="screen8-appointments.html" class="fb cancel">Cancel</a>
+        <a href="screen8-appointments.html" class="fb primary">Save Changes</a>
       </div>
 
     </div>
+
+    <!-- SCREEN NAV -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a> <a href="screen2-registration.html">2. Registration</a> <a href="screen3-signin.html">3. Sign In</a> <a href="screen4-dashboard.html">4. Dashboard</a> <a href="screen5-pricing.html">5. Pricing</a> <a href="screen5a-payment.html">5a. Payment</a> <a href="screen6-leads.html">6. Lead Manager</a> <a href="screen7-lead-form.html">7. Lead Form</a> <a href="screen8-appointments.html">8. Appointments</a> <a href="screen8a-appointment-form.html">8a. Appt Form</a> <a href="screen8b-appointment-detail.html">8b. Appt Detail</a> <a href="screen9-schedule.html">9. Schedule</a> <a href="screen10-estimates.html">10. Estimates</a> <a href="screen11-estimate-form.html">11. Est Step 1</a> <a href="screen11-step2.html">11-S2. Est Builder</a> <a href="screen11-step3.html">11-S3. Terms</a> <a href="screen11-step4.html">11-S4. Review</a> <a href="screen11a-customer-portal.html">11a. Customer Portal</a> <a href="screen12-floorplan.html">12. Floor Plan</a> <a href="screen13-jobs.html">13. Jobs</a> <a href="screen13a-job-form.html">13a. Job Form</a> <a href="screen13b-job-detail.html">13b. Job Detail</a> <a href="screen14a-invoicing.html">14a. Invoicing</a> <a href="screen15-management.html">15. Management Master</a> <a href="screen15a-nomenclature.html">15a. Nomenclature</a> <a href="screen15b-materials.html">15b. Materials</a> <a href="screen15c-services.html">15c. Services</a> <a href="screen15d-estimate-template.html">15d. Estimate Template</a> <a href="screen15e-invoice-template.html">15e. Invoice Template</a> <a href="screen15f-crew-management.html">15f. Crew Mgmt</a> <a href="screen15g-currency-settings.html">15g. Currency</a> <a href="screen15h-sites-management.html">15h. Sites</a> <a href="screen15i-artifact-library.html">15i. Artifact Library</a> <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+
   </div>
 
 </body>

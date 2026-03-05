@@ -3,202 +3,113 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Create / Edit Lead</title>
+  <title>TurboFSM — Create / Edit Lead</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .form-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 28px;
-      width: 100%;
-    }
-
-    .form-card-title {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .read-only-field {
-      background: #f5f5f5;
-      color: var(--text-light);
+    .form-input.readonly {
+      background: var(--bg);
+      color: var(--text-muted);
       cursor: not-allowed;
     }
-
-    .form-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 24px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    .location-input {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-    }
-
-    .location-input input {
-      border: none;
-      padding: 8px 12px;
-      font-size: 13px;
-      outline: none;
-      flex: 1;
-    }
-
-    .location-input .pin-icon {
-      padding: 8px 12px;
-      background: #f8f9fa;
-      color: var(--danger);
-      border-left: 1px solid var(--border);
-      cursor: pointer;
-      font-size: 14px;
-    }
-
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* Priority indicator dots */
-    .priority-option-urgent { color: #c62828; }
-    .priority-option-medium { color: #e65100; }
-    .priority-option-low { color: #2e7d32; }
   </style>
 </head>
 <body>
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html" class="active">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item active"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">7</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
-              </div>
-            </div>
-            <button class="btn-sm">Buy More Space</button>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
-          </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="screen6-leads.html" style="font-size:18px;color:var(--text-secondary);">&#8592;</a>
+        <h1>Create New Lead</h1>
+        <span class="t-sub">Fill in lead details below</span>
+        <span class="auto-status">&#9679; New</span>
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <a href="screen6-leads.html" class="topbar-btn">Cancel</a>
+        <a href="screen8-appointments.html" class="topbar-btn teal">Save &amp; Schedule Appointment</a>
+        <button class="topbar-btn primary">Save Lead</button>
+      </div>
+    </div>
 
-      <!-- CONTENT -->
-      <div class="content">
+    <!-- CONTENT -->
+    <div class="content">
 
-        <!-- PAGE TITLE -->
-        <div class="page-title">Create New Lead</div>
-        <div class="page-subtitle">Fill in lead details below</div>
+      <!-- NOTE BAR -->
+      <div class="note-bar">
+        &#128221; <strong>Note:</strong> Lead No. auto-generated on first save. Format: LD-YYYYMMDD-NNNN
+      </div>
 
-        <!-- WIREFRAME NOTE -->
-        <div class="wireframe-note">
-          &#128221; <strong>Note:</strong> Lead No. auto-generated on first save. Format: LD-YYYYMMDD-NNNN
-        </div>
+      <!-- QUAD GRID -->
+      <div class="quad-grid">
 
-        <!-- FORM CARD -->
-        <div class="form-card">
-          <div class="form-card-title">Lead Information</div>
+        <!-- Lead Information -->
+        <div class="form-section">
+          <div class="form-section-title">&#128100; Lead Information</div>
+          <div class="form-section-subtitle">Basic contact details for this lead</div>
 
-          <!-- Lead No. (Read-Only) -->
           <div class="form-group">
-            <label>Lead No.</label>
-            <input type="text" class="form-control read-only-field" placeholder="Auto-generated" readonly>
+            <label class="form-label">Lead No.</label>
+            <input type="text" class="form-input readonly" placeholder="Auto-generated" readonly>
           </div>
 
-          <!-- Customer Name + Phone -->
           <div class="form-row">
             <div class="form-group">
-              <label class="required">Customer Name</label>
-              <input type="text" class="form-control" placeholder="Enter full name">
+              <label class="form-label">Customer Name *</label>
+              <input type="text" class="form-input" placeholder="Enter full name">
             </div>
             <div class="form-group">
-              <label class="required">Phone</label>
-              <input type="tel" class="form-control" placeholder="(555) 000-0000">
+              <label class="form-label">Phone *</label>
+              <input type="tel" class="form-input" placeholder="(555) 000-0000">
             </div>
           </div>
 
-          <!-- Email + Lead Source -->
           <div class="form-row">
             <div class="form-group">
-              <label class="required">Email</label>
-              <input type="email" class="form-control" placeholder="email@example.com">
+              <label class="form-label">Email *</label>
+              <input type="email" class="form-input" placeholder="email@example.com">
             </div>
             <div class="form-group">
-              <label>Lead Source</label>
-              <select class="form-control">
+              <label class="form-label">Lead Source</label>
+              <select class="form-select">
                 <option value="">-- Select Source --</option>
                 <option value="referral">Referral</option>
                 <option value="website">Website</option>
@@ -208,135 +119,133 @@
               </select>
             </div>
           </div>
+        </div>
 
-          <!-- PRIMARY / BILLING ADDRESS -->
-          <div style="font-size: 14px; font-weight: 600; color: var(--text); margin-top: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-            &#127968; Primary / Billing Address
-            <span style="font-size: 11px; font-weight: 400; color: var(--text-light);">(Customer's main office or billing address)</span>
-          </div>
+        <!-- Primary / Billing Address -->
+        <div class="form-section">
+          <div class="form-section-title">&#127968; Primary / Billing Address</div>
+          <div class="form-section-subtitle">Customer's main office or billing address</div>
 
-          <!-- Address Line 1 + Address Line 2 -->
           <div class="form-row">
             <div class="form-group">
-              <label class="required">Address Line 1</label>
-              <input type="text" class="form-control" placeholder="Street address">
+              <label class="form-label">Address Line 1 *</label>
+              <input type="text" class="form-input" placeholder="Street address">
             </div>
             <div class="form-group">
-              <label>Address Line 2</label>
-              <input type="text" class="form-control" placeholder="Apt, Suite, Unit (optional)">
+              <label class="form-label">Address Line 2</label>
+              <input type="text" class="form-input" placeholder="Apt, Suite, Unit (optional)">
             </div>
           </div>
 
-          <!-- City + State + Zip Code -->
           <div class="form-row-3">
             <div class="form-group">
-              <label class="required">City</label>
-              <input type="text" class="form-control" placeholder="City">
+              <label class="form-label">City *</label>
+              <input type="text" class="form-input" placeholder="City">
             </div>
             <div class="form-group">
-              <label class="required">State</label>
-              <input type="text" class="form-control" placeholder="State">
+              <label class="form-label">State *</label>
+              <input type="text" class="form-input" placeholder="State">
             </div>
             <div class="form-group">
-              <label class="required">Zip Code</label>
-              <input type="text" class="form-control" placeholder="Zip Code">
+              <label class="form-label">Zip Code *</label>
+              <input type="text" class="form-input" placeholder="Zip Code">
             </div>
           </div>
 
-          <!-- Google Location Pin -->
           <div class="form-group">
-            <label>Google Location Pin</label>
-            <div class="location-input">
-              <input type="text" placeholder="Paste Google Maps link or search location...">
+            <label class="form-label">Google Location Pin</label>
+            <div class="pin-row">
+              <input type="text" class="form-input" placeholder="Paste Google Maps link or search location..." style="flex:1;">
               <span class="pin-icon" title="Set Location Pin">&#128205;</span>
             </div>
           </div>
+        </div>
 
-          <!-- SERVICE LOCATIONS / SITES -->
-          <div style="margin-top: 24px; padding-top: 20px; border-top: 2px dashed var(--border);">
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-              <div style="font-size: 14px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px;">
-                &#128205; Service Locations (Sites)
-                <span style="font-size: 11px; font-weight: 400; color: var(--text-light);">Where work will be performed — can differ from billing address</span>
-              </div>
-              <button class="btn btn-sm" style="background: var(--primary); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">+ Add Site</button>
+        <!-- Service Locations (Sites) — full width -->
+        <div class="form-section" style="grid-column: 1 / -1;">
+          <div class="sites-header">
+            <div>
+              <div class="form-section-title">&#128205; Service Locations (Sites)</div>
+              <div class="form-section-subtitle">Where work will be performed — can differ from billing address</div>
             </div>
-
-            <div class="wireframe-note" style="margin-bottom: 12px;">
-              &#128221; <strong>Sites:</strong> Each customer can have multiple service locations. Sites are reusable across Appointments, Estimates, and Jobs. One site can be marked as "Primary Service Location" (default selection). Site ID format: SITE-YYYYMMDD-NNNN.
-            </div>
-
-            <!-- Sites Table -->
-            <div style="border: 1px solid var(--border); border-radius: 8px; overflow: hidden;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
-                <thead>
-                  <tr style="background: #f8f9fa;">
-                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border);">Site Name</th>
-                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border);">Address</th>
-                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border);">Site Contact</th>
-                    <th style="padding: 10px 12px; text-align: left; font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border);">Notes</th>
-                    <th style="padding: 10px 12px; text-align: center; font-size: 11px; font-weight: 600; color: var(--text-light); text-transform: uppercase; border-bottom: 2px solid var(--border); width: 80px;">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px 12px;">
-                      <div style="font-weight: 600;">Downtown Office</div>
-                      <span style="display: inline-block; padding: 1px 8px; background: #e8f0fe; color: #1565c0; border-radius: 10px; font-size: 10px; font-weight: 600;">Primary</span>
-                    </td>
-                    <td style="padding: 10px 12px;">456 Commerce Blvd, Springfield, IL 62704</td>
-                    <td style="padding: 10px 12px;">
-                      <div>Mike Johnson</div>
-                      <div style="font-size: 11px; color: var(--text-light);">(555) 111-2222</div>
-                    </td>
-                    <td style="padding: 10px 12px; font-size: 12px; color: var(--text-light);">Gate code: 4455</td>
-                    <td style="padding: 10px 12px; text-align: center;">
-                      <span style="cursor: pointer; color: var(--primary); margin-right: 8px;" title="Edit">&#9998;</span>
-                      <span style="cursor: pointer; color: var(--danger);" title="Remove">&#128465;</span>
-                    </td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid #eee;">
-                    <td style="padding: 10px 12px;">
-                      <div style="font-weight: 600;">Warehouse B</div>
-                    </td>
-                    <td style="padding: 10px 12px;">789 Industrial Park, Springfield, IL 62705</td>
-                    <td style="padding: 10px 12px;">
-                      <div>Same as customer</div>
-                    </td>
-                    <td style="padding: 10px 12px; font-size: 12px; color: var(--text-light);">Loading dock entrance, ask for security</td>
-                    <td style="padding: 10px 12px; text-align: center;">
-                      <span style="cursor: pointer; color: var(--primary); margin-right: 8px;" title="Edit">&#9998;</span>
-                      <span style="cursor: pointer; color: var(--danger);" title="Remove">&#128465;</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div style="font-size: 11px; color: var(--text-light); margin-top: 8px; font-style: italic;">
-              Sites added here will be available for selection when creating Appointments, Estimates, and Jobs for this customer.
-            </div>
+            <button class="add-btn">+ Add Site</button>
           </div>
 
-          <!-- Lead Description -->
+          <div class="sites-note">
+            <strong>Sites:</strong> Each customer can have multiple service locations. Sites are reusable across Appointments, Estimates, and Jobs. One site can be marked as "Primary Service Location" (default selection). Site ID format: SITE-YYYYMMDD-NNNN.
+          </div>
+
+          <table class="sites-table">
+            <thead>
+              <tr>
+                <th>Site Name</th>
+                <th>Address</th>
+                <th>Site Contact</th>
+                <th>Notes</th>
+                <th style="text-align:center;width:80px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <span class="site-name">Downtown Office</span>
+                  <span class="site-primary">Primary</span>
+                </td>
+                <td>456 Commerce Blvd, Springfield, IL 62704</td>
+                <td>
+                  <div>Mike Johnson</div>
+                  <div class="site-contact">(555) 111-2222</div>
+                </td>
+                <td class="site-notes">Gate code: 4455</td>
+                <td style="text-align:center;">
+                  <span class="site-act" title="Edit">&#9998;</span>
+                  <span class="site-act del" title="Remove">&#128465;</span>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <span class="site-name">Warehouse B</span>
+                </td>
+                <td>789 Industrial Park, Springfield, IL 62705</td>
+                <td>
+                  <div>Same as customer</div>
+                </td>
+                <td class="site-notes">Loading dock entrance, ask for security</td>
+                <td style="text-align:center;">
+                  <span class="site-act" title="Edit">&#9998;</span>
+                  <span class="site-act del" title="Remove">&#128465;</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="sites-footer">
+            Sites added here will be available for selection when creating Appointments, Estimates, and Jobs for this customer.
+          </div>
+        </div>
+
+        <!-- Lead Details — full width -->
+        <div class="form-section" style="grid-column: 1 / -1;">
+          <div class="form-section-title">&#128221; Lead Details</div>
+          <div class="form-section-subtitle">Describe the work needed and set priority</div>
+
           <div class="form-group">
-            <label class="required">Lead Description</label>
-            <textarea class="form-control" placeholder="Describe the service needed, issue details, special requirements..."></textarea>
+            <label class="form-label">Lead Description *</label>
+            <textarea class="form-input form-textarea" placeholder="Describe the service needed, issue details, special requirements..."></textarea>
           </div>
 
-          <!-- Lead Priority + Lead Status -->
           <div class="form-row">
             <div class="form-group">
-              <label>Lead Priority</label>
-              <select class="form-control">
+              <label class="form-label">Lead Priority</label>
+              <select class="form-select">
                 <option value="">-- Select Priority --</option>
-                <option value="urgent" class="priority-option-urgent">&#128308; Urgent</option>
-                <option value="medium" selected class="priority-option-medium">&#128992; Medium</option>
-                <option value="low" class="priority-option-low">&#128994; Low</option>
+                <option value="urgent">&#128308; Urgent</option>
+                <option value="medium" selected>&#128992; Medium</option>
+                <option value="low">&#128994; Low</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Lead Status</label>
-              <select class="form-control">
+              <label class="form-label">Lead Status</label>
+              <select class="form-select">
                 <option value="new" selected>New</option>
                 <option value="contacted">Contacted</option>
                 <option value="follow-up">Follow Up</option>
@@ -348,63 +257,64 @@
             </div>
           </div>
 
-          <!-- Notes -->
           <div class="form-group">
-            <label>Notes</label>
-            <textarea class="form-control" placeholder="Internal notes about this lead..."></textarea>
+            <label class="form-label">Notes</label>
+            <textarea class="form-input form-textarea" placeholder="Internal notes about this lead..."></textarea>
           </div>
-
-          <!-- Action Buttons -->
-          <div class="form-actions">
-            <button class="btn btn-primary">Save Lead</button>
-            <a href="screen8-appointments.html" class="btn btn-success">Save &amp; Schedule Appointment</a>
-            <a href="screen6-leads.html" class="btn btn-outline">Cancel</a>
-          </div>
-
         </div>
 
       </div>
 
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html"><strong>7. Lead Form</strong></a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
+      <!-- FORM FOOTER -->
+      <div class="form-footer">
+        <a href="screen6-leads.html" class="fb cancel">Cancel</a>
+        <a href="screen8-appointments.html" class="fb teal">Save &amp; Schedule Appointment</a>
+        <button class="fb primary">Save Lead</button>
       </div>
 
     </div>
+
+    <!-- SCREEN NAV -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a>
+      <a href="screen2-registration.html">2. Registration</a>
+      <a href="screen3-signin.html">3. Sign In</a>
+      <a href="screen4-dashboard.html">4. Dashboard</a>
+      <a href="screen5-pricing.html">5. Pricing</a>
+      <a href="screen5a-payment.html">5a. Payment</a>
+      <a href="screen6-leads.html">6. Lead Manager</a>
+      <a href="screen7-lead-form.html">7. Lead Form</a>
+      <a href="screen8-appointments.html">8. Appointments</a>
+      <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+      <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+      <a href="screen9-schedule.html">9. Schedule</a>
+      <a href="screen10-estimates.html">10. Estimates</a>
+      <a href="screen11-estimate-form.html">11. Est Step 1</a>
+      <a href="screen11-step2.html">11-S2. Est Builder</a>
+      <a href="screen11-step3.html">11-S3. Terms</a>
+      <a href="screen11-step4.html">11-S4. Review</a>
+      <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+      <a href="screen12-floorplan.html">12. Floor Plan</a>
+      <a href="screen13-jobs.html">13. Jobs</a>
+      <a href="screen13a-job-form.html">13a. Job Form</a>
+      <a href="screen13b-job-detail.html">13b. Job Detail</a>
+      <a href="screen14a-invoicing.html">14a. Invoicing</a>
+      <a href="screen15-management.html">15. Management Master</a>
+      <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+      <a href="screen15b-materials.html">15b. Materials</a>
+      <a href="screen15c-services.html">15c. Services</a>
+      <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+      <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+      <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+      <a href="screen15g-currency-settings.html">15g. Currency</a>
+      <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+      <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+
   </div>
 
 </body>

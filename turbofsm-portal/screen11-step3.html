@@ -3,315 +3,342 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Create Estimate (Step 3: Notes &amp; Terms)</title>
+  <title>TurboFSM — Create Estimate (Step 3: Notes &amp; Terms)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body class="estimate-wizard">
 
-  <div class="layout">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo"><div class="logo-icon">&#9889;</div><span>Turbo<span style="color:#818CF8;">FSM</span></span></div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html"><span class="nav-icon">&#9632;</span> Dashboard</a>
-        <a href="screen6-leads.html"><span class="nav-icon">&#9672;</span> Leads</a>
-        <a href="screen8-appointments.html"><span class="nav-icon">&#128197;</span> Appointments</a>
-        <a href="screen9-schedule.html"><span class="nav-icon">&#128339;</span> Schedule</a>
-        <a href="screen10-estimates.html" class="active"><span class="nav-icon">&#128196;</span> Estimates</a>
-        <a href="screen12-floorplan.html"><span class="nav-icon">&#9633;</span> Floor Plan</a>
-        <a href="screen13-jobs.html"><span class="nav-icon">&#128736;</span> Jobs Board</a>
-        <a href="screen14-crew.html"><span class="nav-icon">&#128101;</span> Assign Crew</a>
-        <a href="screen14a-invoicing.html"><span class="nav-icon">&#128176;</span> Invoices</a>
-        <a href="screen15-management.html"><span class="nav-icon">&#9881;</span> Management Master</a>
-        <a href="screen16-settings.html"><span class="nav-icon">&#128295;</span> Client Settings</a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <div class="main-area">
-
-      <!-- ESTIMATE HEADER BAR -->
-      <div class="est-header-bar">
-        <div class="est-header-left">
-          <a href="screen10-estimates.html" class="est-back-btn">&larr;</a>
-          <div>
-            <div class="est-title-group">
-              <span class="est-title">New Estimate <span class="est-id">#EST-208</span></span>
-              <span class="est-badge-draft">Draft</span>
-            </div>
-            <div class="est-meta">
-              <span>&#128100; James Wilson</span>
-              <span>&middot;</span>
-              <span>&#128205; Springfield, IL</span>
-            </div>
-          </div>
-        </div>
-        <div class="est-header-actions">
-          <span style="font-size: 18px; cursor: pointer; color: var(--est-text-medium);">&#8942;</span>
-          <a href="screen10-estimates.html" class="est-close-btn">&times;</a>
-        </div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-
-      <!-- WIZARD PROGRESS: Step 3 Active -->
-      <div class="est-wizard">
-        <div class="est-wizard-step completed">
-          <div class="est-step-circle">&#10003;</div>
-          <div class="est-step-label">Cover Page</div>
-        </div>
-        <div class="est-wizard-connector completed"></div>
-        <div class="est-wizard-step completed">
-          <div class="est-step-circle">&#10003;</div>
-          <div class="est-step-label">Services &amp; Pricing</div>
-        </div>
-        <div class="est-wizard-connector completed"></div>
-        <div class="est-wizard-step active">
-          <div class="est-step-circle">3</div>
-          <div class="est-step-label">Notes &amp; Terms</div>
-        </div>
-        <div class="est-wizard-connector"></div>
-        <div class="est-wizard-step">
-          <div class="est-step-circle">4</div>
-          <div class="est-step-label">Preview &amp; Send</div>
-        </div>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item active"><span class="ni">&#128196;</span><span>Estimation</span></a>
       </div>
-
-      <!-- CONTENT: Two-Panel Layout -->
-      <div class="content">
-        <div class="est-panels est-panels--60-40">
-
-          <!-- LEFT PANEL: Notes & Terms Editor -->
-          <div class="est-panel-left">
-
-            <div>
-              <div style="font-size: 18px; font-weight: 700; color: var(--est-text-dark); margin-bottom: 4px;">Add Notes &amp; Terms</div>
-              <div style="font-size: 13px; color: var(--est-text-medium);">Include project notes, special instructions, and terms &amp; conditions for this estimate.</div>
-            </div>
-
-            <!-- Estimate Notes Card -->
-            <div class="est-card">
-              <div class="est-card-header">
-                <div class="est-card-title"><span class="card-icon">&#128221;</span> Estimate Notes</div>
-                <a class="est-card-action">&#9998; Use Template</a>
-              </div>
-              <div class="est-card-subtitle">Describe the project scope, findings, or recommendations</div>
-              <textarea class="form-control" style="min-height: 100px; border-color: var(--est-border); font-size: 13px;">HVAC unit making rattling noise. Recommended full tune-up and filter replacement to ensure system efficiency for the winter season.</textarea>
-              <div class="est-char-count">131 / 1000</div>
-              <div class="est-quick-tags">
-                <span class="est-quick-tag">+ Inspection Note</span>
-                <span class="est-quick-tag">+ Maintenance</span>
-                <span class="est-quick-tag">+ Safety Issue</span>
-                <span class="est-quick-tag">+ Customer Request</span>
-              </div>
-            </div>
-
-            <!-- Internal Notes Card -->
-            <div class="est-card">
-              <div class="est-card-header">
-                <div class="est-card-title"><span class="card-icon">&#128274;</span> Internal Notes</div>
-                <span class="est-badge-private">Private</span>
-              </div>
-              <div class="est-card-subtitle">Notes for your team only &mdash; not visible to the customer</div>
-              <textarea class="form-control" placeholder="e.g., Customer mentioned budget concerns. May need to offer payment plan option..." style="min-height: 70px; border-color: var(--est-border); font-size: 13px;"></textarea>
-              <div class="est-char-count">0 / 500</div>
-            </div>
-
-            <!-- Terms & Conditions Card -->
-            <div class="est-card">
-              <div class="est-card-header">
-                <div class="est-card-title"><span class="card-icon">&#128196;</span> Terms &amp; Conditions</div>
-                <a class="est-card-action">&#9998; Use Template</a>
-              </div>
-              <div class="est-card-subtitle">Legal terms that will appear at the bottom of the estimate</div>
-              <textarea class="form-control" style="min-height: 100px; border-color: var(--est-border); font-size: 13px;">1. PAYMENT TERMS: Payment is due upon completion of service unless otherwise agreed in writing. 2. WARRANTY: All labor is guaranteed for 30 days. Parts are subject to manufacturer warranty. 3. CANCELLATION: Cancellations must be made 24 hours in advance to avoid a service fee. 4. ESTIMATE VALIDITY: This estimate is valid for 30 days from the date of issuance.</textarea>
-              <div style="display: flex; justify-content: space-between; margin-top: 4px;">
-                <div class="est-info-tip">&#9432; Tip: Number your terms for better readability.</div>
-                <div class="est-char-count" style="flex-shrink: 0;">361 / 2000</div>
-              </div>
-            </div>
-
-            <!-- Estimate Validity Card -->
-            <div class="est-card">
-              <div class="est-card-title"><span class="card-icon">&#128197;</span> Estimate Validity</div>
-              <div class="est-card-subtitle">Set how long this estimate remains valid</div>
-              <div class="est-validity-options">
-                <div class="est-validity-card">
-                  <div class="days">15</div>
-                  <div class="label">days</div>
-                </div>
-                <div class="est-validity-card selected">
-                  <div class="days">30</div>
-                  <div class="label">days</div>
-                </div>
-                <div class="est-validity-card">
-                  <div class="days">60</div>
-                  <div class="label">days</div>
-                </div>
-              </div>
-              <label style="display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--est-text-medium); cursor: pointer;">
-                <input type="checkbox" style="accent-color: var(--est-primary);"> Set custom expiration date
-                <input type="date" class="form-control" style="width: 160px; padding: 6px 10px; font-size: 12px; border-color: var(--est-border); margin-left: 8px;" disabled>
-              </label>
-            </div>
-
-            <!-- Attachments Card -->
-            <div class="est-card">
-              <div class="est-card-title"><span class="card-icon">&#128206;</span> Attachments <span style="font-size: 12px; font-weight: 400; color: var(--est-text-light);">(Optional)</span></div>
-              <div class="est-card-subtitle">Add photos, diagrams, or supporting documents</div>
-              <div class="est-drop-zone">
-                <span class="drop-icon">&#9729;</span>
-                Drop files here or click to browse
-                <span class="drop-hint">PNG, JPG, PDF up to 10MB each</span>
-              </div>
-              <div class="est-file-item">
-                <span class="est-file-icon">&#128444;</span>
-                <div style="flex: 1;">
-                  <div style="font-weight: 500;">hvac-unit-photo.jpg</div>
-                  <div class="est-file-size">1.2 MB</div>
-                </div>
-                <span style="color: #EF4444; cursor: pointer;">&#10005;</span>
-              </div>
-            </div>
-
-            <!-- Step Navigation -->
-            <div class="est-step-footer">
-              <a href="screen11-step2.html" class="est-btn-prev" style="text-decoration:none;">&larr; Back to Services</a>
-              <div class="auto-save"><span class="check">&#10003;</span> All changes saved</div>
-              <div class="est-step-footer-actions">
-                <button class="est-save-draft-btn">Save as Draft</button>
-                <a href="screen11-step4.html" class="est-btn-next" style="text-decoration:none;">Continue to Preview &rarr;</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- RIGHT PANEL: Summary & Templates -->
-          <div class="est-panel-right">
-
-            <!-- Estimate Summary Card -->
-            <div class="est-card est-summary-card">
-              <div class="est-card-header">
-                <div class="est-card-title">Estimate Summary</div>
-                <span style="font-size: 12px; font-weight: 700; color: var(--est-primary);">#EST-208</span>
-              </div>
-              <div class="summary-row"><span>Customer</span><span style="font-weight: 600;">James Wilson</span></div>
-              <div class="summary-row"><span>Services</span><span>2 items</span></div>
-              <div class="summary-row"><span>Materials</span><span>1 item</span></div>
-              <div class="summary-row"><span>Total Amount</span><span class="total-value" style="font-weight: 700; font-size: 18px;">$513.11</span></div>
-            </div>
-
-            <!-- Quick Templates Card -->
-            <div class="est-card">
-              <div class="est-card-title">Quick Templates</div>
-
-              <div class="est-template-category-title">Estimate Notes</div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #DBEAFE;">&#10052;</div>
-                <div>
-                  <div class="est-quick-template-name">HVAC Inspection</div>
-                  <div class="est-quick-template-desc">Standard HVAC service notes</div>
-                </div>
-              </div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #D1FAE5;">&#128167;</div>
-                <div>
-                  <div class="est-quick-template-name">Plumbing Repair</div>
-                  <div class="est-quick-template-desc">Leak detection and repair</div>
-                </div>
-              </div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #FEF3C7;">&#9889;</div>
-                <div>
-                  <div class="est-quick-template-name">Electrical Work</div>
-                  <div class="est-quick-template-desc">Wiring and panel upgrade</div>
-                </div>
-              </div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #FFE4E6;">&#127968;</div>
-                <div>
-                  <div class="est-quick-template-name">Roofing Inspection</div>
-                  <div class="est-quick-template-desc">Roof assessment and repair</div>
-                </div>
-              </div>
-
-              <div class="est-template-category-title">Terms &amp; Conditions</div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128196;</div>
-                <div>
-                  <div class="est-quick-template-name">Standard Terms</div>
-                  <div class="est-quick-template-desc">Default company terms</div>
-                </div>
-              </div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128737;</div>
-                <div>
-                  <div class="est-quick-template-name">With Warranty</div>
-                  <div class="est-quick-template-desc">Includes extended warranty</div>
-                </div>
-              </div>
-              <div class="est-quick-template-card">
-                <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128179;</div>
-                <div>
-                  <div class="est-quick-template-name">Payment Plan</div>
-                  <div class="est-quick-template-desc">Installment payment terms</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Pro Tips Card -->
-            <div class="est-card est-pro-tips-card">
-              <div class="est-card-title">&#128161; Pro Tips</div>
-              <div class="est-pro-tips">
-                <div class="tip-item"><span class="tip-check">&#10003;</span> Be specific about findings and recommendations</div>
-                <div class="tip-item"><span class="tip-check">&#10003;</span> Use templates to save time on common jobs</div>
-                <div class="tip-item"><span class="tip-check">&#10003;</span> Add photos to help customers understand the work</div>
-              </div>
-            </div>
-          </div>
-
-        </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
       </div>
-
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Services</a>
-        <a href="screen11-step3.html"><strong>11-S3. Notes</strong></a>
-        <a href="screen11-step4.html">11-S4. Preview</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
       </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
     </div>
   </div>
+
+  <!-- MAIN AREA -->
+  <div class="main">
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <a href="screen10-estimates.html" style="color:var(--text-secondary);font-size:20px;text-decoration:none;margin-right:8px;">&larr;</a>
+        <h1>Create Estimate</h1>
+        <span class="t-sub">Step 3: Notes &amp; Terms</span>
+      </div>
+      <div class="topbar-right">
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- ESTIMATE HEADER BAR -->
+    <div class="est-header-bar">
+      <div class="est-header-left">
+        <div>
+          <div class="est-title-group">
+            <span class="est-title">New Estimate <span class="est-id">#EST-208</span></span>
+            <span class="est-badge-draft">Draft</span>
+          </div>
+          <div class="est-meta">
+            <span>&#128100; James Wilson</span>
+            <span>&middot;</span>
+            <span>&#128205; Springfield, IL</span>
+          </div>
+        </div>
+      </div>
+      <div class="est-header-actions">
+        <span style="font-size: 18px; cursor: pointer; color: var(--text-muted);">&#8942;</span>
+        <a href="screen10-estimates.html" class="est-close-btn">&times;</a>
+      </div>
+    </div>
+
+    <!-- WIZARD PROGRESS: Step 3 Active -->
+    <div class="est-wizard">
+      <div class="est-wizard-step completed">
+        <div class="est-step-circle">&#10003;</div>
+        <div class="est-step-label">Cover Page</div>
+      </div>
+      <div class="est-wizard-connector completed"></div>
+      <div class="est-wizard-step completed">
+        <div class="est-step-circle">&#10003;</div>
+        <div class="est-step-label">Services &amp; Pricing</div>
+      </div>
+      <div class="est-wizard-connector completed"></div>
+      <div class="est-wizard-step active">
+        <div class="est-step-circle">3</div>
+        <div class="est-step-label">Notes &amp; Terms</div>
+      </div>
+      <div class="est-wizard-connector"></div>
+      <div class="est-wizard-step">
+        <div class="est-step-circle">4</div>
+        <div class="est-step-label">Preview &amp; Send</div>
+      </div>
+    </div>
+
+    <!-- CONTENT: Two-Panel Layout -->
+    <div class="content">
+      <div class="est-panels est-panels--60-40">
+
+        <!-- LEFT PANEL: Notes & Terms Editor -->
+        <div class="est-panel-left">
+
+          <div>
+            <div style="font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">Add Notes &amp; Terms</div>
+            <div style="font-size: 13px; color: var(--text-secondary);">Include project notes, special instructions, and terms &amp; conditions for this estimate.</div>
+          </div>
+
+          <!-- Estimate Notes Card -->
+          <div class="est-card">
+            <div class="est-card-header">
+              <div class="est-card-title"><span class="card-icon">&#128221;</span> Estimate Notes</div>
+              <a class="est-card-action">&#9998; Use Template</a>
+            </div>
+            <div class="est-card-subtitle">Describe the project scope, findings, or recommendations</div>
+            <textarea class="form-input" style="min-height: 100px; font-size: 13px;">HVAC unit making rattling noise. Recommended full tune-up and filter replacement to ensure system efficiency for the winter season.</textarea>
+            <div class="est-char-count">131 / 1000</div>
+            <div class="est-quick-tags">
+              <span class="est-quick-tag">+ Inspection Note</span>
+              <span class="est-quick-tag">+ Maintenance</span>
+              <span class="est-quick-tag">+ Safety Issue</span>
+              <span class="est-quick-tag">+ Customer Request</span>
+            </div>
+          </div>
+
+          <!-- Internal Notes Card -->
+          <div class="est-card">
+            <div class="est-card-header">
+              <div class="est-card-title"><span class="card-icon">&#128274;</span> Internal Notes</div>
+              <span class="est-badge-private">Private</span>
+            </div>
+            <div class="est-card-subtitle">Notes for your team only &mdash; not visible to the customer</div>
+            <textarea class="form-input" placeholder="e.g., Customer mentioned budget concerns. May need to offer payment plan option..." style="min-height: 70px; font-size: 13px;"></textarea>
+            <div class="est-char-count">0 / 500</div>
+          </div>
+
+          <!-- Terms & Conditions Card -->
+          <div class="est-card">
+            <div class="est-card-header">
+              <div class="est-card-title"><span class="card-icon">&#128196;</span> Terms &amp; Conditions</div>
+              <a class="est-card-action">&#9998; Use Template</a>
+            </div>
+            <div class="est-card-subtitle">Legal terms that will appear at the bottom of the estimate</div>
+            <textarea class="form-input" style="min-height: 100px; font-size: 13px;">1. PAYMENT TERMS: Payment is due upon completion of service unless otherwise agreed in writing. 2. WARRANTY: All labor is guaranteed for 30 days. Parts are subject to manufacturer warranty. 3. CANCELLATION: Cancellations must be made 24 hours in advance to avoid a service fee. 4. ESTIMATE VALIDITY: This estimate is valid for 30 days from the date of issuance.</textarea>
+            <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+              <div class="est-info-tip">&#9432; Tip: Number your terms for better readability.</div>
+              <div class="est-char-count" style="flex-shrink: 0;">361 / 2000</div>
+            </div>
+          </div>
+
+          <!-- Estimate Validity Card -->
+          <div class="est-card">
+            <div class="est-card-title"><span class="card-icon">&#128197;</span> Estimate Validity</div>
+            <div class="est-card-subtitle">Set how long this estimate remains valid</div>
+            <div class="est-validity-options">
+              <div class="est-validity-card">
+                <div class="days">15</div>
+                <div class="label">days</div>
+              </div>
+              <div class="est-validity-card selected">
+                <div class="days">30</div>
+                <div class="label">days</div>
+              </div>
+              <div class="est-validity-card">
+                <div class="days">60</div>
+                <div class="label">days</div>
+              </div>
+            </div>
+            <label style="display: flex; align-items: center; gap: 6px; margin-top: 12px; font-size: 12px; color: var(--text-secondary); cursor: pointer;">
+              <input type="checkbox" style="accent-color: var(--accent);"> Set custom expiration date
+              <input type="date" class="form-input" style="width: 160px; padding: 6px 10px; font-size: 12px; margin-left: 8px;" disabled>
+            </label>
+          </div>
+
+          <!-- Attachments Card -->
+          <div class="est-card">
+            <div class="est-card-title"><span class="card-icon">&#128206;</span> Attachments <span style="font-size: 12px; font-weight: 400; color: var(--text-muted);">(Optional)</span></div>
+            <div class="est-card-subtitle">Add photos, diagrams, or supporting documents</div>
+            <div class="est-drop-zone">
+              <span class="drop-icon">&#9729;</span>
+              Drop files here or click to browse
+              <span class="drop-hint">PNG, JPG, PDF up to 10MB each</span>
+            </div>
+            <div class="est-file-item">
+              <span class="est-file-icon">&#128444;</span>
+              <div style="flex: 1;">
+                <div style="font-weight: 500;">hvac-unit-photo.jpg</div>
+                <div class="est-file-size">1.2 MB</div>
+              </div>
+              <span style="color: #EF4444; cursor: pointer;">&#10005;</span>
+            </div>
+          </div>
+
+          <!-- Step Navigation -->
+          <div class="est-step-footer">
+            <a href="screen11-step2.html" class="est-btn-prev" style="text-decoration:none;">&larr; Back to Services</a>
+            <div class="auto-save"><span class="check">&#10003;</span> All changes saved</div>
+            <div class="est-step-footer-actions">
+              <button class="est-save-draft-btn">Save as Draft</button>
+              <a href="screen11-step4.html" class="est-btn-next" style="text-decoration:none;">Continue to Preview &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT PANEL: Summary & Templates -->
+        <div class="est-panel-right">
+
+          <!-- Estimate Summary Card -->
+          <div class="est-card est-summary-card">
+            <div class="est-card-header">
+              <div class="est-card-title">Estimate Summary</div>
+              <span style="font-size: 12px; font-weight: 700; color: var(--accent);">#EST-208</span>
+            </div>
+            <div class="summary-row"><span>Customer</span><span style="font-weight: 600;">James Wilson</span></div>
+            <div class="summary-row"><span>Services</span><span>2 items</span></div>
+            <div class="summary-row"><span>Materials</span><span>1 item</span></div>
+            <div class="summary-row"><span>Total Amount</span><span class="total-value" style="font-weight: 700; font-size: 18px;">$513.11</span></div>
+          </div>
+
+          <!-- Quick Templates Card -->
+          <div class="est-card">
+            <div class="est-card-title">Quick Templates</div>
+
+            <div class="est-template-category-title">Estimate Notes</div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #DBEAFE;">&#10052;</div>
+              <div>
+                <div class="est-quick-template-name">HVAC Inspection</div>
+                <div class="est-quick-template-desc">Standard HVAC service notes</div>
+              </div>
+            </div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #D1FAE5;">&#128167;</div>
+              <div>
+                <div class="est-quick-template-name">Plumbing Repair</div>
+                <div class="est-quick-template-desc">Leak detection and repair</div>
+              </div>
+            </div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #FEF3C7;">&#9889;</div>
+              <div>
+                <div class="est-quick-template-name">Electrical Work</div>
+                <div class="est-quick-template-desc">Wiring and panel upgrade</div>
+              </div>
+            </div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #FFE4E6;">&#127968;</div>
+              <div>
+                <div class="est-quick-template-name">Roofing Inspection</div>
+                <div class="est-quick-template-desc">Roof assessment and repair</div>
+              </div>
+            </div>
+
+            <div class="est-template-category-title">Terms &amp; Conditions</div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128196;</div>
+              <div>
+                <div class="est-quick-template-name">Standard Terms</div>
+                <div class="est-quick-template-desc">Default company terms</div>
+              </div>
+            </div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128737;</div>
+              <div>
+                <div class="est-quick-template-name">With Warranty</div>
+                <div class="est-quick-template-desc">Includes extended warranty</div>
+              </div>
+            </div>
+            <div class="est-quick-template-card">
+              <div class="est-quick-template-icon" style="background: #F1F5F9;">&#128179;</div>
+              <div>
+                <div class="est-quick-template-name">Payment Plan</div>
+                <div class="est-quick-template-desc">Installment payment terms</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pro Tips Card -->
+          <div class="est-card est-pro-tips-card">
+            <div class="est-card-title">&#128161; Pro Tips</div>
+            <div class="est-pro-tips">
+              <div class="tip-item"><span class="tip-check">&#10003;</span> Be specific about findings and recommendations</div>
+              <div class="tip-item"><span class="tip-check">&#10003;</span> Use templates to save time on common jobs</div>
+              <div class="tip-item"><span class="tip-check">&#10003;</span> Add photos to help customers understand the work</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SCREEN NAVIGATION -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a>
+      <a href="screen2-registration.html">2. Registration</a>
+      <a href="screen3-signin.html">3. Sign In</a>
+      <a href="screen4-dashboard.html">4. Dashboard</a>
+      <a href="screen5-pricing.html">5. Pricing</a>
+      <a href="screen5a-payment.html">5a. Payment</a>
+      <a href="screen6-leads.html">6. Lead Manager</a>
+      <a href="screen7-lead-form.html">7. Lead Form</a>
+      <a href="screen8-appointments.html">8. Appointments</a>
+      <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+      <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+      <a href="screen9-schedule.html">9. Schedule</a>
+      <a href="screen10-estimates.html">10. Estimates</a>
+      <a href="screen11-estimate-form.html">11. Est Step 1</a>
+      <a href="screen11-step2.html">11-S2. Services</a>
+      <a href="screen11-step3.html"><strong>11-S3. Notes</strong></a>
+      <a href="screen11-step4.html">11-S4. Preview</a>
+      <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+      <a href="screen12-floorplan.html">12. Floor Plan</a>
+      <a href="screen13-jobs.html">13. Jobs</a>
+      <a href="screen13a-job-form.html">13a. Job Form</a>
+      <a href="screen13b-job-detail.html">13b. Job Detail</a>
+      <a href="screen14a-invoicing.html">14a. Invoicing</a>
+      <a href="screen15-management.html">15. Management Master</a>
+      <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+      <a href="screen15b-materials.html">15b. Materials</a>
+      <a href="screen15c-services.html">15c. Services</a>
+      <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+      <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+      <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+      <a href="screen15g-currency-settings.html">15g. Currency</a>
+      <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+      <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+  </div>
+
 </body>
 </html>

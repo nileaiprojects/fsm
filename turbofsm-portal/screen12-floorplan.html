@@ -3,347 +3,1194 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Floor Plan Creation</title>
+  <title>TurboFSM &mdash; Floor Plan Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
+    /* ── Three-Panel Builder Layout ── */
+    .fp-builder {
+      display: flex; gap: 0; border: 1px solid rgba(0,0,0,.08); border-radius: var(--radius);
+      overflow: hidden; background: #fff; min-height: 560px; margin-bottom: 24px;
     }
 
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    /* ── Left Panel: Artifact Library ── */
+    .fp-left-panel {
+      width: 220px; background: #f8f9fa; border-right: 1px solid rgba(0,0,0,.08);
+      display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+    }
+    .fp-panel-header {
+      padding: 12px 14px; font-size: 12px; font-weight: 700; color: var(--text);
+      text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(0,0,0,.06);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .fp-artifact-search {
+      padding: 8px 10px; border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .fp-artifact-search input {
+      width: 100%; padding: 6px 10px; border: 1px solid rgba(0,0,0,.1); border-radius: 6px;
+      font-size: 12px; font-family: inherit; background: #fff; outline: none;
+    }
+    .fp-artifact-search input:focus { border-color: var(--accent); }
+
+    .fp-category { border-bottom: 1px solid rgba(0,0,0,.04); }
+    .fp-category-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; cursor: pointer; font-size: 12px; font-weight: 600; color: var(--text);
+      transition: background 0.15s; user-select: none;
+    }
+    .fp-category-header:hover { background: rgba(0,0,0,.03); }
+    .fp-cat-arrow { font-size: 10px; color: var(--muted); transition: transform 0.2s; }
+    .fp-cat-count {
+      font-size: 10px; font-weight: 500; color: var(--muted); background: rgba(0,0,0,.05);
+      padding: 1px 6px; border-radius: 8px; margin-left: auto; margin-right: 6px;
     }
 
-    .floor-plan-workspace {
-      display: flex;
-      gap: 0;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-      background: #fff;
+    .fp-category-items {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;
+      padding: 2px 8px 8px;
+    }
+    .fp-artifact {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 6px 2px; border: 1px solid transparent; border-radius: 6px;
+      cursor: grab; font-size: 9px; color: var(--text-secondary); text-align: center;
+      transition: background 0.15s, border-color 0.15s; gap: 2px; min-height: 48px;
+    }
+    .fp-artifact:hover { background: #e8f0fe; border-color: var(--accent); color: var(--accent); }
+    .fp-artifact-icon { font-size: 18px; line-height: 1; }
+
+    /* Custom artifact tile */
+    .fp-artifact.fp-add-custom {
+      border: 1px dashed rgba(0,0,0,.18); color: var(--muted); cursor: pointer;
+    }
+    .fp-artifact.fp-add-custom:hover { border-color: var(--accent); color: var(--accent); background: #f0f6ff; }
+    .fp-artifact.fp-add-custom .fp-artifact-icon { font-size: 16px; opacity: 0.6; }
+    .fp-artifact.fp-user-added { position: relative; }
+    .fp-artifact.fp-user-added::after {
+      content: ''; position: absolute; top: 3px; right: 3px; width: 6px; height: 6px;
+      background: var(--teal); border-radius: 50%;
     }
 
-    .floor-plan-toolbox {
-      width: 80px;
-      background: #f8f9fa;
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 12px 0;
-      gap: 6px;
+    /* Panel footer */
+    .fp-panel-footer {
+      padding: 10px 12px; border-top: 1px solid rgba(0,0,0,.08); margin-top: auto;
+      display: flex; flex-direction: column; gap: 6px;
     }
-
-    .tool-item {
-      width: 60px;
-      height: 56px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 9px;
-      color: var(--text-light);
-      text-align: center;
-      transition: background 0.2s;
+    .fp-panel-footer-link {
+      display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500;
+      color: var(--accent); cursor: pointer; text-decoration: none; padding: 4px 0;
     }
+    .fp-panel-footer-link:hover { text-decoration: underline; }
+    .fp-panel-footer-stat { font-size: 10px; color: var(--muted); }
 
-    .tool-item:hover {
-      background: #e8f0fe;
-      border-color: var(--primary);
-      color: var(--primary);
+    /* ── Center Panel: Canvas ── */
+    .fp-canvas-panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+    .fp-canvas-toolbar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 12px; background: #f8f9fa; border-bottom: 1px solid rgba(0,0,0,.08);
+      gap: 8px; flex-wrap: wrap;
     }
-
-    .tool-item .tool-icon {
-      font-size: 20px;
+    .fp-toolbar-left, .fp-toolbar-right { display: flex; align-items: center; gap: 4px; }
+    .fp-tool-btn {
+      width: 32px; height: 30px; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(0,0,0,.08); border-radius: 5px; background: #fff; cursor: pointer;
+      font-size: 14px; color: var(--text-secondary); transition: all 0.15s;
     }
-
-    .floor-plan-canvas-area {
-      flex: 1;
-      min-height: 420px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #fafafa;
-      position: relative;
+    .fp-tool-btn:hover { border-color: var(--accent); color: var(--accent); background: #f0f6ff; }
+    .fp-tool-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .fp-toolbar-sep { width: 1px; height: 20px; background: rgba(0,0,0,.1); margin: 0 4px; }
+    .fp-snap-toggle {
+      font-size: 11px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; cursor: pointer;
     }
+    .fp-snap-toggle input { accent-color: var(--accent); }
+    .fp-zoom-level { font-size: 11px; font-weight: 600; color: var(--text); min-width: 36px; text-align: center; }
 
-    .canvas-placeholder {
-      text-align: center;
-      color: var(--text-light);
+    .fp-canvas-area {
+      flex: 1; min-height: 440px; position: relative; background: #fafafa; overflow: hidden;
     }
-
-    .canvas-placeholder .canvas-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      opacity: 0.4;
-    }
-
-    .canvas-placeholder .canvas-text {
-      font-size: 16px;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-
-    .canvas-placeholder .canvas-subtext {
-      font-size: 12px;
-    }
-
-    .canvas-grid-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image:
-        linear-gradient(to right, #e0e0e0 1px, transparent 1px),
-        linear-gradient(to bottom, #e0e0e0 1px, transparent 1px);
+    .fp-canvas-area .canvas-grid-overlay {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image: linear-gradient(rgba(0,0,0,.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0,0,0,.06) 1px, transparent 1px);
       background-size: 20px 20px;
-      opacity: 0.3;
-      pointer-events: none;
     }
+    .fp-drawing { position: absolute; inset: 20px; z-index: 1; }
 
-    .linked-info {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 20px;
+    .fp-status-bar {
+      display: flex; align-items: center; gap: 0; padding: 5px 14px;
+      background: #f0f1f3; border-top: 1px solid rgba(0,0,0,.08); font-size: 11px; color: var(--muted);
     }
+    .fp-status-sep { margin: 0 10px; color: rgba(0,0,0,.15); }
 
-    .linked-info-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
+    /* ── Right Panel: Properties Inspector ── */
+    .fp-right-panel {
+      width: 260px; background: #fff; border-left: 1px solid rgba(0,0,0,.08);
+      overflow-y: auto; flex-shrink: 0;
     }
-
-    .linked-info-item .info-label {
-      font-weight: 600;
-      color: var(--text-light);
-      font-size: 12px;
+    .fp-props-section {
+      padding: 14px 16px; border-bottom: 1px solid rgba(0,0,0,.06);
     }
-
-    .linked-info-item .info-value {
-      color: var(--text);
-      font-weight: 500;
+    .fp-props-title {
+      font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 12px;
+      text-transform: uppercase; letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px;
     }
-
-    .linked-info-item .info-value a {
-      color: var(--primary);
-      text-decoration: underline;
+    .fp-props-badge {
+      font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px;
+      background: var(--accent-light); color: var(--accent); text-transform: none; letter-spacing: 0;
     }
+    .fp-right-panel .form-group { margin-bottom: 10px; }
+    .fp-right-panel .form-label { font-size: 10px; margin-bottom: 3px; }
+    .fp-right-panel .form-input,
+    .fp-right-panel .form-select,
+    .fp-right-panel .form-textarea { font-size: 12px; padding: 6px 8px; }
+    .fp-right-panel .form-row { grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .action-buttons-row {
-      display: flex;
-      gap: 10px;
+    .fp-layer-controls {
+      display: flex; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(0,0,0,.06);
+    }
+    .fp-layer-btn {
+      flex: 1; padding: 6px 0; text-align: center; border: 1px solid rgba(0,0,0,.1);
+      border-radius: 5px; background: #fff; cursor: pointer; font-size: 14px; color: var(--text-secondary);
+      transition: all 0.15s;
+    }
+    .fp-layer-btn:hover { background: #f0f6ff; border-color: var(--accent); color: var(--accent); }
+    .fp-layer-btn-del:hover { background: #fff0f0; border-color: var(--red); color: var(--red); }
+
+    /* ── Context Bar ── */
+    .fp-context-bar {
+      display: flex; align-items: center; gap: 24px; padding: 12px 20px; margin-bottom: 16px;
+      background: var(--surface); border: 1px solid rgba(0,0,0,.08); border-radius: var(--radius);
       flex-wrap: wrap;
-      margin-top: 24px;
+    }
+    .fp-context-item { display: flex; flex-direction: column; gap: 2px; }
+    .fp-context-label { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .fp-context-value { font-size: 13px; font-weight: 500; color: var(--text); }
+
+    /* ── Modal ── */
+    .fp-modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fp-modal {
+      background: #fff; border-radius: var(--radius-lg); width: 500px; max-height: 90vh;
+      overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .fp-modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px; border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .fp-modal-header h3 { font-size: 16px; font-weight: 700; margin: 0; }
+    .fp-modal-close {
+      width: 30px; height: 30px; border: none; background: #f5f5f5; border-radius: 50%;
+      cursor: pointer; font-size: 18px; color: var(--muted); display: flex; align-items: center; justify-content: center;
+    }
+    .fp-modal-close:hover { background: #eee; color: var(--text); }
+    .fp-modal-body { padding: 20px 24px; }
+    .fp-modal-footer {
+      padding: 14px 24px; border-top: 1px solid rgba(0,0,0,.08);
+      display: flex; justify-content: flex-end; gap: 10px;
+    }
+    .fp-template-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 6px; }
+    .fp-template-card {
+      display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px;
+      border: 2px solid rgba(0,0,0,.08); border-radius: 8px; cursor: pointer; text-align: center;
+      transition: all 0.15s;
+    }
+    .fp-template-card:hover { border-color: var(--accent); background: #f0f6ff; }
+    .fp-template-card.selected { border-color: var(--accent); background: var(--accent-light); }
+    .fp-template-icon { font-size: 28px; }
+    .fp-template-name { font-size: 11px; font-weight: 600; color: var(--text); }
+
+    /* Export option rows */
+    .fp-export-option {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+      border: 1px solid rgba(0,0,0,.08); border-radius: 8px; cursor: pointer;
+      margin-bottom: 8px; transition: all 0.15s;
+    }
+    .fp-export-option:hover { border-color: var(--accent); background: #f0f6ff; }
+    .fp-export-icon { font-size: 22px; flex-shrink: 0; }
+    .fp-export-option strong { font-size: 13px; color: var(--text); }
+    .fp-export-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* ── Custom Artifact Modal extras ── */
+    .fp-upload-zone {
+      border: 2px dashed rgba(0,0,0,.15); border-radius: 10px; padding: 28px 16px;
+      text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa;
+    }
+    .fp-upload-zone:hover { border-color: var(--accent); background: #f0f6ff; }
+    .fp-upload-zone-icon { font-size: 32px; margin-bottom: 6px; opacity: 0.4; }
+    .fp-upload-zone-text { font-size: 12px; color: var(--muted); }
+    .fp-upload-zone-text strong { color: var(--accent); }
+    .fp-upload-formats { font-size: 10px; color: var(--muted); margin-top: 4px; }
+
+    .fp-icon-picker { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-top: 6px; }
+    .fp-icon-option {
+      width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(0,0,0,.08); border-radius: 6px; cursor: pointer;
+      font-size: 18px; transition: all 0.15s;
+    }
+    .fp-icon-option:hover { border-color: var(--accent); background: #e8f0fe; }
+    .fp-icon-option.selected { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+    .fp-or-divider {
+      display: flex; align-items: center; gap: 12px; margin: 14px 0; font-size: 11px; color: var(--muted);
+    }
+    .fp-or-divider::before, .fp-or-divider::after {
+      content: ''; flex: 1; height: 1px; background: rgba(0,0,0,.1);
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 1280px) {
+      .fp-left-panel { width: 180px; }
+      .fp-right-panel { width: 220px; }
+      .fp-category-items { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 1024px) {
+      .fp-builder { flex-direction: column; min-height: auto; }
+      .fp-left-panel { width: 100%; max-height: 160px; border-right: none; border-bottom: 1px solid rgba(0,0,0,.08); }
+      .fp-right-panel { width: 100%; border-left: none; border-top: 1px solid rgba(0,0,0,.08); }
+      .fp-canvas-area { min-height: 350px; }
+    }
+    @media (max-width: 768px) {
+      .fp-right-panel { display: none; }
+      .fp-context-bar { gap: 12px; padding: 10px 14px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="layout">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+      <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+      <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+      <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="screen12-floorplan.html" class="nav-item active"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+      <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+      <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+      <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+      <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+  </div>
+</div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Floor Plan Builder</h1>
+      <span class="t-sub">Create &amp; manage floor plans</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn primary" onclick="openNewPlanModal()">+ New Floor Plan</button>
+      <div class="view-toggle" style="margin: 0 4px;">
+        <button class="view-toggle-btn active" onclick="toggle2D3D(this)">2D</button>
+        <button class="view-toggle-btn" onclick="toggle2D3D(this)">3D</button>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html" class="active">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
-
-    <!-- MAIN AREA -->
-    <div class="main-area">
-
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
-              </div>
-            </div>
-            <button class="btn-sm">Buy More Space</button>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
-          </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- PAGE TITLE -->
-        <div class="page-title">Floor Plan Creation</div>
-        <div class="page-subtitle">Create floor plans for your estimates</div>
-
-        <!-- WIREFRAME NOTES -->
-        <div class="wireframe-note">
-          &#128221; <strong>Note:</strong> Available only if Floor Plan add-on ($40/mo) is purchased.
-        </div>
-        <div class="wireframe-note">
-          &#128221; <strong>Note:</strong> Floor plan PDF/thumbnail gets embedded in the estimate on Screen 11.
-        </div>
-
-        <!-- LINKED INFO -->
-        <div class="card">
-          <div class="linked-info">
-            <div class="linked-info-item">
-              <span class="info-label">Linked Estimate:</span>
-              <span class="info-value"><a href="screen11-estimate-form.html">EST-20260215-0001</a></span>
-            </div>
-            <div class="linked-info-item">
-              <span class="info-label">Customer:</span>
-              <span class="info-value">John Smith</span>
-            </div>
-          </div>
-
-          <!-- FLOOR PLAN EDITOR -->
-          <div class="floor-plan-workspace">
-
-            <!-- Left Toolbox -->
-            <div class="floor-plan-toolbox">
-              <div class="tool-item">
-                <span class="tool-icon">&#9608;</span>
-                Walls
-              </div>
-              <div class="tool-item">
-                <span class="tool-icon">&#128682;</span>
-                Doors
-              </div>
-              <div class="tool-item">
-                <span class="tool-icon">&#9634;</span>
-                Windows
-              </div>
-              <div class="tool-item">
-                <span class="tool-icon">&#128688;</span>
-                Fixtures
-              </div>
-              <div class="tool-item">
-                <span class="tool-icon">T</span>
-                Text
-              </div>
-              <div class="tool-item">
-                <span class="tool-icon">&#128207;</span>
-                Measure
-              </div>
-            </div>
-
-            <!-- Canvas Area -->
-            <div class="floor-plan-canvas-area">
-              <div class="canvas-grid-overlay"></div>
-              <div class="canvas-placeholder">
-                <div class="canvas-icon">&#9633;</div>
-                <div class="canvas-text">Floor Plan Editor</div>
-                <div class="canvas-subtext">Drag &amp; drop tools to create your floor plan</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- ACTION BUTTONS -->
-          <div class="action-buttons-row">
-            <a href="screen11-estimate-form.html" class="btn btn-primary">Save &amp; Attach to Estimate</a>
-            <a href="screen11-estimate-form.html" class="btn btn-outline">Cancel</a>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html">10. Estimates</a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html"><strong>12. Floor Plan</strong></a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
-      </div>
-
+      <button class="topbar-btn" onclick="openExportModal()">&#128438; Export</button>
+      <button class="topbar-btn">&#128424; Print</button>
+      <a href="screen18-profile-presentation.html" class="topbar-btn teal" style="text-decoration:none;">&#128190; Save to Presentation</a>
+      <button class="notif-btn">&#128276;<span class="dot"></span></button>
+      <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
     </div>
   </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- NOTE BARS -->
+    <div class="note-bar" style="background: #fff8e1; border-left-color: var(--orange); margin-bottom: 8px;">
+      &#9733; <strong>Premium Feature:</strong> Floor Plan Builder is available as an add-on.
+      <a href="screen5-pricing.html" style="color: var(--accent); margin-left: 4px;">View Plans</a>
+    </div>
+    <div class="note-bar" style="margin-bottom: 16px;">
+      &#128221; <strong>Floor Plan Builder:</strong> Drag artifacts from the left panel onto the canvas. Right panel shows properties of selected elements. Floor plans can be created independently or linked to estimates. Export as PDF, print, or save to Profile &amp; Presentation. 2D/3D toggle switches view modes.
+    </div>
+
+    <!-- CONTEXT BAR -->
+    <div class="fp-context-bar" style="animation: fadeUp .4s both; animation-delay: .02s;">
+      <div class="fp-context-item">
+        <span class="fp-context-label">Linked Estimate</span>
+        <span class="fp-context-value"><a href="screen11-estimate-form.html" style="color: var(--accent);">EST-20260215-0001</a></span>
+      </div>
+      <div class="fp-context-item">
+        <span class="fp-context-label">Customer</span>
+        <span class="fp-context-value">John Smith</span>
+      </div>
+      <div class="fp-context-item">
+        <span class="fp-context-label">Status</span>
+        <span class="fp-context-value"><span class="status-pill draft">Draft</span></span>
+      </div>
+      <div class="fp-context-item">
+        <span class="fp-context-label">Last Modified</span>
+        <span class="fp-context-value">Mar 4, 2026</span>
+      </div>
+      <div class="fp-context-item">
+        <span class="fp-context-label">Floor Plan</span>
+        <span class="fp-context-value" style="font-weight: 700;">Bathroom Remodel &mdash; 1st Floor</span>
+      </div>
+    </div>
+
+    <!-- ═══════ THREE-PANEL BUILDER ═══════ -->
+    <div class="fp-builder" style="animation: fadeUp .4s both; animation-delay: .06s;">
+
+      <!-- ── LEFT PANEL: ARTIFACT LIBRARY ── -->
+      <div class="fp-left-panel">
+        <div class="fp-panel-header">
+          <span>&#128230; Artifacts</span>
+        </div>
+        <div class="fp-artifact-search">
+          <input type="text" placeholder="Search artifacts...">
+        </div>
+
+        <!-- 1. Structural (expanded) -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9660;</span> Structural</span>
+            <span class="fp-cat-count">10</span>
+          </div>
+          <div class="fp-category-items">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9608;</span>Wall</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128682;</span>Door</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#11036;</span>Window</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128316;</span>Stairs</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9635;</span>Column</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9638;</span>Partition</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9651;</span>Roof</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9644;</span>Beam</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9608;</span>Slab</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Structural')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 2. Plumbing -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Plumbing</span>
+            <span class="fp-cat-count">13</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128703;</span>Sink</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128701;</span>Toilet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128705;</span>Bathtub</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128703;</span>Shower</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9832;</span>Water Htr</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9473;</span>Pipes</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128703;</span>Faucet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9675;</span>Drain</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128167;</span>Valve</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9651;</span>Sump Pump</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128703;</span>Bidet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9707;</span>Floor Drain</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Plumbing')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 3. HVAC -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> HVAC</span>
+            <span class="fp-cat-count">11</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10052;</span>AC Unit</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9707;</span>Vent</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9644;</span>Duct</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127777;</span>Thermostat</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128293;</span>Furnace</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10052;</span>Mini Split</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127744;</span>Blower</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9635;</span>Damper</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9707;</span>Return Air</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10044;</span>Exhaust Fan</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('HVAC')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 4. Electrical -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Electrical</span>
+            <span class="fp-cat-count">12</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128268;</span>Outlet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9211;</span>Switch</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128161;</span>Light</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9889;</span>Panel</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#12336;</span>Wiring</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128161;</span>Recessed</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128268;</span>GFCI</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10040;</span>Ceiling Fan</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9211;</span>Dimmer</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128268;</span>240V Outlet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9889;</span>Junction</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Electrical')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 5. Landscaping -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Landscaping</span>
+            <span class="fp-cat-count">12</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127795;</span>Tree</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127793;</span>Shrub</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127803;</span>Garden Bed</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128739;</span>Pathway</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9618;</span>Fence</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128166;</span>Sprinkler</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127794;</span>Palm</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127807;</span>Lawn</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9728;</span>Patio</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128167;</span>Pond</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127797;</span>Hedge</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Landscaping')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 6. Cleaning -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Cleaning</span>
+            <span class="fp-cat-count">8</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9634;</span>Zone</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10022;</span>Area</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128167;</span>Station</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128230;</span>Supply Closet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9632;</span>Mop Area</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128465;</span>Waste Bin</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128167;</span>Sanitizer</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Cleaning')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 7. Furniture -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Furniture</span>
+            <span class="fp-cat-count">12</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128437;</span>Table</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#129681;</span>Chair</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128187;</span>Desk</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128452;</span>Cabinet</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128716;</span>Bed</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128186;</span>Sofa</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128218;</span>Bookshelf</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128250;</span>TV Unit</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#129482;</span>Counter</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#127869;</span>Dining Set</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128701;</span>Vanity</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Furniture')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 8. Annotations -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> Annotations</span>
+            <span class="fp-cat-count">8</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon" style="font-weight:700;">T</span>Text</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#8596;</span>Dimension</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#11034;</span>Area</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#10132;</span>Arrow</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128221;</span>Note</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#9898;</span>Callout</div>
+            <div class="fp-artifact" draggable="true"><span class="fp-artifact-icon">&#128205;</span>Pin</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('Annotations')"><span class="fp-artifact-icon">&#43;</span>Custom</div>
+          </div>
+        </div>
+
+        <!-- 9. My Custom (user-created artifacts) -->
+        <div class="fp-category">
+          <div class="fp-category-header" onclick="toggleCategory(this)">
+            <span><span class="fp-cat-arrow">&#9654;</span> My Custom</span>
+            <span class="fp-cat-count">2</span>
+          </div>
+          <div class="fp-category-items" style="display:none;">
+            <div class="fp-artifact fp-user-added" draggable="true"><span class="fp-artifact-icon">&#128703;</span>Tankless WH</div>
+            <div class="fp-artifact fp-user-added" draggable="true"><span class="fp-artifact-icon">&#9635;</span>Access Panel</div>
+            <div class="fp-artifact fp-add-custom" onclick="openCustomArtifactModal('My Custom')"><span class="fp-artifact-icon">&#43;</span>Add New</div>
+          </div>
+        </div>
+
+        <!-- Panel Footer -->
+        <div class="fp-panel-footer">
+          <div class="fp-panel-footer-stat">88 artifacts &bull; 2 custom</div>
+          <a href="#" class="fp-panel-footer-link" onclick="openCustomArtifactModal('');return false;">&#43; Add Custom Artifact</a>
+          <a href="screen15i-artifact-library.html" class="fp-panel-footer-link">&#9881; Manage Artifact Library</a>
+        </div>
+      </div>
+
+      <!-- ── CENTER PANEL: CANVAS ── -->
+      <div class="fp-canvas-panel">
+        <!-- Canvas Toolbar -->
+        <div class="fp-canvas-toolbar">
+          <div class="fp-toolbar-left">
+            <button class="fp-tool-btn active" onclick="selectTool(this)" title="Select">&#9995;</button>
+            <button class="fp-tool-btn" onclick="selectTool(this)" title="Draw Wall">&#9608;</button>
+            <button class="fp-tool-btn" onclick="selectTool(this)" title="Measure">&#8596;</button>
+            <button class="fp-tool-btn" onclick="selectTool(this)" title="Text">T</button>
+            <span class="fp-toolbar-sep"></span>
+            <button class="fp-tool-btn" title="Undo">&#8630;</button>
+            <button class="fp-tool-btn" title="Redo">&#8631;</button>
+          </div>
+          <div class="fp-toolbar-right">
+            <label class="fp-snap-toggle"><input type="checkbox" checked> Snap to Grid</label>
+            <span class="fp-toolbar-sep"></span>
+            <button class="fp-tool-btn" title="Zoom Out">&#8722;</button>
+            <span class="fp-zoom-level">100%</span>
+            <button class="fp-tool-btn" title="Zoom In">&#43;</button>
+            <button class="fp-tool-btn" title="Fit View">&#8862;</button>
+          </div>
+        </div>
+
+        <!-- Canvas Drawing Area -->
+        <div class="fp-canvas-area">
+          <div class="canvas-grid-overlay"></div>
+
+          <!-- PRE-DRAWN SAMPLE FLOOR PLAN (inline SVG) -->
+          <svg class="fp-drawing" viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:100%;">
+            <!-- Room Fills (floor demarcation) -->
+            <rect x="40" y="30" width="280" height="200" rx="0" fill="#fefce8" opacity="0.5"/><!-- Kitchen -->
+            <rect x="320" y="30" width="180" height="200" rx="0" fill="#eff6ff" opacity="0.6"/><!-- Bathroom -->
+            <rect x="140" y="230" width="360" height="160" rx="0" fill="#f0fdf4" opacity="0.5"/><!-- Living Room -->
+
+            <!-- ── EXTERIOR WALLS (thick) ── -->
+            <!-- Kitchen top -->
+            <line x1="40" y1="30" x2="500" y2="30" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+            <!-- Kitchen left -->
+            <line x1="40" y1="30" x2="40" y2="230" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+            <!-- Bottom-left corner down -->
+            <line x1="40" y1="230" x2="140" y2="230" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+            <!-- Living room left -->
+            <line x1="140" y1="230" x2="140" y2="390" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+            <!-- Living room bottom -->
+            <line x1="140" y1="390" x2="500" y2="390" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+            <!-- Right side top -->
+            <line x1="500" y1="30" x2="500" y2="390" stroke="#2d3436" stroke-width="6" stroke-linecap="round"/>
+
+            <!-- ── INTERIOR WALLS (thinner) ── -->
+            <!-- Kitchen/Bathroom divider (vertical) -->
+            <line x1="320" y1="30" x2="320" y2="230" stroke="#636e72" stroke-width="3"/>
+            <!-- Kitchen/Living Room divider (horizontal, partial — with door gap) -->
+            <line x1="40" y1="230" x2="210" y2="230" stroke="#636e72" stroke-width="3"/>
+            <line x1="250" y1="230" x2="320" y2="230" stroke="#636e72" stroke-width="3"/>
+            <!-- Bathroom/Living Room divider -->
+            <line x1="320" y1="230" x2="500" y2="230" stroke="#636e72" stroke-width="3"/>
+
+            <!-- ── DOOR (Kitchen to Living Room) ── -->
+            <path d="M 210 230 Q 210 270 250 230" fill="none" stroke="#0f6fde" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="210" y1="230" x2="210" y2="228" stroke="#0f6fde" stroke-width="3"/>
+            <line x1="250" y1="230" x2="250" y2="228" stroke="#0f6fde" stroke-width="3"/>
+
+            <!-- ── DOOR (Bathroom) ── -->
+            <path d="M 320 150 Q 356 150 356 186" fill="none" stroke="#0f6fde" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <line x1="320" y1="148" x2="320" y2="186" stroke="#eff6ff" stroke-width="4"/>
+            <line x1="320" y1="150" x2="320" y2="148" stroke="#0f6fde" stroke-width="3"/>
+            <line x1="320" y1="186" x2="320" y2="188" stroke="#0f6fde" stroke-width="3"/>
+
+            <!-- ── WINDOWS ── -->
+            <!-- Kitchen window (top wall) -->
+            <line x1="120" y1="28" x2="200" y2="28" stroke="#60a5fa" stroke-width="3"/>
+            <line x1="120" y1="32" x2="200" y2="32" stroke="#60a5fa" stroke-width="3"/>
+            <!-- Living room window (bottom wall) -->
+            <line x1="280" y1="388" x2="380" y2="388" stroke="#60a5fa" stroke-width="3"/>
+            <line x1="280" y1="392" x2="380" y2="392" stroke="#60a5fa" stroke-width="3"/>
+            <!-- Bathroom window (right wall) -->
+            <line x1="498" y1="80" x2="498" y2="150" stroke="#60a5fa" stroke-width="3"/>
+            <line x1="502" y1="80" x2="502" y2="150" stroke="#60a5fa" stroke-width="3"/>
+
+            <!-- ── PLUMBING FIXTURES (Bathroom) ── -->
+            <!-- Toilet -->
+            <rect x="420" y="46" width="30" height="42" rx="6" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1.5"/>
+            <ellipse cx="435" cy="55" rx="10" ry="6" fill="#b2bec3" opacity="0.4"/>
+            <!-- Selection handles on toilet (blue dashed border + corner squares) -->
+            <rect x="416" y="42" width="38" height="50" rx="2" fill="none" stroke="#0f6fde" stroke-width="1.5" stroke-dasharray="4,2"/>
+            <rect x="414" y="40" width="6" height="6" fill="#0f6fde" rx="1"/>
+            <rect x="452" y="40" width="6" height="6" fill="#0f6fde" rx="1"/>
+            <rect x="414" y="88" width="6" height="6" fill="#0f6fde" rx="1"/>
+            <rect x="452" y="88" width="6" height="6" fill="#0f6fde" rx="1"/>
+
+            <!-- Sink -->
+            <rect x="340" y="42" width="34" height="28" rx="4" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1.5"/>
+            <circle cx="357" cy="56" r="5" fill="#b2bec3" opacity="0.4"/>
+
+            <!-- Bathtub -->
+            <rect x="340" y="170" width="60" height="48" rx="8" fill="#dfe6e9" stroke="#b2bec3" stroke-width="1.5"/>
+            <rect x="348" y="178" width="44" height="32" rx="6" fill="#b2bec3" opacity="0.15"/>
+
+            <!-- ── DIMENSION LINES ── -->
+            <!-- Kitchen width (top) -->
+            <line x1="40" y1="16" x2="320" y2="16" stroke="#0f6fde" stroke-width="1" marker-start="url(#arrowL)" marker-end="url(#arrowR)"/>
+            <rect x="148" y="8" width="44" height="16" rx="3" fill="#fff" stroke="#0f6fde" stroke-width="0.5"/>
+            <text x="170" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#0f6fde" font-family="DM Sans, sans-serif">12 ft</text>
+
+            <!-- Bathroom width (top) -->
+            <line x1="320" y1="16" x2="500" y2="16" stroke="#0f6fde" stroke-width="1"/>
+            <rect x="385" y="8" width="36" height="16" rx="3" fill="#fff" stroke="#0f6fde" stroke-width="0.5"/>
+            <text x="403" y="20" text-anchor="middle" font-size="10" font-weight="600" fill="#0f6fde" font-family="DM Sans, sans-serif">8 ft</text>
+
+            <!-- Kitchen height (left) -->
+            <line x1="26" y1="30" x2="26" y2="230" stroke="#0f6fde" stroke-width="1"/>
+            <rect x="8" y="118" width="38" height="16" rx="3" fill="#fff" stroke="#0f6fde" stroke-width="0.5"/>
+            <text x="27" y="130" text-anchor="middle" font-size="10" font-weight="600" fill="#0f6fde" font-family="DM Sans, sans-serif">10 ft</text>
+
+            <!-- Living room width (bottom) -->
+            <line x1="140" y1="404" x2="500" y2="404" stroke="#0f6fde" stroke-width="1"/>
+            <rect x="293" y="396" width="36" height="16" rx="3" fill="#fff" stroke="#0f6fde" stroke-width="0.5"/>
+            <text x="311" y="408" text-anchor="middle" font-size="10" font-weight="600" fill="#0f6fde" font-family="DM Sans, sans-serif">14 ft</text>
+
+            <!-- Living room height (right side) -->
+            <line x1="514" y1="230" x2="514" y2="390" stroke="#0f6fde" stroke-width="1"/>
+            <rect x="506" y="298" width="38" height="16" rx="3" fill="#fff" stroke="#0f6fde" stroke-width="0.5"/>
+            <text x="525" y="310" text-anchor="middle" font-size="10" font-weight="600" fill="#0f6fde" font-family="DM Sans, sans-serif">12 ft</text>
+
+            <!-- ── ROOM LABELS ── -->
+            <text x="160" y="130" text-anchor="middle" font-size="16" font-weight="700" fill="#636e72" opacity="0.6" font-family="DM Sans, sans-serif">Kitchen</text>
+            <text x="160" y="148" text-anchor="middle" font-size="10" fill="#636e72" opacity="0.4" font-family="DM Sans, sans-serif">12 &times; 10 ft &bull; 120 sq ft</text>
+
+            <text x="410" y="130" text-anchor="middle" font-size="16" font-weight="700" fill="#636e72" opacity="0.6" font-family="DM Sans, sans-serif">Bathroom</text>
+            <text x="410" y="148" text-anchor="middle" font-size="10" fill="#636e72" opacity="0.4" font-family="DM Sans, sans-serif">8 &times; 10 ft &bull; 80 sq ft</text>
+
+            <text x="320" y="310" text-anchor="middle" font-size="16" font-weight="700" fill="#636e72" opacity="0.6" font-family="DM Sans, sans-serif">Living Room</text>
+            <text x="320" y="328" text-anchor="middle" font-size="10" fill="#636e72" opacity="0.4" font-family="DM Sans, sans-serif">14 &times; 12 ft &bull; 168 sq ft</text>
+          </svg>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="fp-status-bar">
+          <span>Zoom: 100%</span>
+          <span class="fp-status-sep">|</span>
+          <span>Grid: 1 ft</span>
+          <span class="fp-status-sep">|</span>
+          <span>Cursor: (24, 16) ft</span>
+          <span class="fp-status-sep">|</span>
+          <span><strong>Total Area: 368 sq ft</strong></span>
+          <span class="fp-status-sep">|</span>
+          <span>3 Rooms</span>
+          <span class="fp-status-sep">|</span>
+          <span>Selected: Toilet</span>
+        </div>
+      </div>
+
+      <!-- ── RIGHT PANEL: PROPERTIES INSPECTOR ── -->
+      <div class="fp-right-panel">
+        <!-- Floor Plan Metadata -->
+        <div class="fp-props-section">
+          <div class="fp-props-title">&#128196; Floor Plan</div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input class="form-input" value="Bathroom Remodel - 1st Floor">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Customer</label>
+            <input class="form-input" value="John Smith" readonly style="background: #f8f9fa;">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Linked Estimate</label>
+            <select class="form-select">
+              <option selected>EST-20260215-0001</option>
+              <option>None (Independent)</option>
+              <option>EST-20260214-0002 - Sarah Johnson</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notes</label>
+            <textarea class="form-input" rows="2" style="min-height: 50px;">First floor layout for plumbing estimate</textarea>
+          </div>
+        </div>
+
+        <!-- Selected Element Properties -->
+        <div class="fp-props-section">
+          <div class="fp-props-title">&#9881; Selected: Toilet <span class="fp-props-badge">Plumbing</span></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Width</label>
+              <input class="form-input" value="1.5 ft">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Height</label>
+              <input class="form-input" value="2.5 ft">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">X Position</label>
+              <input class="form-input" value="18 ft">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Y Position</label>
+              <input class="form-input" value="4 ft">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Rotation</label>
+              <input class="form-input" value="0&deg;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Style</label>
+              <select class="form-select">
+                <option selected>Standard</option>
+                <option>Wall-mounted</option>
+                <option>Corner</option>
+              </select>
+            </div>
+          </div>
+          <div class="fp-layer-controls">
+            <button class="fp-layer-btn" title="Bring Forward">&#8593;</button>
+            <button class="fp-layer-btn" title="Send Back">&#8595;</button>
+            <button class="fp-layer-btn" title="Lock">&#128274;</button>
+            <button class="fp-layer-btn fp-layer-btn-del" title="Delete">&#128465;</button>
+          </div>
+        </div>
+
+        <!-- Room Properties -->
+        <div class="fp-props-section">
+          <div class="fp-props-title">&#127968; Room: Bathroom</div>
+          <div class="form-group">
+            <label class="form-label">Room Name</label>
+            <input class="form-input" value="Bathroom">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Area</label>
+              <div style="font-size: 13px; font-weight: 700; color: var(--teal);">80 sq ft</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Perimeter</label>
+              <div style="font-size: 13px; font-weight: 500;">36 ft</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Floor Type</label>
+            <select class="form-select">
+              <option selected>Tile</option>
+              <option>Hardwood</option>
+              <option>Carpet</option>
+              <option>Concrete</option>
+              <option>Vinyl</option>
+              <option>Laminate</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Wall Color</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <div style="width: 24px; height: 24px; background: #eff6ff; border: 1px solid #bbb; border-radius: 4px; cursor: pointer;"></div>
+              <input class="form-input" value="#EFF6FF" style="flex:1;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /fp-builder -->
+
+    <!-- ═══════ SAVED FLOOR PLANS TABLE ═══════ -->
+    <div class="detail-card" style="animation: fadeUp .4s both; animation-delay: .1s;">
+      <div class="detail-card-title">
+        Saved Floor Plans
+        <span style="font-size: 12px; color: var(--muted); font-weight: 400;">3 floor plans</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Customer</th>
+            <th>Linked Estimate</th>
+            <th>Date Created</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color: var(--accent);">Bathroom Remodel - 1st Floor</strong></td>
+            <td>John Smith</td>
+            <td><a href="screen11-estimate-form.html" style="color: var(--accent);">EST-20260215-0001</a></td>
+            <td>Mar 1, 2026</td>
+            <td><span class="status-pill draft">Draft</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action estimate">&#128438; PDF</a>
+                <a href="#" class="row-action notes">&#128464; Copy</a>
+                <a href="screen18-profile-presentation.html" class="row-action complete">&#127908; Present</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>HVAC Duct Layout - Warehouse</strong></td>
+            <td>Lisa Brown</td>
+            <td><a href="screen11-estimate-form.html" style="color: var(--accent);">EST-20260210-0004</a></td>
+            <td>Feb 12, 2026</td>
+            <td><span class="status-pill completed">Complete</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#128065; View</a>
+                <a href="#" class="row-action estimate">&#128438; PDF</a>
+                <a href="#" class="row-action notes">&#128464; Copy</a>
+                <a href="screen18-profile-presentation.html" class="row-action complete">&#127908; Present</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Landscape Design - Front Yard</strong></td>
+            <td>Sarah Johnson</td>
+            <td><span style="color: var(--muted);">&mdash; Independent</span></td>
+            <td>Feb 5, 2026</td>
+            <td><span class="status-pill sent">Attached</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#128065; View</a>
+                <a href="#" class="row-action estimate">&#128438; PDF</a>
+                <a href="screen11-estimate-form.html" class="row-action phone">&#128206; Attach</a>
+                <a href="screen18-profile-presentation.html" class="row-action complete">&#127908; Present</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div><!-- /content -->
+
+  <!-- SCREEN NAV -->
+  <div class="screen-nav">
+    <strong>Wireframe Screen Navigation:</strong><br><br>
+    <a href="screen1-landing.html">1. Landing</a>
+    <a href="screen2-registration.html">2. Registration</a>
+    <a href="screen3-signin.html">3. Sign In</a>
+    <a href="screen4-dashboard.html">4. Dashboard</a>
+    <a href="screen5-pricing.html">5. Pricing</a>
+    <a href="screen5a-payment.html">5a. Payment</a>
+    <a href="screen6-leads.html">6. Lead Manager</a>
+    <a href="screen7-lead-form.html">7. Lead Form</a>
+    <a href="screen8-appointments.html">8. Appointments</a>
+    <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+    <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+    <a href="screen9-schedule.html">9. Schedule</a>
+    <a href="screen10-estimates.html">10. Estimates</a>
+    <a href="screen11-estimate-form.html">11. Est Step 1</a>
+    <a href="screen11-step2.html">11-S2. Est Builder</a>
+    <a href="screen11-step3.html">11-S3. Terms</a>
+    <a href="screen11-step4.html">11-S4. Review</a>
+    <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+    <a href="screen12-floorplan.html"><strong>12. Floor Plan</strong></a>
+    <a href="screen13-jobs.html">13. Jobs</a>
+    <a href="screen13a-job-form.html">13a. Job Form</a>
+    <a href="screen13b-job-detail.html">13b. Job Detail</a>
+    <a href="screen14a-invoicing.html">14a. Invoicing</a>
+    <a href="screen15-management.html">15. Management Master</a>
+    <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+    <a href="screen15b-materials.html">15b. Materials</a>
+    <a href="screen15c-services.html">15c. Services</a>
+    <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+    <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+    <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+    <a href="screen15g-currency-settings.html">15g. Currency</a>
+    <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html">15i. Artifact Library</a>
+    <a href="screen16-settings.html">16. Settings</a>
+    <a href="screen17-crew-costs.html">17. Crew Costs</a>
+    <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ═══════ NEW FLOOR PLAN MODAL ═══════ -->
+<div class="fp-modal-overlay" id="newPlanModal" style="display:none;">
+  <div class="fp-modal">
+    <div class="fp-modal-header">
+      <h3>New Floor Plan</h3>
+      <button class="fp-modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="fp-modal-body">
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input class="form-input" placeholder="e.g., Bathroom Remodel - 1st Floor">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Customer (Optional)</label>
+        <select class="form-select">
+          <option value="">-- Select Customer --</option>
+          <option>John Smith</option>
+          <option>Lisa Brown</option>
+          <option>Sarah Johnson</option>
+          <option>David Park</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Link to Estimate (Optional)</label>
+        <select class="form-select">
+          <option value="">-- None (Independent) --</option>
+          <option>EST-20260215-0001 &mdash; John Smith</option>
+          <option>EST-20260214-0002 &mdash; Sarah Johnson</option>
+          <option>EST-20260210-0004 &mdash; Lisa Brown</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Template</label>
+        <div class="fp-template-grid">
+          <div class="fp-template-card selected">
+            <div class="fp-template-icon">&#9634;</div>
+            <div class="fp-template-name">Blank</div>
+          </div>
+          <div class="fp-template-card">
+            <div class="fp-template-icon">&#127968;</div>
+            <div class="fp-template-name">Residential</div>
+          </div>
+          <div class="fp-template-card">
+            <div class="fp-template-icon">&#127970;</div>
+            <div class="fp-template-name">Commercial</div>
+          </div>
+          <div class="fp-template-card">
+            <div class="fp-template-icon">&#127795;</div>
+            <div class="fp-template-name">Landscape</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fp-modal-footer">
+      <button class="fb cancel" onclick="closeModal()">Cancel</button>
+      <button class="fb primary" onclick="closeModal()">Create Floor Plan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ EXPORT MODAL ═══════ -->
+<div class="fp-modal-overlay" id="exportModal" style="display:none;">
+  <div class="fp-modal">
+    <div class="fp-modal-header">
+      <h3>Export Floor Plan</h3>
+      <button class="fp-modal-close" onclick="closeExportModal()">&times;</button>
+    </div>
+    <div class="fp-modal-body">
+      <div class="fp-export-option" onclick="closeExportModal()">
+        <span class="fp-export-icon">&#128438;</span>
+        <div>
+          <strong>Export as PDF</strong>
+          <div class="fp-export-desc">Download floor plan as a high-quality PDF document</div>
+        </div>
+      </div>
+      <div class="fp-export-option" onclick="closeExportModal()">
+        <span class="fp-export-icon">&#128444;</span>
+        <div>
+          <strong>Export as PNG</strong>
+          <div class="fp-export-desc">Download as a raster image file</div>
+        </div>
+      </div>
+      <div class="fp-export-option" onclick="closeExportModal()">
+        <span class="fp-export-icon">&#128206;</span>
+        <div>
+          <strong>Attach to Estimate</strong>
+          <div class="fp-export-desc">Link this floor plan to estimate EST-20260215-0001</div>
+        </div>
+      </div>
+      <div class="fp-export-option" onclick="closeExportModal()">
+        <span class="fp-export-icon">&#127908;</span>
+        <div>
+          <strong>Save to Presentation</strong>
+          <div class="fp-export-desc">Add to Profile &amp; Presentation folder for client showcase</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ CUSTOM ARTIFACT MODAL ═══════ -->
+<div class="fp-modal-overlay" id="customArtifactModal" style="display:none;">
+  <div class="fp-modal" style="width: 460px;">
+    <div class="fp-modal-header">
+      <h3>Add Custom Artifact</h3>
+      <button class="fp-modal-close" onclick="closeCustomArtifactModal()">&times;</button>
+    </div>
+    <div class="fp-modal-body">
+      <div class="form-group">
+        <label class="form-label">Artifact Name *</label>
+        <input class="form-input" placeholder="e.g., Tankless Water Heater">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select class="form-select" id="customArtifactCategory">
+          <option value="">-- Select Category --</option>
+          <option>Structural</option>
+          <option>Plumbing</option>
+          <option>HVAC</option>
+          <option>Electrical</option>
+          <option>Landscaping</option>
+          <option>Cleaning</option>
+          <option>Furniture</option>
+          <option>Annotations</option>
+          <option>My Custom</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Icon &mdash; Choose from library</label>
+        <div class="fp-icon-picker">
+          <div class="fp-icon-option selected">&#9635;</div>
+          <div class="fp-icon-option">&#9632;</div>
+          <div class="fp-icon-option">&#9634;</div>
+          <div class="fp-icon-option">&#9675;</div>
+          <div class="fp-icon-option">&#9651;</div>
+          <div class="fp-icon-option">&#9733;</div>
+          <div class="fp-icon-option">&#10022;</div>
+          <div class="fp-icon-option">&#10044;</div>
+          <div class="fp-icon-option">&#128167;</div>
+          <div class="fp-icon-option">&#128293;</div>
+          <div class="fp-icon-option">&#10052;</div>
+          <div class="fp-icon-option">&#9889;</div>
+          <div class="fp-icon-option">&#128161;</div>
+          <div class="fp-icon-option">&#128268;</div>
+          <div class="fp-icon-option">&#128703;</div>
+          <div class="fp-icon-option">&#128701;</div>
+          <div class="fp-icon-option">&#127795;</div>
+          <div class="fp-icon-option">&#127793;</div>
+          <div class="fp-icon-option">&#128682;</div>
+          <div class="fp-icon-option">&#128437;</div>
+          <div class="fp-icon-option">&#128452;</div>
+          <div class="fp-icon-option">&#128230;</div>
+          <div class="fp-icon-option">&#128205;</div>
+          <div class="fp-icon-option">&#9881;</div>
+        </div>
+      </div>
+
+      <div class="fp-or-divider">or upload your own</div>
+
+      <div class="form-group">
+        <div class="fp-upload-zone">
+          <div class="fp-upload-zone-icon">&#128194;</div>
+          <div class="fp-upload-zone-text">Drag &amp; drop an icon file or <strong>browse</strong></div>
+          <div class="fp-upload-formats">SVG, PNG, JPG &bull; Max 200 KB &bull; 64&times;64px recommended</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Default Size</label>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" style="font-size:10px; color:var(--muted);">Width</label>
+            <input class="form-input" value="2 ft" placeholder="Width">
+          </div>
+          <div class="form-group">
+            <label class="form-label" style="font-size:10px; color:var(--muted);">Height</label>
+            <input class="form-input" value="2 ft" placeholder="Height">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description (Optional)</label>
+        <textarea class="form-input" rows="2" placeholder="Short description for tooltip on hover..." style="min-height: 44px;"></textarea>
+      </div>
+    </div>
+    <div class="fp-modal-footer">
+      <button class="fb cancel" onclick="closeCustomArtifactModal()">Cancel</button>
+      <button class="fb primary" onclick="closeCustomArtifactModal()">Add Artifact</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Accordion toggle for artifact categories
+function toggleCategory(el) {
+  var items = el.nextElementSibling;
+  var arrow = el.querySelector('.fp-cat-arrow');
+  if (items.style.display === 'none') {
+    items.style.display = 'grid';
+    arrow.innerHTML = '&#9660;';
+  } else {
+    items.style.display = 'none';
+    arrow.innerHTML = '&#9654;';
+  }
+}
+
+// Modal controls
+function openNewPlanModal() {
+  document.getElementById('newPlanModal').style.display = 'flex';
+}
+function closeModal() {
+  document.getElementById('newPlanModal').style.display = 'none';
+}
+function openExportModal() {
+  document.getElementById('exportModal').style.display = 'flex';
+}
+function closeExportModal() {
+  document.getElementById('exportModal').style.display = 'none';
+}
+
+// 2D/3D toggle
+function toggle2D3D(btn) {
+  document.querySelectorAll('.view-toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+// Canvas tool selection
+function selectTool(btn) {
+  document.querySelectorAll('.fp-tool-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+
+// Custom Artifact modal
+function openCustomArtifactModal(category) {
+  document.getElementById('customArtifactModal').style.display = 'flex';
+  if (category) {
+    var sel = document.getElementById('customArtifactCategory');
+    for (var i = 0; i < sel.options.length; i++) {
+      if (sel.options[i].text === category) { sel.selectedIndex = i; break; }
+    }
+  }
+}
+function closeCustomArtifactModal() {
+  document.getElementById('customArtifactModal').style.display = 'none';
+}
+
+// Icon picker selection
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('fp-icon-option')) {
+    document.querySelectorAll('.fp-icon-option').forEach(function(o) { o.classList.remove('selected'); });
+    e.target.classList.add('selected');
+  }
+});
+
+// Close modals on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('fp-modal-overlay')) {
+    e.target.style.display = 'none';
+  }
+});
+</script>
 
 </body>
 </html>

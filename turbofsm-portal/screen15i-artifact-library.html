@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurboFSM &mdash; Floor Plan Artifact Library</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      /* ── Category Tab Strip ── */
+      .al-tabs {
+        display: flex; gap: 0; border-bottom: 2px solid rgba(0,0,0,.06); margin-bottom: 20px;
+        overflow-x: auto; flex-wrap: nowrap;
+      }
+      .al-tab {
+        padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--muted);
+        border-bottom: 2px solid transparent; margin-bottom: -2px; cursor: pointer;
+        white-space: nowrap; transition: all 0.15s; text-decoration: none;
+      }
+      .al-tab:hover { color: var(--text); background: rgba(0,0,0,.02); }
+      .al-tab.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+      .al-tab .al-tab-count {
+        font-size: 10px; font-weight: 600; background: rgba(0,0,0,.06); color: var(--muted);
+        padding: 1px 7px; border-radius: 10px; margin-left: 6px;
+      }
+      .al-tab.active .al-tab-count { background: var(--accent-light); color: var(--accent); }
+
+      /* ── Artifact Grid Cards ── */
+      .al-grid {
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px;
+        margin-bottom: 24px;
+      }
+      .al-card {
+        background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 10px;
+        padding: 18px 14px; text-align: center; transition: all 0.2s; position: relative;
+      }
+      .al-card:hover { border-color: var(--accent); box-shadow: 0 4px 16px rgba(15,111,222,0.08); }
+      .al-card-icon { font-size: 36px; margin-bottom: 8px; line-height: 1; }
+      .al-card-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+      .al-card-meta { font-size: 11px; color: var(--muted); }
+      .al-card-badge {
+        position: absolute; top: 8px; right: 8px; font-size: 9px; font-weight: 600;
+        padding: 2px 8px; border-radius: 8px;
+      }
+      .al-card-badge.system { background: #f0f1f3; color: var(--muted); }
+      .al-card-badge.custom { background: #d1fae5; color: #059669; }
+      .al-card-actions {
+        display: flex; gap: 6px; justify-content: center; margin-top: 10px;
+        padding-top: 10px; border-top: 1px solid rgba(0,0,0,.06);
+      }
+      .al-card-action {
+        font-size: 11px; padding: 4px 10px; border: 1px solid rgba(0,0,0,.1); border-radius: 5px;
+        background: #fff; cursor: pointer; color: var(--text-secondary); transition: all 0.15s;
+        text-decoration: none;
+      }
+      .al-card-action:hover { border-color: var(--accent); color: var(--accent); background: #f0f6ff; }
+      .al-card-action.delete:hover { border-color: var(--red); color: var(--red); background: #fff5f5; }
+
+      /* ── Add New Card (dashed) ── */
+      .al-card.al-add-new {
+        border: 2px dashed rgba(0,0,0,.15); display: flex; flex-direction: column;
+        align-items: center; justify-content: center; cursor: pointer; min-height: 160px;
+      }
+      .al-card.al-add-new:hover { border-color: var(--accent); background: #f0f6ff; }
+      .al-add-icon { font-size: 28px; color: var(--muted); margin-bottom: 6px; }
+      .al-add-text { font-size: 12px; font-weight: 600; color: var(--accent); }
+
+      /* ── Stats Row ── */
+      .al-stats {
+        display: flex; gap: 24px; margin-bottom: 20px; flex-wrap: wrap;
+      }
+      .al-stat {
+        display: flex; align-items: center; gap: 10px; padding: 14px 20px;
+        background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: 10px; flex: 1; min-width: 160px;
+      }
+      .al-stat-icon { font-size: 24px; opacity: 0.6; }
+      .al-stat-value { font-size: 22px; font-weight: 700; color: var(--text); line-height: 1; }
+      .al-stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+      /* ── Upload Zone ── */
+      .al-upload-zone {
+        border: 2px dashed rgba(0,0,0,.12); border-radius: 10px; padding: 32px; text-align: center;
+        background: #fafbfc; margin-bottom: 20px; transition: all 0.2s;
+      }
+      .al-upload-zone:hover { border-color: var(--accent); background: #f0f6ff; }
+      .al-upload-icon { font-size: 40px; opacity: 0.35; margin-bottom: 8px; }
+      .al-upload-text { font-size: 13px; color: var(--text-secondary); }
+      .al-upload-text strong { color: var(--accent); cursor: pointer; }
+      .al-upload-formats { font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+      /* ── Bulk Actions Bar ── */
+      .al-bulk-bar {
+        display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+        background: #f0f6ff; border: 1px solid rgba(15,111,222,.15); border-radius: 8px;
+        margin-bottom: 16px; font-size: 12px; color: var(--text);
+      }
+      .al-bulk-bar strong { color: var(--accent); }
+
+      /* Responsive */
+      @media (max-width: 1024px) {
+        .al-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+      }
+      @media (max-width: 768px) {
+        .al-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+        .al-stats { gap: 10px; }
+        .al-stat { padding: 10px 14px; }
+      }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+      <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+      <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+      <a href="screen10-estimates.html" class="nav-item"><span class="ni">&#128196;</span><span>Estimation</span></a>
+        <a href="screen19-customers.html" class="nav-item"><span class="ni">&#128101;</span><span>Customers</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+      <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">9</span></a>
+      <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+      <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="screen15-management.html" class="nav-item active"><span class="ni">&#9881;</span><span>Management Master</span></a>
+      <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <a href="screen15-management.html" class="back-arrow">&#8592;</a>
+      <h1>Floor Plan Artifact Library</h1>
+      <span class="t-sub">Manage drag-and-drop artifacts for floor plans</span>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn primary" onclick="document.getElementById('addArtifactModal').style.display='flex'">+ Add Artifact</button>
+      <button class="topbar-btn" onclick="document.getElementById('bulkImportModal').style.display='flex'">&#128228; Import</button>
+      <button class="topbar-btn">&#128229; Export</button>
+      <button class="notif-btn">&#128276;<span class="dot"></span></button>
+      <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+    </div>
+  </div>
+
+  <!-- PAGE CONTENT -->
+  <div class="content">
+
+    <!-- NOTE BAR -->
+    <div class="note-bar" style="margin-bottom: 16px;">
+      &#128221; <strong>Artifact Library:</strong> Manage the icons and shapes available in the Floor Plan Builder. System artifacts come pre-loaded; custom artifacts are created by your team. All artifacts here appear in the builder's left panel.
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="al-stats" style="animation: fadeUp .4s both;">
+      <div class="al-stat">
+        <span class="al-stat-icon">&#128230;</span>
+        <div>
+          <div class="al-stat-value">88</div>
+          <div class="al-stat-label">Total Artifacts</div>
+        </div>
+      </div>
+      <div class="al-stat">
+        <span class="al-stat-icon">&#9881;</span>
+        <div>
+          <div class="al-stat-value">86</div>
+          <div class="al-stat-label">System (Built-in)</div>
+        </div>
+      </div>
+      <div class="al-stat">
+        <span class="al-stat-icon" style="color: var(--teal);">&#9733;</span>
+        <div>
+          <div class="al-stat-value" style="color: var(--teal);">2</div>
+          <div class="al-stat-label">Custom (User-created)</div>
+        </div>
+      </div>
+      <div class="al-stat">
+        <span class="al-stat-icon">&#128193;</span>
+        <div>
+          <div class="al-stat-value">9</div>
+          <div class="al-stat-label">Categories</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar" style="animation: fadeUp .4s both; animation-delay: .03s;">
+      <div class="filter-bar-left">
+        <input type="text" class="search-input" placeholder="Search artifacts by name...">
+        <select class="form-select" style="width: 140px; font-size: 12px;">
+          <option>All Types</option>
+          <option>System</option>
+          <option>Custom</option>
+        </select>
+        <select class="form-select" style="width: 140px; font-size: 12px;">
+          <option>All Status</option>
+          <option>Active</option>
+          <option>Hidden</option>
+        </select>
+      </div>
+      <div class="filter-bar-right">
+        <button class="topbar-btn" style="font-size: 12px;">&#9634; Grid</button>
+        <button class="topbar-btn" style="font-size: 12px;">&#9776; List</button>
+      </div>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="al-tabs" style="animation: fadeUp .4s both; animation-delay: .05s;">
+      <a class="al-tab active">All<span class="al-tab-count">88</span></a>
+      <a class="al-tab">Structural<span class="al-tab-count">10</span></a>
+      <a class="al-tab">Plumbing<span class="al-tab-count">13</span></a>
+      <a class="al-tab">HVAC<span class="al-tab-count">11</span></a>
+      <a class="al-tab">Electrical<span class="al-tab-count">12</span></a>
+      <a class="al-tab">Landscaping<span class="al-tab-count">12</span></a>
+      <a class="al-tab">Cleaning<span class="al-tab-count">8</span></a>
+      <a class="al-tab">Furniture<span class="al-tab-count">12</span></a>
+      <a class="al-tab">Annotations<span class="al-tab-count">8</span></a>
+      <a class="al-tab" style="color: var(--teal);">My Custom<span class="al-tab-count">2</span></a>
+    </div>
+
+    <!-- BULK ACTION BAR (demo state) -->
+    <div class="al-bulk-bar" style="display: none; animation: fadeUp .3s both;">
+      <input type="checkbox" checked style="accent-color: var(--accent);">
+      <strong>3 artifacts selected</strong>
+      <span style="margin-left: auto; display: flex; gap: 8px;">
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 12px;">Move to Category</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 12px;">Hide</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 12px; color: var(--red);">Delete</button>
+      </span>
+    </div>
+
+    <!-- ARTIFACT GRID -->
+    <div class="al-grid" style="animation: fadeUp .4s both; animation-delay: .08s;">
+
+      <!-- System Artifacts — Structural samples -->
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#9608;</div>
+        <div class="al-card-name">Wall</div>
+        <div class="al-card-meta">Structural &bull; 2 &times; 0.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128682;</div>
+        <div class="al-card-name">Door</div>
+        <div class="al-card-meta">Structural &bull; 3 &times; 0.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#11036;</div>
+        <div class="al-card-name">Window</div>
+        <div class="al-card-meta">Structural &bull; 4 &times; 0.3 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <!-- System — Plumbing samples -->
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128703;</div>
+        <div class="al-card-name">Sink</div>
+        <div class="al-card-meta">Plumbing &bull; 2 &times; 1.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128701;</div>
+        <div class="al-card-name">Toilet</div>
+        <div class="al-card-meta">Plumbing &bull; 1.5 &times; 2.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128705;</div>
+        <div class="al-card-name">Bathtub</div>
+        <div class="al-card-meta">Plumbing &bull; 5 &times; 2.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <!-- System — HVAC -->
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#10052;</div>
+        <div class="al-card-name">AC Unit</div>
+        <div class="al-card-meta">HVAC &bull; 3 &times; 3 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <!-- System — Electrical -->
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128268;</div>
+        <div class="al-card-name">Outlet</div>
+        <div class="al-card-meta">Electrical &bull; 0.3 &times; 0.3 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#128161;</div>
+        <div class="al-card-name">Light</div>
+        <div class="al-card-meta">Electrical &bull; 0.5 &times; 0.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <!-- System — Landscaping -->
+      <div class="al-card">
+        <span class="al-card-badge system">System</span>
+        <div class="al-card-icon">&#127795;</div>
+        <div class="al-card-name">Tree</div>
+        <div class="al-card-meta">Landscaping &bull; 6 &times; 6 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action">&#128464; Duplicate</a>
+        </div>
+      </div>
+
+      <!-- Custom Artifacts -->
+      <div class="al-card" style="border-color: rgba(13,148,136,0.2); background: #f0fdfa;">
+        <span class="al-card-badge custom">Custom</span>
+        <div class="al-card-icon">&#128703;</div>
+        <div class="al-card-name">Tankless WH</div>
+        <div class="al-card-meta">My Custom &bull; 2 &times; 2 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action delete">&#128465; Delete</a>
+        </div>
+      </div>
+
+      <div class="al-card" style="border-color: rgba(13,148,136,0.2); background: #f0fdfa;">
+        <span class="al-card-badge custom">Custom</span>
+        <div class="al-card-icon">&#9635;</div>
+        <div class="al-card-name">Access Panel</div>
+        <div class="al-card-meta">My Custom &bull; 1.5 &times; 1.5 ft</div>
+        <div class="al-card-actions">
+          <a class="al-card-action">&#9998; Edit</a>
+          <a class="al-card-action">&#128065; Preview</a>
+          <a class="al-card-action delete">&#128465; Delete</a>
+        </div>
+      </div>
+
+      <!-- Add New Card -->
+      <div class="al-card al-add-new" onclick="document.getElementById('addArtifactModal').style.display='flex'">
+        <div class="al-add-icon">&#43;</div>
+        <div class="al-add-text">Add Custom Artifact</div>
+      </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 20px;">
+      <span>Showing 13 of 88 artifacts</span>
+      <div style="display: flex; gap: 4px;">
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;" disabled>&laquo; Prev</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px; background: var(--accent); color: #fff;">1</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;">2</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;">3</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;">4</button>
+        <button class="topbar-btn" style="font-size: 11px; padding: 4px 10px;">Next &raquo;</button>
+      </div>
+    </div>
+
+    <!-- BULK UPLOAD SECTION -->
+    <div class="detail-card" style="animation: fadeUp .4s both; animation-delay: .12s;">
+      <div class="detail-card-title">
+        Bulk Upload Custom Artifacts
+        <span style="font-size: 11px; color: var(--muted); font-weight: 400;">Upload multiple artifacts at once</span>
+      </div>
+      <div class="al-upload-zone">
+        <div class="al-upload-icon">&#128194;</div>
+        <div class="al-upload-text">Drag &amp; drop artifact files here, or <strong>click to browse</strong></div>
+        <div class="al-upload-formats">SVG, PNG, JPG &bull; Max 200 KB per file &bull; 64 &times; 64 px recommended &bull; Up to 50 files at once</div>
+      </div>
+      <div style="display: flex; gap: 12px; align-items: center; font-size: 12px; color: var(--muted);">
+        <a href="#" style="color: var(--accent); font-weight: 500; text-decoration: none;">&#128229; Download CSV template</a>
+        <span>&mdash; Use this to bulk-import artifact names, categories, and dimensions via CSV</span>
+      </div>
+    </div>
+
+    <!-- CATEGORY MANAGEMENT -->
+    <div class="detail-card" style="animation: fadeUp .4s both; animation-delay: .15s;">
+      <div class="detail-card-title">
+        Category Management
+        <button class="topbar-btn primary" style="font-size: 11px; padding: 5px 14px;">+ Add Category</button>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th style="width: 40px;"><input type="checkbox"></th>
+            <th>Category Name</th>
+            <th>Artifacts</th>
+            <th>Type</th>
+            <th>Visibility</th>
+            <th>Sort Order</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Structural</strong></td>
+            <td>10</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>1</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Plumbing</strong></td>
+            <td>13</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>2</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>HVAC</strong></td>
+            <td>11</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>3</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Electrical</strong></td>
+            <td>12</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>4</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Landscaping</strong></td>
+            <td>12</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>5</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Cleaning</strong></td>
+            <td>8</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>6</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Furniture</strong></td>
+            <td>12</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>7</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"></td>
+            <td><strong>Annotations</strong></td>
+            <td>8</td>
+            <td><span class="status-pill" style="background: #f0f1f3; color: var(--muted);">System</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>8</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+              </div>
+            </td>
+          </tr>
+          <tr style="background: #f0fdfa;">
+            <td><input type="checkbox"></td>
+            <td><strong style="color: var(--teal);">My Custom</strong></td>
+            <td>2</td>
+            <td><span class="status-pill" style="background: #d1fae5; color: #059669;">Custom</span></td>
+            <td><span class="status-pill completed">Visible</span></td>
+            <td>9</td>
+            <td>
+              <div class="row-actions">
+                <a href="#" class="row-action view">&#9998; Edit</a>
+                <a href="#" class="row-action notes">&#128065; Hide</a>
+                <a href="#" class="row-action" style="color: var(--red);">&#128465; Delete</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Screen Navigation Footer -->
+  <div class="screen-nav">
+    <strong>Wireframe Screen Navigation:</strong><br><br>
+    <a href="screen1-landing.html">1. Landing</a>
+    <a href="screen2-registration.html">2. Registration</a>
+    <a href="screen3-signin.html">3. Sign In</a>
+    <a href="screen4-dashboard.html">4. Dashboard</a>
+    <a href="screen5-pricing.html">5. Pricing</a>
+    <a href="screen5a-payment.html">5a. Payment</a>
+    <a href="screen6-leads.html">6. Lead Manager</a>
+    <a href="screen7-lead-form.html">7. Lead Form</a>
+    <a href="screen8-appointments.html">8. Appointments</a>
+    <a href="screen8a-appointment-form.html">8a. Appt Form</a>
+    <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
+    <a href="screen9-schedule.html">9. Schedule</a>
+    <a href="screen10-estimates.html">10. Estimates</a>
+    <a href="screen11-estimate-form.html">11. Est Step 1</a>
+    <a href="screen11-step2.html">11-S2. Est Builder</a>
+    <a href="screen11-step3.html">11-S3. Terms</a>
+    <a href="screen11-step4.html">11-S4. Review</a>
+    <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
+    <a href="screen12-floorplan.html">12. Floor Plan</a>
+    <a href="screen13-jobs.html">13. Jobs</a>
+    <a href="screen13a-job-form.html">13a. Job Form</a>
+    <a href="screen13b-job-detail.html">13b. Job Detail</a>
+    <a href="screen14a-invoicing.html">14a. Invoicing</a>
+    <a href="screen15-management.html">15. Management Master</a>
+    <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
+    <a href="screen15b-materials.html">15b. Materials</a>
+    <a href="screen15c-services.html">15c. Services</a>
+    <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
+    <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
+    <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
+    <a href="screen15g-currency-settings.html">15g. Currency</a>
+    <a href="screen15h-sites-management.html">15h. Sites</a>
+    <a href="screen15i-artifact-library.html"><strong>15i. Artifact Library</strong></a>
+    <a href="screen16-settings.html">16. Settings</a>
+    <a href="screen17-crew-costs.html">17. Crew Costs</a>
+    <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+  </div>
+
+</div>
+
+<!-- ═══════ ADD ARTIFACT MODAL ═══════ -->
+<div class="fp-modal-overlay" id="addArtifactModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:none; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:12px; width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid rgba(0,0,0,.08);">
+      <h3 style="font-size:16px; font-weight:700; margin:0;">Add Custom Artifact</h3>
+      <button onclick="document.getElementById('addArtifactModal').style.display='none'" style="width:30px;height:30px;border:none;background:#f5f5f5;border-radius:50%;cursor:pointer;font-size:18px;color:#999;display:flex;align-items:center;justify-content:center;">&times;</button>
+    </div>
+    <div style="padding: 20px 24px;">
+      <div class="form-group">
+        <label class="form-label">Artifact Name *</label>
+        <input class="form-input" placeholder="e.g., Tankless Water Heater">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select class="form-select">
+          <option value="">-- Select Category --</option>
+          <option>Structural</option>
+          <option>Plumbing</option>
+          <option>HVAC</option>
+          <option>Electrical</option>
+          <option>Landscaping</option>
+          <option>Cleaning</option>
+          <option>Furniture</option>
+          <option>Annotations</option>
+          <option>My Custom</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Icon &mdash; Pick from library or upload</label>
+        <div style="display:grid; grid-template-columns:repeat(8,1fr); gap:4px; margin-top:6px;">
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:2px solid var(--accent);border-radius:6px;cursor:pointer;font-size:18px;background:var(--accent);color:#fff;">&#9635;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#9632;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#9675;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#9651;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#9733;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128167;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128293;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#9889;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128161;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128703;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#127795;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128682;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128437;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128452;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#128205;</div>
+          <div style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,0,0,.08);border-radius:6px;cursor:pointer;font-size:18px;">&#10044;</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;margin:14px 0;font-size:11px;color:var(--muted);">
+        <div style="flex:1;height:1px;background:rgba(0,0,0,.1);"></div>or upload custom icon<div style="flex:1;height:1px;background:rgba(0,0,0,.1);"></div>
+      </div>
+      <div class="form-group">
+        <div class="al-upload-zone" style="padding: 20px;">
+          <div class="al-upload-icon" style="font-size: 28px;">&#128194;</div>
+          <div class="al-upload-text" style="font-size: 12px;">Drop file or <strong>browse</strong></div>
+          <div class="al-upload-formats">SVG, PNG, JPG &bull; Max 200 KB</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Default Size</label>
+        <div class="form-row">
+          <div class="form-group">
+            <input class="form-input" value="2 ft" placeholder="Width">
+          </div>
+          <div class="form-group">
+            <input class="form-input" value="2 ft" placeholder="Height">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Description (Optional)</label>
+        <textarea class="form-input" rows="2" placeholder="Short description for tooltip..." style="min-height:44px;"></textarea>
+      </div>
+    </div>
+    <div style="padding:14px 24px; border-top:1px solid rgba(0,0,0,.08); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="fb cancel" onclick="document.getElementById('addArtifactModal').style.display='none'">Cancel</button>
+      <button class="fb primary" onclick="document.getElementById('addArtifactModal').style.display='none'">Add Artifact</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ BULK IMPORT MODAL ═══════ -->
+<div class="fp-modal-overlay" id="bulkImportModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:200; display:none; align-items:center; justify-content:center;">
+  <div style="background:#fff; border-radius:12px; width:500px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:18px 24px; border-bottom:1px solid rgba(0,0,0,.08);">
+      <h3 style="font-size:16px; font-weight:700; margin:0;">Bulk Import Artifacts</h3>
+      <button onclick="document.getElementById('bulkImportModal').style.display='none'" style="width:30px;height:30px;border:none;background:#f5f5f5;border-radius:50%;cursor:pointer;font-size:18px;color:#999;display:flex;align-items:center;justify-content:center;">&times;</button>
+    </div>
+    <div style="padding: 20px 24px;">
+      <div class="form-group">
+        <label class="form-label">Import Method</label>
+        <select class="form-select">
+          <option>Upload Icons (SVG/PNG files)</option>
+          <option>CSV Import (names, categories, sizes)</option>
+          <option>ZIP Archive (icons + CSV manifest)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <div class="al-upload-zone">
+          <div class="al-upload-icon">&#128194;</div>
+          <div class="al-upload-text">Drag &amp; drop files here, or <strong>click to browse</strong></div>
+          <div class="al-upload-formats">SVG, PNG, JPG, CSV, ZIP &bull; Max 10 MB total &bull; Up to 50 artifacts</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Default Category for Imported Artifacts</label>
+        <select class="form-select">
+          <option>My Custom</option>
+          <option>Structural</option>
+          <option>Plumbing</option>
+          <option>HVAC</option>
+          <option>Electrical</option>
+          <option>Landscaping</option>
+          <option>Cleaning</option>
+          <option>Furniture</option>
+          <option>Annotations</option>
+        </select>
+      </div>
+      <div style="font-size: 11px; color: var(--muted); margin-top: 4px;">
+        &#128712; <a href="#" style="color: var(--accent);">Download sample CSV template</a> &mdash; Pre-fill artifact names, categories, and default sizes before uploading
+      </div>
+    </div>
+    <div style="padding:14px 24px; border-top:1px solid rgba(0,0,0,.08); display:flex; justify-content:flex-end; gap:10px;">
+      <button class="fb cancel" onclick="document.getElementById('bulkImportModal').style.display='none'">Cancel</button>
+      <button class="fb primary" onclick="document.getElementById('bulkImportModal').style.display='none'">Import Artifacts</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.al-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.al-tab').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+  });
+});
+
+// Close modals on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('fp-modal-overlay') || e.target.id === 'addArtifactModal' || e.target.id === 'bulkImportModal') {
+    if (e.target.id) e.target.style.display = 'none';
+  }
+});
+</script>
+
+</body>
+</html>

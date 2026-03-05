@@ -3,299 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TurboFSM - Estimates</title>
+  <title>TurboFSM — Estimates</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
-  <style>
-    .tenant-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .header-storage {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .badge-expired { background: #fce4ec; color: #880e4f; }
-
-    .action-icon.create-job { color: var(--success); }
-    .action-icon.send-email { color: var(--info); }
-
-    .action-icon[title]::after { content: none; }
-  </style>
 </head>
 <body>
 
-  <div class="layout">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar-logo">
-        <div class="logo-icon">TF</div>
-        <span>TurboFSM</span>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-brand"><div class="logo">&#9889;</div><div class="brand-name">TurboFSM</div></div>
+    <nav class="sidebar-nav">
+      <div class="nav-group"><div class="nav-group-label">Main</div>
+        <a href="screen4-dashboard.html" class="nav-item"><span class="ni">&#9632;</span><span>Dashboard</span></a>
       </div>
-      <nav class="sidebar-nav">
-        <a href="screen4-dashboard.html">
-          <span class="nav-icon">&#9632;</span> Dashboard
-        </a>
-        <a href="screen6-leads.html">
-          <span class="nav-icon">&#9672;</span> Lead Manager
-        </a>
-        <a href="screen8-appointments.html">
-          <span class="nav-icon">&#128197;</span> Appointments
-        </a>
-        <a href="screen9-schedule.html">
-          <span class="nav-icon">&#128339;</span> Schedule
-        </a>
-        <a href="screen10-estimates.html" class="active">
-          <span class="nav-icon">&#128196;</span> Estimation
-        </a>
-        <a href="screen12-floorplan.html">
-          <span class="nav-icon">&#9633;</span> Floor Plan
-        </a>
-        <a href="screen13-jobs.html">
-          <span class="nav-icon">&#128736;</span> Job Creation
-        </a>
-        <a href="screen14-crew.html">
-          <span class="nav-icon">&#128101;</span> Assign Crew
-        </a>
-        <a href="screen14a-invoicing.html">
-          <span class="nav-icon">&#128176;</span> Invoicing
-        </a>
-        <a href="screen15-management.html">
-          <span class="nav-icon">&#9881;</span> Management Master
-        </a>
-        <a href="screen16-settings.html">
-          <span class="nav-icon">&#128295;</span> Client Settings
-        </a>
-        <a href="screen3-signin.html" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 14px;">
-          <span class="nav-icon">&#10140;</span> Log Out
-        </a>
-      </nav>
-    </aside>
+      <div class="nav-group"><div class="nav-group-label">Sales</div>
+        <a href="screen6-leads.html" class="nav-item"><span class="ni">&#9672;</span><span>Lead Manager</span><span class="badge">8</span></a>
+        <a href="screen8-appointments.html" class="nav-item"><span class="ni">&#128197;</span><span>Appointments</span></a>
+        <a href="screen9-schedule.html" class="nav-item"><span class="ni">&#128339;</span><span>Schedule</span></a>
+        <a href="screen10-estimates.html" class="nav-item active"><span class="ni">&#128196;</span><span>Estimation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Operations</div>
+        <a href="screen12-floorplan.html" class="nav-item"><span class="ni">&#9633;</span><span>Floor Plan</span></a>
+        <a href="screen13-jobs.html" class="nav-item"><span class="ni">&#128736;</span><span>Job Creation</span><span class="badge">7</span></a>
+        <a href="screen14a-invoicing.html" class="nav-item"><span class="ni">&#128176;</span><span>Invoicing</span></a>
+        <a href="screen17-crew-costs.html" class="nav-item"><span class="ni">&#128181;</span><span>Crew Costs</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Showcase</div>
+        <a href="screen18-profile-presentation.html" class="nav-item"><span class="ni">&#127908;</span><span>Profile &amp; Presentation</span></a>
+      </div>
+      <div class="nav-group"><div class="nav-group-label">Setup</div>
+        <a href="screen15-management.html" class="nav-item"><span class="ni">&#9881;</span><span>Management Master</span></a>
+        <a href="screen16-settings.html" class="nav-item"><span class="ni">&#128295;</span><span>Client Settings</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="storage-bar"><div class="sl">Storage</div><div class="st"><div class="sf"></div></div><div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;">2.1 GB / 5 GB</div><a href="screen5-pricing.html">Buy More Space</a></div>
+      <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+      <a href="screen3-signin.html" class="sidebar-logout"><span>&#10140;</span><span>Log Out</span></a>
+    </div>
+  </div>
 
-    <!-- MAIN AREA -->
-    <div class="main-area">
+  <!-- MAIN -->
+  <div class="main">
 
-      <!-- HEADER -->
-      <header class="header">
-        <div class="header-left">
-          <div class="header-storage">
-            <div class="storage-bar">
-              <span>2.1 GB / 5 GB</span>
-              <div class="bar">
-                <div class="bar-fill" style="width: 42%;"></div>
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1>Estimates</h1>
+        <span class="t-sub">All estimates at a glance</span>
+      </div>
+      <div class="topbar-right">
+        <a href="screen11-estimate-form.html" class="topbar-btn primary">+ Create New Estimate</a>
+        <button class="notif-btn">&#128276;<span class="dot"></span></button>
+        <div class="user-pill"><div class="up-avatar">JS</div><span>John Smith</span></div>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- NOTE BAR -->
+      <div class="note-bar">
+        &#128221; <strong>Note:</strong> Estimate ID format: EST-YYYYMMDD-NNNN.
+      </div>
+
+      <!-- FILTER BAR -->
+      <div class="filter-bar">
+        <div class="filter-bar-left">
+          <div class="search-input">
+            <span>&#128269;</span>
+            <input type="text" placeholder="Search estimates...">
+          </div>
+          <select class="filter-select">
+            <option value="all">All Statuses</option>
+            <option value="draft">Draft</option>
+            <option value="sent">Sent</option>
+            <option value="awaiting">Awaiting Approval</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="expired">Expired</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ESTIMATES TABLE -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Estimate ID</th>
+            <th>Lead ID</th>
+            <th>Customer Name</th>
+            <th>Date Created</th>
+            <th>Estimate Value</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1: Draft -->
+          <tr>
+            <td>EST-20260215-0001</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260215-0001</a></td>
+            <td>John Smith</td>
+            <td>Feb 15, 2026</td>
+            <td>$8,500.00</td>
+            <td><span class="status-pill draft">Draft</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
               </div>
-            </div>
-            <button class="btn-sm">Buy More Space</button>
-          </div>
-        </div>
-        <div class="header-right">
-          <div class="tenant-name">ABC Plumbing Co.</div>
-          <div class="notification-bell">
-            &#128276;
-            <div class="badge">3</div>
-          </div>
-          <div class="user-avatar">JS</div>
-        </div>
-      </header>
-
-      <!-- CONTENT -->
-      <div class="content">
-
-        <!-- PAGE TITLE -->
-        <div class="page-title">Estimates</div>
-        <div class="page-subtitle">All estimates at a glance</div>
-
-        <!-- WIREFRAME NOTE -->
-        <div class="wireframe-note">
-          &#128221; <strong>Note:</strong> Estimate ID format: EST-YYYYMMDD-NNNN.
-        </div>
-
-        <!-- TOOLBAR -->
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <div class="search-box">
-              <input type="text" placeholder="Search estimates...">
-              <button>&#128269;</button>
-            </div>
-            <select class="filter-select">
-              <option value="all">All Statuses</option>
-              <option value="draft">Draft</option>
-              <option value="sent">Sent</option>
-              <option value="awaiting">Awaiting Approval</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-              <option value="expired">Expired</option>
-
-
-            </select>
-          </div>
-          <div class="toolbar-right">
-            <a href="screen11-estimate-form.html" class="btn btn-primary">+ Create New Estimate</a>
-          </div>
-        </div>
-
-        <!-- ESTIMATES TABLE -->
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Estimate ID</th>
-                <th>Lead ID</th>
-                <th>Customer Name</th>
-                <th>Date Created</th>
-                <th>Estimate Value</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Row 1: Draft -->
-              <tr>
-                <td>EST-20260215-0001</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260215-0001</a></td>
-                <td>John Smith</td>
-                <td>Feb 15, 2026</td>
-                <td>$8,500.00</td>
-                <td><span class="badge badge-draft">Draft</span></td>
-                <td>
-                  <div class="action-icons">
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 2: Sent -->
-              <tr>
-                <td>EST-20260214-0002</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260214-0002</a></td>
-                <td>Sarah Johnson</td>
-                <td>Feb 14, 2026</td>
-                <td>$12,300.00</td>
-                <td><span class="badge badge-sent">Sent</span></td>
-                <td>
-                  <div class="action-icons">
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 3: Awaiting Approval -->
-              <tr>
-                <td>EST-20260213-0003</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260213-0003</a></td>
-                <td>Mike Williams</td>
-                <td>Feb 13, 2026</td>
-                <td>$5,750.00</td>
-                <td><span class="badge badge-trial">Awaiting Approval</span></td>
-                <td>
-                  <div class="action-icons">
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 4: Approved -->
-              <tr>
-                <td>EST-20260210-0004</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260210-0004</a></td>
-                <td>Lisa Brown</td>
-                <td>Feb 10, 2026</td>
-                <td>$22,000.00</td>
-                <td><span class="badge badge-approved">Approved</span></td>
-                <td>
-                  <div class="action-icons">
-                    <a href="screen13-jobs.html" class="action-icon create-job" title="Create Job">&#128736;</a>
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 5: Rejected -->
-              <tr>
-                <td>EST-20260208-0005</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260208-0005</a></td>
-                <td>Tom Davis</td>
-                <td>Feb 8, 2026</td>
-                <td>$3,200.00</td>
-                <td><span class="badge badge-rejected">Rejected</span></td>
-                <td>
-                  <div class="action-icons">
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-              <!-- Row 6: Expired -->
-              <tr>
-                <td>EST-20260205-0006</td>
-                <td><a href="screen6-leads.html" style="color: var(--primary); text-decoration: underline;">LD-20260205-0006</a></td>
-                <td>Amy Wilson</td>
-                <td>Feb 5, 2026</td>
-                <td>$15,800.00</td>
-                <td><span class="badge badge-expired">Expired</span></td>
-                <td>
-                  <div class="action-icons">
-
-                    <a href="screen11-estimate-form.html" class="action-icon edit" title="Edit">&#9998;</a>
-                    <a href="screen11a-customer-portal.html" class="action-icon send-email" title="Send by Email">&#9993;</a>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-      </div>
-
-      <!-- SCREEN NAVIGATION -->
-      <div class="screen-nav">
-        <strong>Wireframe Screen Navigation:</strong><br><br>
-        <a href="screen1-landing.html">1. Landing</a>
-        <a href="screen2-registration.html">2. Registration</a>
-        <a href="screen3-signin.html">3. Sign In</a>
-        <a href="screen4-dashboard.html">4. Dashboard</a>
-        <a href="screen5-pricing.html">5. Pricing</a>
-        <a href="screen5a-payment.html">5a. Payment</a>
-        <a href="screen6-leads.html">6. Lead Manager</a>
-        <a href="screen7-lead-form.html">7. Lead Form</a>
-        <a href="screen8-appointments.html">8. Appointments</a>
-        <a href="screen8a-appointment-form.html">8a. Appt Form</a>
-        <a href="screen8b-appointment-detail.html">8b. Appt Detail</a>
-        <a href="screen9-schedule.html">9. Schedule</a>
-        <a href="screen10-estimates.html"><strong>10. Estimates</strong></a>
-        <a href="screen11-estimate-form.html">11. Est Step 1</a>
-        <a href="screen11-step2.html">11-S2. Est Builder</a>
-        <a href="screen11-step3.html">11-S3. Terms</a>
-        <a href="screen11-step4.html">11-S4. Review</a>
-        <a href="screen11a-customer-portal.html">11a. Customer Portal</a>
-        <a href="screen12-floorplan.html">12. Floor Plan</a>
-        <a href="screen13-jobs.html">13. Jobs</a>
-        <a href="screen13a-job-form.html">13a. Job Form</a>
-        <a href="screen13b-job-detail.html">13b. Job Detail</a>
-        <a href="screen14-crew.html">14. Crew Assignment</a>
-        <a href="screen14a-invoicing.html">14a. Invoicing</a>
-        <a href="screen15-management.html">15. Management Master</a>
-        <a href="screen15a-nomenclature.html">15a. Nomenclature</a>
-        <a href="screen15b-materials.html">15b. Materials</a>
-        <a href="screen15c-services.html">15c. Services</a>
-        <a href="screen15d-estimate-template.html">15d. Estimate Template</a>
-        <a href="screen15e-invoice-template.html">15e. Invoice Template</a>
-        <a href="screen15f-crew-management.html">15f. Crew Mgmt</a>
-                <a href="screen15g-currency-settings.html">15g. Currency</a>
-                <a href="screen15h-sites-management.html">15h. Sites</a>
-        <a href="screen16-settings.html">16. Settings</a>
-      </div>
+            </td>
+          </tr>
+          <!-- Row 2: Sent -->
+          <tr>
+            <td>EST-20260214-0002</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260214-0002</a></td>
+            <td>Sarah Johnson</td>
+            <td>Feb 14, 2026</td>
+            <td>$12,300.00</td>
+            <td><span class="status-pill sent">Sent</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 3: Awaiting Approval -->
+          <tr>
+            <td>EST-20260213-0003</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260213-0003</a></td>
+            <td>Mike Williams</td>
+            <td>Feb 13, 2026</td>
+            <td>$5,750.00</td>
+            <td><span class="status-pill awaiting">Awaiting Approval</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 4: Approved -->
+          <tr>
+            <td>EST-20260210-0004</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260210-0004</a></td>
+            <td>Lisa Brown</td>
+            <td>Feb 10, 2026</td>
+            <td>$22,000.00</td>
+            <td><span class="status-pill approved">Approved</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
+                <a href="screen13-jobs.html" class="icon-btn" title="Create Job">&#128736;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 5: Rejected -->
+          <tr>
+            <td>EST-20260208-0005</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260208-0005</a></td>
+            <td>Tom Davis</td>
+            <td>Feb 8, 2026</td>
+            <td>$3,200.00</td>
+            <td><span class="status-pill rejected">Rejected</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
+              </div>
+            </td>
+          </tr>
+          <!-- Row 6: Expired -->
+          <tr>
+            <td>EST-20260205-0006</td>
+            <td><a href="screen6-leads.html" style="color: var(--accent); text-decoration: underline;">LD-20260205-0006</a></td>
+            <td>Amy Wilson</td>
+            <td>Feb 5, 2026</td>
+            <td>$15,800.00</td>
+            <td><span class="status-pill expired">Expired</span></td>
+            <td>
+              <div class="row-actions">
+                <a href="screen11-estimate-form.html" class="icon-btn" title="Edit">&#9998;</a>
+                <a href="screen11a-customer-portal.html" class="icon-btn" title="Send by Email">&#9993;</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
     </div>
+
+    <!-- SCREEN NAV -->
+    <div class="screen-nav">
+      <strong>Wireframe Screen Navigation:</strong><br><br>
+      <a href="screen1-landing.html">1. Landing</a> <a href="screen2-registration.html">2. Registration</a> <a href="screen3-signin.html">3. Sign In</a> <a href="screen4-dashboard.html">4. Dashboard</a> <a href="screen5-pricing.html">5. Pricing</a> <a href="screen5a-payment.html">5a. Payment</a> <a href="screen6-leads.html">6. Lead Manager</a> <a href="screen7-lead-form.html">7. Lead Form</a> <a href="screen8-appointments.html">8. Appointments</a> <a href="screen8a-appointment-form.html">8a. Appt Form</a> <a href="screen8b-appointment-detail.html">8b. Appt Detail</a> <a href="screen9-schedule.html">9. Schedule</a> <a href="screen10-estimates.html">10. Estimates</a> <a href="screen11-estimate-form.html">11. Est Step 1</a> <a href="screen11-step2.html">11-S2. Est Builder</a> <a href="screen11-step3.html">11-S3. Terms</a> <a href="screen11-step4.html">11-S4. Review</a> <a href="screen11a-customer-portal.html">11a. Customer Portal</a> <a href="screen12-floorplan.html">12. Floor Plan</a> <a href="screen13-jobs.html">13. Jobs</a> <a href="screen13a-job-form.html">13a. Job Form</a> <a href="screen13b-job-detail.html">13b. Job Detail</a> <a href="screen14a-invoicing.html">14a. Invoicing</a> <a href="screen15-management.html">15. Management Master</a> <a href="screen15a-nomenclature.html">15a. Nomenclature</a> <a href="screen15b-materials.html">15b. Materials</a> <a href="screen15c-services.html">15c. Services</a> <a href="screen15d-estimate-template.html">15d. Estimate Template</a> <a href="screen15e-invoice-template.html">15e. Invoice Template</a> <a href="screen15f-crew-management.html">15f. Crew Mgmt</a> <a href="screen15g-currency-settings.html">15g. Currency</a> <a href="screen15h-sites-management.html">15h. Sites</a> <a href="screen15i-artifact-library.html">15i. Artifact Library</a> <a href="screen16-settings.html">16. Settings</a>
+      <a href="screen17-crew-costs.html">17. Crew Costs</a>
+      <a href="screen18-profile-presentation.html">18. Profile &amp; Presentation</a>
+    </div>
+
   </div>
 
 </body>
