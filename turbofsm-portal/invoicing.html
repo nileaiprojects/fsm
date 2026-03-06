@@ -9,7 +9,7 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -37,7 +37,8 @@
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -47,21 +48,26 @@
     <div class="topbar-right"><button class="notif-btn">🔔<span class="count">2</span></button><a href="create-invoice.html" class="topbar-btn primary-lg">+ Create Invoice</a></div>
   </header>
   <div class="content">
-    <div class="kpi-strip kpi-5">
-      <div class="kpi-card"><div class="kv" style="color:var(--accent)">12</div><div class="kl">Total Invoices</div><div class="kdate">📄 All time</div><div class="ka" style="background:var(--accent)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--green)">$68,450</div><div class="kl">Collected</div><div class="kdate">💵 This quarter</div><div class="ka" style="background:var(--green)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--orange)">$24,200</div><div class="kl">Outstanding</div><div class="kdate">⏳ Pending payment</div><div class="ka" style="background:var(--orange)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--red)">$3,200</div><div class="kl">Overdue</div><div class="kdate">⚠ Past due date</div><div class="ka" style="background:var(--red)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--teal)">78%</div><div class="kl">Collection Rate</div><div class="kdate">📊 Overall</div><div class="ka" style="background:var(--teal)"></div></div>
+    <div class="kpi-strip kpi-4">
+      <div class="kpi-card" style="position:relative"><div class="kv" style="color:var(--accent)">$45,200</div><div class="kl">Invoices MTD</div><div class="kdate">📄 Month to date</div><span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green)">↑ 15%</span><div class="ka" style="background:var(--accent)"></div></div>
+      <div class="kpi-card" style="position:relative"><div class="kv" style="color:var(--green)">$312,800</div><div class="kl">Invoices YTD (Jan 1)</div><div class="kdate">📊 Year to date</div><span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green)">↑ 22%</span><div class="ka" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--teal)">$38,500</div><div class="kl">Payments MTD</div><div class="kdate">💵 Month to date</div><div class="ka" style="background:var(--teal)"></div></div>
+      <div class="kpi-card" style="position:relative"><div class="kv" style="color:var(--purple)">$285,600</div><div class="kl">Payments YTD (Jan 1)</div><div class="kdate">💰 Year to date</div><span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green)">↑ 18%</span><div class="ka" style="background:var(--purple)"></div></div>
     </div>
-    <div class="filter-bar">
-      <div class="search-box"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchInv" placeholder="Search by customer, invoice ID, job..."></div>
+    <div class="filter-bar" style="display:flex;flex-wrap:nowrap;overflow-x:auto;align-items:center;gap:8px">
+      <div class="search-box" style="min-width:240px;width:240px"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchInv" placeholder="Search by customer, invoice ID, job..."></div>
       <button class="chip active" onclick="filterInv('all',this)">All <span class="cnt">12</span></button>
       <button class="chip" onclick="filterInv('sent',this)">Sent <span class="cnt">4</span></button>
       <button class="chip" onclick="filterInv('paid',this)">Paid <span class="cnt">5</span></button>
       <button class="chip" onclick="filterInv('partial',this)">Partial <span class="cnt">1</span></button>
       <button class="chip" onclick="filterInv('overdue',this)">Overdue <span class="cnt">1</span></button>
       <button class="chip" onclick="filterInv('draft',this)">Draft <span class="cnt">1</span></button>
+      <div style="display:flex;align-items:center;gap:6px;margin-left:auto;flex-shrink:0">
+        <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">From</label>
+        <input type="date" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);outline:none;width:130px">
+        <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">To</label>
+        <input type="date" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--text);outline:none;width:130px">
+      </div>
     </div>
     <div class="table-wrap">
       <table>

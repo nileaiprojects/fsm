@@ -188,7 +188,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -216,7 +216,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -302,7 +303,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
       <!-- ═══ SECTION 2: Appointment Details ═══ -->
       <div class="form-section">
         <div class="form-section-title"><span class="section-num">2</span> Appointment Details</div>
-        <div class="form-section-subtitle">Type, schedule, and crew assignment</div>
+        <div class="form-section-subtitle">Type, schedule, and team assignment</div>
 
         <div class="form-group">
           <label class="form-label">Appointment Type</label>
@@ -335,10 +336,10 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 
         <div class="form-group">
           <label class="form-label">Assign To</label>
-          <div class="hint" style="margin-bottom:8px">Search and select one or more crew members. Their availability is shown below.</div>
+          <div class="hint" style="margin-bottom:8px">Search and select one or more team members. Their availability is shown below.</div>
           <div class="crew-search">
             <span style="color:var(--text-muted)">🔍</span>
-            <input placeholder="Search crew members...">
+            <input placeholder="Search team members...">
           </div>
           <div class="crew-tags">
             <span class="crew-tag">John Smith · Master Plumber <span class="remove">×</span></span>
@@ -357,7 +358,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 
         <!-- Calendar Header: title, date nav, day/week toggle -->
         <div class="cal-header">
-          <div class="cal-title">📅 Crew Availability</div>
+          <div class="cal-title">📅 Availability</div>
           <div class="cal-nav">
             <button class="cal-nav-btn" id="navPrev">‹</button>
             <div class="cal-date-label" id="calDateLabel">Thursday, March 5, 2026</div>
@@ -375,7 +376,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
         <div class="day-grid active" id="dayView">
           <!-- Header row: corner + hour columns -->
           <div class="day-grid-header" style="grid-template-columns:160px 1fr">
-            <div class="dg-corner">Crew Member</div>
+            <div class="dg-corner">TEAM MEMBER</div>
             <div class="dg-hours">
               <div class="dg-hour">8–9</div>
               <div class="dg-hour">9–10</div>
@@ -508,7 +509,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
           <table class="wk-table">
             <thead>
               <tr>
-                <th>Crew Member</th>
+                <th>TEAM MEMBER</th>
                 <th><span class="wk-day-name">Mon</span><span class="wk-day-num">2</span></th>
                 <th><span class="wk-day-name">Tue</span><span class="wk-day-num">3</span></th>
                 <th><span class="wk-day-name">Wed</span><span class="wk-day-num">4</span></th>

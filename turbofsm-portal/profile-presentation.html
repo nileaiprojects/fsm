@@ -7,94 +7,673 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-.pp-layout{display:grid;grid-template-columns:240px 1fr;gap:0;min-height:calc(100vh - 56px)}
-.pp-sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px}
-.pp-sidebar .folder{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;cursor:pointer;transition:all var(--transition);color:var(--text-secondary)}
-.pp-sidebar .folder:hover{background:var(--surface-hover)}.pp-sidebar .folder.active{background:var(--accent-light);color:var(--accent);font-weight:600}
-.pp-sidebar .folder .f-count{margin-left:auto;font-size:11px;color:var(--text-muted);font-weight:600}
-.pp-sidebar .folder.sub{padding-left:32px;font-size:12.5px}
-.pp-main{padding:20px 24px}
-.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;margin-top:16px}
+/* ═══════════════════════════════════════════
+   Profile & Presentation — Page Styles
+   ═══════════════════════════════════════════ */
+
+/* Toolbar */
+.pp-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.pp-toolbar .spacer{flex:1}
+.pp-search{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);width:240px;transition:border-color var(--transition)}
+.pp-search:focus-within{border-color:var(--accent)}
+.pp-search input{border:none;outline:none;font-family:inherit;font-size:13px;flex:1;background:transparent;color:var(--text-primary);width:100%}
+.tb-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);color:var(--text-secondary);font-family:inherit;white-space:nowrap}
+.tb-btn:hover{border-color:var(--accent);color:var(--accent)}
+.tb-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600}
+.tb-btn.primary:hover{background:var(--accent-hover)}
+.tb-btn.success{background:var(--green);color:#fff;border-color:var(--green);font-weight:600;font-size:13.5px;padding:9px 20px}
+.tb-btn.success:hover{background:#12853d}
+.tb-select{padding:8px 28px 8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;background:var(--surface);color:var(--text-secondary);cursor:pointer;font-family:inherit;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e96a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center}
+.view-toggle{display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.view-toggle .vt{padding:7px 12px;font-size:13px;cursor:pointer;transition:all var(--transition);color:var(--text-muted);background:var(--surface);border:none;font-family:inherit}
+.view-toggle .vt.active{background:var(--accent);color:#fff}
+.view-toggle .vt:not(:last-child){border-right:1px solid var(--border)}
+
+/* Presentation mode hint bar */
+.pres-hint{display:flex;align-items:center;gap:10px;padding:12px 18px;background:var(--green-light);border:1px solid rgba(22,163,74,0.18);border-radius:var(--radius);margin-bottom:18px;font-size:12.5px;color:#15803d;line-height:1.5}
+.pres-hint strong{color:#166534}
+
+/* Folder Grid */
+.folder-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:20px}
+.folder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;cursor:pointer;transition:all var(--transition);position:relative}
+.folder-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.folder-card .fc-icon{font-size:32px;margin-bottom:10px}
+.folder-card .fc-name{font-size:14px;font-weight:600;margin-bottom:4px}
+.folder-card .fc-count{font-size:12px;color:var(--text-muted)}
+.folder-card .fc-date{font-size:11px;color:var(--text-muted);margin-top:6px}
+.folder-card .fc-badge{position:absolute;top:14px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--accent-light);color:var(--accent)}
+
+/* Breadcrumb */
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);margin-bottom:14px}
+.breadcrumb a{color:var(--accent);font-weight:500;cursor:pointer;transition:color var(--transition)}
+.breadcrumb a:hover{color:var(--accent-hover)}
+.breadcrumb .sep{color:var(--border)}
+.breadcrumb .current{color:var(--text-primary);font-weight:600}
+
+/* File Grid (inside folder) */
+.file-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
 .file-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all var(--transition)}
 .file-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
-.file-card .fc-preview{height:100px;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative}
-.file-card .fc-type{position:absolute;top:6px;left:6px;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase}
-.file-card .fc-idx{position:absolute;top:6px;right:6px;font-size:10px;color:var(--text-muted);font-weight:600}
-.file-card .fc-info{padding:10px 12px}
-.file-card .fc-name{font-weight:600;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.file-card .fc-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
-.storage-usage{margin-top:16px;padding:12px;background:var(--bg);border-radius:var(--radius)}
+.file-card .fc-preview{height:120px;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative}
+.file-card .fc-type{position:absolute;top:8px;left:8px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px}
+.file-card .fc-size-tag{position:absolute;top:8px;right:8px;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;background:rgba(0,0,0,0.5);color:#fff}
+.file-card .fc-info{padding:12px 14px}
+.file-card .fc-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.file-card .fc-meta{font-size:11.5px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.file-card .fc-actions{display:flex;align-items:center;gap:4px;padding:0 14px 12px;opacity:0;transition:opacity var(--transition)}
+.file-card:hover .fc-actions{opacity:1}
+.file-card .fc-actions .fa-btn{padding:4px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;font-weight:500;cursor:pointer;transition:all var(--transition);background:var(--surface);color:var(--text-secondary);font-family:inherit}
+.file-card .fc-actions .fa-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.file-card .fc-actions .fa-btn.danger:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+
+/* Upload Modal */
+.upload-modal .drop-zone{border:2px dashed var(--border);border-radius:var(--radius);padding:40px 24px;text-align:center;cursor:pointer;transition:all var(--transition);margin-bottom:16px}
+.upload-modal .drop-zone:hover{border-color:var(--accent);background:var(--accent-light)}
+.upload-modal .drop-zone .dz-icon{font-size:36px;margin-bottom:8px}
+.upload-modal .drop-zone .dz-title{font-size:15px;font-weight:600;margin-bottom:4px}
+.upload-modal .drop-zone .dz-sub{font-size:13px;color:var(--text-muted)}
+.upload-modal .file-types{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.upload-modal .file-types .ft{padding:4px 10px;background:var(--bg);border:1px solid var(--border-light);border-radius:4px;font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.3px}
+.upload-modal .max-notice{font-size:12px;color:var(--text-muted);margin-bottom:14px;display:flex;align-items:center;gap:6px}
+
+/* Section label */
+.section-label{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-label .sl-count{font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;background:var(--bg);color:var(--text-muted)}
+
+/* View states */
+.view-state{display:none}
+.view-state.active{display:block;animation:fadeUp .25s ease}
+
+/* File type color map */
+.ft-pptx{background:var(--orange);color:#fff}
+.ft-ppt{background:var(--orange);color:#fff}
+.ft-pdf{background:var(--red);color:#fff}
+.ft-jpg{background:var(--teal);color:#fff}
+.ft-png{background:var(--teal);color:#fff}
+.ft-mp4{background:var(--purple);color:#fff}
+.ft-mov{background:var(--green);color:#fff}
+.ft-doc{background:var(--accent);color:#fff}
+.ft-docx{background:var(--accent);color:#fff}
 </style>
 </head>
 <body>
+
+<!-- ═══ SIDEBAR ═══ -->
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
-      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+      <a href="dashboard.html" class="nav-item"><span class="ni">■</span> Dashboard</a>
     </div>
     <div class="nav-group"><div class="nav-group-label">Sales</div>
-      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
-      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
-      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
-      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="lead-manager.html" class="nav-item"><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item"><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item"><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item"><span class="ni">📄</span> Estimation</a>
       <a href="customers.html" class="nav-item"><span class="ni">👥</span> Customers</a>
     </div>
     <div class="nav-group"><div class="nav-group-label">Operations</div>
-      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
-      <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
-      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
-      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+      <a href="floor-plan.html" class="nav-item"><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item"><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item"><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item"><span class="ni">💵</span> Crew Costs</a>
     </div>
     <div class="nav-group"><div class="nav-group-label">Showcase</div>
-      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+      <a href="profile-presentation.html" class="nav-item active"><span class="ni">🎤</span> Profile & Presentation</a>
     </div>
     <div class="nav-group"><div class="nav-group-label">Setup</div>
-      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
-      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+      <a href="management-master.html" class="nav-item"><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item"><span class="ni">🔧</span> Client Settings</a>
     </div>
   </nav>
   <div class="sidebar-footer">
-    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="storage-bar"><div class="sl">1.8 GB / 5 GB</div><div class="st"><div class="sf" style="width:36%"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+    <div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
+
+<!-- ═══ MAIN CONTENT ═══ -->
 <div class="main">
+
+  <!-- Top Bar -->
   <header class="topbar">
-    <div class="topbar-left"><h1>Profile & Presentation</h1><span class="t-sub">Upload & showcase your work to clients</span></div>
-    <div class="topbar-right"><button class="topbar-btn primary">▶ Presentation Mode</button></div>
-  </header>
-  <div class="pp-layout">
-    <div class="pp-sidebar">
-      <div style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between">📁 Folders <button class="link-btn" style="font-size:11px">+</button></div>
-      <div class="folder active">📂 All Files <span class="f-count">18</span></div>
-      <div class="folder">📂 Company Profile <span class="f-count">4</span></div>
-      <div class="folder">📂 Past Projects <span class="f-count">6</span></div>
-      <div class="folder sub">📁 Residential <span class="f-count">3</span></div>
-      <div class="folder sub">📁 Commercial <span class="f-count">3</span></div>
-      <div class="folder">📂 Videos & Demos <span class="f-count">3</span></div>
-      <div class="folder">📂 Certifications <span class="f-count">2</span></div>
-      <div class="folder">📂 Client Testimonials <span class="f-count">3</span></div>
-      <div class="storage-usage"><div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Storage Used</div><div style="height:4px;background:var(--border-light);border-radius:2px;margin-bottom:4px"><div style="width:42%;height:100%;background:var(--accent);border-radius:2px"></div></div><div style="font-size:10px;color:var(--text-muted)">2.1 GB / 5 GB</div></div>
-      <div style="font-size:10px;color:var(--text-muted);margin-top:8px">18 files · 6 folders</div>
+    <div class="topbar-left">
+      <h1>Profile & Presentation</h1>
+      <span class="t-sub">Upload & showcase your work to clients</span>
     </div>
-    <div class="pp-main">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
-        <div style="font-size:13px;color:var(--text-muted)">All Files</div>
-        <div style="display:flex;gap:8px"><select class="form-select" style="width:130px;padding:6px 10px;font-size:12px"><option>All Types</option><option>Images</option><option>Videos</option><option>Documents</option></select></div>
+    <div class="topbar-right">
+      <button class="notif-btn">🔔<span class="count">2</span></button>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ═══ KPI Strip ═══ -->
+    <div class="kpi-strip kpi-4">
+      <div class="kpi-card">
+        <div class="kv" style="color:var(--accent)">47</div>
+        <div class="kl">Total Files</div>
+        <div class="kdate">Across all folders</div>
+        <div class="ka" style="background:var(--accent)"></div>
       </div>
-      <div style="border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-muted);cursor:pointer;transition:all var(--transition);margin-bottom:16px" onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:18px;margin-bottom:4px">📤</div><div style="font-size:12.5px">Drag & drop files here or browse</div><div style="font-size:11px;margin-top:2px">PPT, PDF, DOC, JPG, PNG, MP4, MOV & more</div></div>
+      <div class="kpi-card">
+        <div class="kv" style="color:var(--teal)">1.8 <span style="font-size:16px;font-weight:600">GB</span></div>
+        <div class="kl">Storage Used</div>
+        <div class="kdate">of 5 GB plan</div>
+        <div class="ka" style="background:var(--teal)"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kv" style="color:var(--purple)">8</div>
+        <div class="kl">Folders</div>
+        <div class="kdate">Organized collections</div>
+        <div class="ka" style="background:var(--purple)"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kv" style="color:var(--green);font-size:22px">Mar 4, 2026</div>
+        <div class="kl">Last Updated</div>
+        <div class="kdate">Company Overview 2026.pptx</div>
+        <div class="ka" style="background:var(--green)"></div>
+      </div>
+    </div>
+
+    <!-- ═══ Toolbar ═══ -->
+    <div class="pp-toolbar">
+      <button class="tb-btn primary" onclick="document.getElementById('uploadModal').classList.add('show')">📤 Upload Files</button>
+      <button class="tb-btn" onclick="showView('folders')">📁 Create Folder</button>
+      <div class="view-toggle">
+        <button class="vt active">▦ Grid</button>
+        <button class="vt">☰ List</button>
+      </div>
+      <select class="tb-select">
+        <option>Sort: Name</option>
+        <option>Sort: Date</option>
+        <option>Sort: Type</option>
+        <option>Sort: Size</option>
+      </select>
+      <div class="pp-search">
+        <span style="color:var(--text-muted);font-size:14px">🔍</span>
+        <input type="text" placeholder="Search files & folders...">
+      </div>
+      <div class="spacer"></div>
+      <button class="tb-btn success" onclick="showView('presentation')">▶ Start Presentation</button>
+    </div>
+
+    <!-- ═══ Presentation Mode Hint ═══ -->
+    <div class="pres-hint">
+      <span style="font-size:18px">🖥</span>
+      <div><strong>Presentation Mode:</strong> Click "Start Presentation" to enter full-screen presentation mode. Navigate through your files using arrow keys. Supports all file types including PPT, PDF, images, and video playback.</div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         VIEW STATE 1: Folder Overview (default)
+         ════════════════════════════════════════ -->
+    <div class="view-state active" id="viewFolders">
+
+      <div class="section-label">📁 Folders <span class="sl-count">8 folders</span></div>
+
+      <div class="folder-grid">
+
+        <div class="folder-card" onclick="showView('files')">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Company Overview</div>
+          <div class="fc-count">4 files</div>
+          <div class="fc-date">Modified: Mar 4, 2026</div>
+          <div class="fc-badge">4</div>
+        </div>
+
+        <div class="folder-card" onclick="showView('files')">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Past Projects</div>
+          <div class="fc-count">12 files</div>
+          <div class="fc-date">Modified: Mar 2, 2026</div>
+          <div class="fc-badge">12</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Certifications & Licenses</div>
+          <div class="fc-count">6 files</div>
+          <div class="fc-date">Modified: Feb 28, 2026</div>
+          <div class="fc-badge">6</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Video Testimonials</div>
+          <div class="fc-count">3 files</div>
+          <div class="fc-date">Modified: Feb 25, 2026</div>
+          <div class="fc-badge">3</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Before & After Gallery</div>
+          <div class="fc-count">8 files</div>
+          <div class="fc-date">Modified: Feb 20, 2026</div>
+          <div class="fc-badge">8</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Marketing Materials</div>
+          <div class="fc-count">5 files</div>
+          <div class="fc-date">Modified: Feb 18, 2026</div>
+          <div class="fc-badge">5</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Training & Safety</div>
+          <div class="fc-count">4 files</div>
+          <div class="fc-date">Modified: Feb 10, 2026</div>
+          <div class="fc-badge">4</div>
+        </div>
+
+        <div class="folder-card">
+          <div class="fc-icon">📂</div>
+          <div class="fc-name">Proposals & Templates</div>
+          <div class="fc-count">5 files</div>
+          <div class="fc-date">Modified: Feb 5, 2026</div>
+          <div class="fc-badge">5</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         VIEW STATE 2: Inside a Folder (Past Projects)
+         ════════════════════════════════════════ -->
+    <div class="view-state" id="viewFiles">
+
+      <div class="breadcrumb">
+        <a onclick="showView('folders')">Portfolio</a>
+        <span class="sep">/</span>
+        <span class="current">Past Projects</span>
+        <span style="margin-left:auto;font-size:12px;color:var(--text-muted)">12 files</span>
+      </div>
+
       <div class="file-grid">
-        <div class="file-card"><div class="fc-preview" style="background:var(--accent-light)"><span style="font-size:28px">📊</span><span class="fc-type" style="background:var(--accent);color:#fff">PPTX</span><span class="fc-idx">#1</span></div><div class="fc-info"><div class="fc-name">Company Overview 2026.pptx</div><div class="fc-meta">4.2 MB · Mar 1</div></div></div>
-        <div class="file-card"><div class="fc-preview" style="background:#e8d5b7"><span style="font-size:11px;color:#8b6914">Kitchen Before</span><span class="fc-type" style="background:var(--orange);color:#fff">JPG</span><span class="fc-idx">#2</span></div><div class="fc-info"><div class="fc-name">Kitchen Remodel - Before.jpg</div><div class="fc-meta">1.8 MB · Feb 20</div></div></div>
-        <div class="file-card"><div class="fc-preview" style="background:#b7d5e8"><span style="font-size:11px;color:#1465a0">Kitchen After</span><span class="fc-type" style="background:var(--accent);color:#fff">JPG</span><span class="fc-idx">#3</span></div><div class="fc-info"><div class="fc-name">Kitchen Remodel - After.jpg</div><div class="fc-meta">2.1 MB · Feb 20</div></div></div>
-        <div class="file-card"><div class="fc-preview" style="background:#1a1a2e"><span style="font-size:24px;color:#6a6a8e">▶</span><span class="fc-type" style="background:var(--teal);color:#fff">MP4</span><span class="fc-idx">#4</span></div><div class="fc-info"><div class="fc-name">HVAC Installation Demo.mp4</div><div class="fc-meta">48.5 MB · Feb 15</div></div></div>
-        <div class="file-card"><div class="fc-preview" style="background:var(--bg)"><span style="font-size:28px">📄</span><span class="fc-type" style="background:var(--red);color:#fff">PDF</span><span class="fc-idx">#5</span></div><div class="fc-info"><div class="fc-name">License & Certifications.pdf</div><div class="fc-meta">820 KB · Jan 10</div></div></div>
-        <div class="file-card"><div class="fc-preview" style="background:#1a2e1a"><span style="font-size:24px;color:#6a8e6a">▶</span><span class="fc-type" style="background:var(--green);color:#fff">MOV</span><span class="fc-idx">#6</span></div><div class="fc-info"><div class="fc-name">Customer Testimonial - Wilson.mov</div><div class="fc-meta">32.1 MB · Feb 28</div></div></div>
+
+        <!-- File 1: PPTX -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#fef3e2,#fde1b5)">
+            <span style="font-size:32px">📊</span>
+            <span class="fc-type ft-pptx">PPTX</span>
+            <span class="fc-size-tag">4.2 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Kitchen Remodel Showcase.pptx</div>
+            <div class="fc-meta"><span>📊 Presentation</span><span>Mar 1, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 2: JPG Before -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#e8d5b7,#d4b896)">
+            <span style="font-size:11px;color:#6b5b3e;font-weight:600">Kitchen Before</span>
+            <span class="fc-type ft-jpg">JPG</span>
+            <span class="fc-size-tag">1.8 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Kitchen Remodel - Before.jpg</div>
+            <div class="fc-meta"><span>🖼 Image</span><span>Feb 20, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 3: JPG After -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#b7d5e8,#96c4d8)">
+            <span style="font-size:11px;color:#1a5276;font-weight:600">Kitchen After</span>
+            <span class="fc-type ft-jpg">JPG</span>
+            <span class="fc-size-tag">2.1 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Kitchen Remodel - After.jpg</div>
+            <div class="fc-meta"><span>🖼 Image</span><span>Feb 20, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 4: MP4 Video -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#1a1a2e,#2d2d44)">
+            <span style="font-size:28px;color:rgba(255,255,255,0.4)">▶</span>
+            <span class="fc-type ft-mp4">MP4</span>
+            <span class="fc-size-tag">48.5 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">HVAC Install Timelapse.mp4</div>
+            <div class="fc-meta"><span>🎬 Video</span><span>Feb 15, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 5: PDF -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#fde8ea,#f8c4ca)">
+            <span style="font-size:32px">📄</span>
+            <span class="fc-type ft-pdf">PDF</span>
+            <span class="fc-size-tag">1.2 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Project Summary - Bathroom.pdf</div>
+            <div class="fc-meta"><span>📄 Document</span><span>Feb 12, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 6: MOV -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#1a2e1a,#2d442d)">
+            <span style="font-size:28px;color:rgba(255,255,255,0.4)">▶</span>
+            <span class="fc-type ft-mov">MOV</span>
+            <span class="fc-size-tag">62.3 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Bathroom Remodel Walkthrough.mov</div>
+            <div class="fc-meta"><span>🎬 Video</span><span>Feb 10, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 7: PNG -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#e6f7f5,#b7e8e2)">
+            <span style="font-size:11px;color:#0d7a6f;font-weight:600">Floor Plan</span>
+            <span class="fc-type ft-png">PNG</span>
+            <span class="fc-size-tag">3.4 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Residential Floor Plan Layout.png</div>
+            <div class="fc-meta"><span>🖼 Image</span><span>Feb 8, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 8: DOCX -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#e8f1fc,#c4d9f5)">
+            <span style="font-size:32px">📝</span>
+            <span class="fc-type ft-docx">DOCX</span>
+            <span class="fc-size-tag">820 KB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Project Scope - Williams.docx</div>
+            <div class="fc-meta"><span>📝 Document</span><span>Feb 5, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 9: JPG -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#d5c4a8,#c1a87c)">
+            <span style="font-size:11px;color:#5c4a2e;font-weight:600">Pipe Repair Before</span>
+            <span class="fc-type ft-jpg">JPG</span>
+            <span class="fc-size-tag">2.8 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Emergency Pipe Repair - Before.jpg</div>
+            <div class="fc-meta"><span>🖼 Image</span><span>Jan 28, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 10: JPG -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#b7e0d4,#8ecfbe)">
+            <span style="font-size:11px;color:#1a6b52;font-weight:600">Pipe Repair After</span>
+            <span class="fc-type ft-jpg">JPG</span>
+            <span class="fc-size-tag">2.5 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Emergency Pipe Repair - After.jpg</div>
+            <div class="fc-meta"><span>🖼 Image</span><span>Jan 28, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 11: PPT -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#fef3e2,#fde1b5)">
+            <span style="font-size:32px">📊</span>
+            <span class="fc-type ft-ppt">PPT</span>
+            <span class="fc-size-tag">8.1 MB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Commercial Plumbing Portfolio.ppt</div>
+            <div class="fc-meta"><span>📊 Presentation</span><span>Jan 20, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
+        <!-- File 12: PDF -->
+        <div class="file-card">
+          <div class="fc-preview" style="background:linear-gradient(135deg,#fde8ea,#f8c4ca)">
+            <span style="font-size:32px">📄</span>
+            <span class="fc-type ft-pdf">PDF</span>
+            <span class="fc-size-tag">540 KB</span>
+          </div>
+          <div class="fc-info">
+            <div class="fc-name">Project Timeline - Davis.pdf</div>
+            <div class="fc-meta"><span>📄 Document</span><span>Jan 15, 2026</span></div>
+          </div>
+          <div class="fc-actions">
+            <button class="fa-btn">Preview</button>
+            <button class="fa-btn">Download</button>
+            <button class="fa-btn">Move</button>
+            <button class="fa-btn danger">Delete</button>
+          </div>
+        </div>
+
       </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         VIEW STATE 3: Presentation Mode Preview
+         ════════════════════════════════════════ -->
+    <div class="view-state" id="viewPresentation">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden">
+        <!-- Presentation Header -->
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--sidebar-bg);color:#fff">
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:16px">🖥</span>
+            <span style="font-size:14px;font-weight:600">Presentation Mode</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.5)">Company Overview</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:11px;color:rgba(255,255,255,0.5)">Slide 1 of 4</span>
+            <button style="padding:5px 10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:4px;color:#fff;font-size:12px;cursor:pointer;font-family:inherit">◀ Prev</button>
+            <button style="padding:5px 10px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);border-radius:4px;color:#fff;font-size:12px;cursor:pointer;font-family:inherit">Next ▶</button>
+            <button onclick="showView('folders')" style="padding:5px 10px;background:var(--red);border:1px solid var(--red);border-radius:4px;color:#fff;font-size:12px;cursor:pointer;font-family:inherit">✕ Exit</button>
+          </div>
+        </div>
+        <!-- Presentation Canvas -->
+        <div style="background:#0f1117;display:flex;align-items:center;justify-content:center;min-height:400px;padding:40px">
+          <div style="background:var(--surface);border-radius:var(--radius);width:100%;max-width:720px;padding:60px 48px;text-align:center;box-shadow:var(--shadow-lg)">
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--accent);margin-bottom:16px">ABC Plumbing Co.</div>
+            <h2 style="font-size:28px;font-weight:700;margin-bottom:12px;color:var(--text-primary)">Company Overview 2026</h2>
+            <p style="font-size:14px;color:var(--text-secondary);line-height:1.7;max-width:500px;margin:0 auto 24px">Licensed & insured plumbing contractor serving the Dallas-Fort Worth area since 2012. Residential, commercial, and emergency services.</p>
+            <div style="display:flex;justify-content:center;gap:24px;margin-top:20px">
+              <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--accent)">500+</div><div style="font-size:11px;color:var(--text-muted)">Projects Completed</div></div>
+              <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--teal)">14</div><div style="font-size:11px;color:var(--text-muted)">Years Experience</div></div>
+              <div style="text-align:center"><div style="font-size:22px;font-weight:700;color:var(--green)">4.9</div><div style="font-size:11px;color:var(--text-muted)">Avg Rating</div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Slide Thumbnails -->
+        <div style="display:flex;gap:8px;padding:12px 20px;background:var(--bg);border-top:1px solid var(--border);overflow-x:auto">
+          <div style="width:80px;height:50px;border-radius:6px;border:2px solid var(--accent);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--accent);cursor:pointer;flex-shrink:0">Slide 1</div>
+          <div style="width:80px;height:50px;border-radius:6px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-muted);cursor:pointer;flex-shrink:0">Slide 2</div>
+          <div style="width:80px;height:50px;border-radius:6px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-muted);cursor:pointer;flex-shrink:0">Slide 3</div>
+          <div style="width:80px;height:50px;border-radius:6px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--text-muted);cursor:pointer;flex-shrink:0">Slide 4</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;text-align:center;font-size:12px;color:var(--text-muted)">Press <strong>F11</strong> for full-screen. Use <strong>Arrow Keys</strong> or click Prev/Next to navigate. Press <strong>Esc</strong> to exit.</div>
+    </div>
+
+  </div>
+  <!-- end content -->
+
+</div>
+<!-- end main -->
+
+
+<!-- ═══════════════════════════════════════════
+     UPLOAD MODAL
+     ═══════════════════════════════════════════ -->
+<div class="modal-overlay" id="uploadModal">
+  <div class="modal upload-modal" style="max-width:560px">
+    <button class="modal-close" onclick="document.getElementById('uploadModal').classList.remove('show')">&times;</button>
+    <h3>📤 Upload Files</h3>
+
+    <!-- Drop Zone -->
+    <div class="drop-zone">
+      <div class="dz-icon">📁</div>
+      <div class="dz-title">Drag & drop files here</div>
+      <div class="dz-sub">or click to browse from your device</div>
+    </div>
+
+    <!-- Supported File Types -->
+    <div style="font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:.3px">Supported File Types</div>
+    <div class="file-types">
+      <span class="ft">PPT</span>
+      <span class="ft">PPTX</span>
+      <span class="ft">PDF</span>
+      <span class="ft">JPG</span>
+      <span class="ft">PNG</span>
+      <span class="ft">MP4</span>
+      <span class="ft">MOV</span>
+      <span class="ft">DOC</span>
+      <span class="ft">DOCX</span>
+    </div>
+
+    <!-- Max File Size -->
+    <div class="max-notice">
+      <span style="font-size:14px">⚠</span>
+      Maximum file size: <strong>100 MB per file</strong>. Total storage available: <strong>3.2 GB remaining</strong>.
+    </div>
+
+    <!-- Folder Selection -->
+    <div class="form-group">
+      <label class="form-label">Upload to Folder</label>
+      <select class="form-select">
+        <option>Company Overview</option>
+        <option selected>Past Projects</option>
+        <option>Certifications & Licenses</option>
+        <option>Video Testimonials</option>
+        <option>Before & After Gallery</option>
+        <option>Marketing Materials</option>
+        <option>Training & Safety</option>
+        <option>Proposals & Templates</option>
+      </select>
+    </div>
+
+    <!-- Actions -->
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="document.getElementById('uploadModal').classList.remove('show')">Cancel</button>
+      <button class="modal-btn primary">Upload Files</button>
     </div>
   </div>
 </div>
+
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast">File uploaded successfully</div>
+
+
+<script>
+// View state management
+function showView(view) {
+  document.querySelectorAll('.view-state').forEach(el => el.classList.remove('active'));
+  if (view === 'folders') {
+    document.getElementById('viewFolders').classList.add('active');
+  } else if (view === 'files') {
+    document.getElementById('viewFiles').classList.add('active');
+  } else if (view === 'presentation') {
+    document.getElementById('viewPresentation').classList.add('active');
+  }
+}
+
+// View toggle (Grid / List)
+document.querySelectorAll('.view-toggle .vt').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.view-toggle .vt').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
+
+// Modal
+document.getElementById('uploadModal').addEventListener('click', function(e) {
+  if (e.target === this) this.classList.remove('show');
+});
+
+// Toast helper
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
 </body>
 </html>

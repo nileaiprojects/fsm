@@ -537,7 +537,7 @@ button, select, input { font-family: inherit; cursor: pointer; }
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -565,7 +565,8 @@ button, select, input { font-family: inherit; cursor: pointer; }
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -659,26 +660,26 @@ button, select, input { font-family: inherit; cursor: pointer; }
 // DATA & STATE
 // ═══════════════════════════════════════════
 const EVENTS = [
-  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'screen8b-appointment-detail.html' },
-  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'screen13b-job-detail.html' },
-  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'screen13b-job-detail.html' },
-  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'screen8b-appointment-detail.html' },
-  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'screen13b-job-detail.html' },
-  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'screen13b-job-detail.html' },
-  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'appointment-details.html' },
+  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'appointment-details.html' },
+  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'appointment-details.html' },
+  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'job-detail.html' },
+  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'job-detail.html' },
+  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'appointment-details.html' },
+  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'appointment-details.html' },
+  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'job-detail.html' },
+  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'appointment-details.html' },
+  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'appointment-details.html' },
+  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'appointment-details.html' },
+  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'job-detail.html' },
+  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'job-detail.html' },
+  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'appointment-details.html' },
+  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'appointment-details.html' },
+  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'appointment-details.html' },
 ];
 
 let state = {
@@ -1166,26 +1167,26 @@ render();
 // DATA & STATE
 // ═══════════════════════════════════════════
 const EVENTS = [
-  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'screen8b-appointment-detail.html' },
-  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'screen13b-job-detail.html' },
-  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'screen13b-job-detail.html' },
-  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'screen8b-appointment-detail.html' },
-  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'screen13b-job-detail.html' },
-  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'screen13b-job-detail.html' },
-  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'screen13b-job-detail.html' },
-  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'screen8b-appointment-detail.html' },
-  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'screen8b-appointment-detail.html' },
-  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'screen8b-appointment-detail.html' },
+  { id:1, date:'2026-03-03', time:'09:00', duration:60, type:'appointment', title:'Appt: Smith', staff:'john', link:'appointment-details.html' },
+  { id:2, date:'2026-03-05', time:'10:00', duration:90, type:'survey', title:'Survey: Johnson', staff:'sarah', link:'appointment-details.html' },
+  { id:3, date:'2026-03-08', time:'13:00', duration:60, type:'presentation', title:'Pres: Williams', staff:'john', link:'appointment-details.html' },
+  { id:4, date:'2026-03-10', time:'08:00', duration:120, type:'job', title:'Job #13: Brown', staff:'mike', link:'job-detail.html' },
+  { id:5, date:'2026-03-10', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:6, date:'2026-03-12', time:'07:00', duration:120, type:'jobstart', title:'Start: Davis', staff:'john', link:'job-detail.html' },
+  { id:7, date:'2026-03-15', time:'10:30', duration:60, type:'appointment', title:'Appt: Wilson', staff:'sarah', link:'appointment-details.html' },
+  { id:8, date:'2026-03-17', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:9, date:'2026-03-18', time:'09:00', duration:90, type:'survey', title:'Survey: Taylor', staff:'mike', link:'appointment-details.html' },
+  { id:10, date:'2026-03-22', time:'08:00', duration:180, type:'job', title:'Job #14: Anderson', staff:'john', link:'job-detail.html' },
+  { id:11, date:'2026-03-24', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:12, date:'2026-03-25', time:'15:00', duration:60, type:'appointment', title:'Appt: Martinez', staff:'mike', link:'appointment-details.html' },
+  { id:13, date:'2026-03-28', time:'11:00', duration:60, type:'presentation', title:'Pres: Thomas', staff:'john', link:'appointment-details.html' },
+  { id:14, date:'2026-03-31', time:'10:00', duration:60, type:'recurring', title:'🔄 Lawn: Park', staff:'sarah', link:'job-detail.html' },
+  { id:15, date:'2026-03-04', time:'14:00', duration:60, type:'appointment', title:'Appt: Clark', staff:'john', link:'appointment-details.html' },
+  { id:16, date:'2026-03-04', time:'09:00', duration:90, type:'job', title:'Job #15: Roberts', staff:'mike', link:'job-detail.html' },
+  { id:17, date:'2026-03-06', time:'11:00', duration:60, type:'jobstart', title:'Start: Evans', staff:'sarah', link:'job-detail.html' },
+  { id:18, date:'2026-03-20', time:'08:30', duration:60, type:'survey', title:'Survey: Green', staff:'john', link:'appointment-details.html' },
+  { id:19, date:'2026-03-27', time:'14:00', duration:60, type:'appointment', title:'Appt: Baker', staff:'mike', link:'appointment-details.html' },
+  { id:20, date:'2026-03-11', time:'16:00', duration:60, type:'presentation', title:'Pres: Lopez', staff:'john', link:'appointment-details.html' },
 ];
 
 let state = {

@@ -388,7 +388,7 @@ button { font-family: inherit; cursor: pointer; }
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item active"><span class="ni">■</span> Dashboard</a>
@@ -416,7 +416,8 @@ button { font-family: inherit; cursor: pointer; }
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -466,12 +467,6 @@ button { font-family: inherit; cursor: pointer; }
         <h3>📈 Pre-Sales KPIs</h3>
       </div>
       <div class="kpi-grid">
-        <a href="dashboard.html" class="kpi-card" title="View all sent estimates">
-          <div class="kpi-value" style="color: var(--accent);">24</div>
-          <div class="kpi-label">Estimates Sent</div>
-          <span class="kpi-trend up">↑ 8%</span>
-          <div class="kpi-accent" style="background: var(--accent);"></div>
-        </a>
         <a href="dashboard.html" class="kpi-card" title="View leads with New status">
           <div class="kpi-value" style="color: var(--orange);">8</div>
           <div class="kpi-label">Leads Pending</div>
@@ -508,10 +503,11 @@ button { font-family: inherit; cursor: pointer; }
           <div class="kpi-label">Jobs Under Progress</div>
           <div class="kpi-accent" style="background: var(--teal);"></div>
         </a>
-        <a href="estimates.html" class="kpi-card" title="View estimates awaiting approval">
-          <div class="kpi-value" style="color: var(--orange);">3</div>
-          <div class="kpi-label">Estimates Awaiting Approval</div>
-          <div class="kpi-accent" style="background: var(--orange);"></div>
+        <a href="dashboard.html" class="kpi-card" title="View all sent estimates">
+          <div class="kpi-value" style="color: var(--accent);">24</div>
+          <div class="kpi-label">Estimates Sent</div>
+          <span class="kpi-trend up">↑ 8%</span>
+          <div class="kpi-accent" style="background: var(--accent);"></div>
         </a>
         <a href="schedule.html" class="kpi-card" title="View today's schedule">
           <div class="kpi-value" style="color: var(--accent);">2</div>

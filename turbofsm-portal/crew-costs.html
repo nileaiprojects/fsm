@@ -7,25 +7,28 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <style>
-.crew-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden}
-.crew-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;transition:background var(--transition)}
-.crew-header:hover{background:var(--surface-hover)}
-.crew-header .ch-left{display:flex;align-items:center;gap:12px}
-.crew-header .ch-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
-.crew-header .ch-name{font-weight:600;font-size:14px}
-.crew-header .ch-role{font-size:12px;color:var(--text-muted)}
-.crew-header .ch-total{font-size:18px;font-weight:700;color:var(--accent)}
-.crew-body{border-top:1px solid var(--border);padding:0}
-.crew-body table{width:100%;border-collapse:collapse;font-size:13px}
-.crew-body th{padding:8px 14px;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.3px;color:var(--text-muted);text-align:left;background:var(--bg);border-bottom:1px solid var(--border)}
-.crew-body td{padding:10px 14px;border-bottom:1px solid var(--border-light)}
-.crew-summary{display:flex;gap:20px;padding:12px 20px;background:var(--bg);border-top:1px solid var(--border);font-size:12.5px}
-.crew-summary .cs-item{display:flex;gap:6px}.crew-summary .cs-label{color:var(--text-muted)}.crew-summary .cs-val{font-weight:600}
+/* ═══ Page-specific styles ═══ */
+.summary-row td{background:var(--bg);font-weight:700;font-size:13px;border-top:2px solid var(--border)}
+.margin-green{color:var(--green);font-weight:700}
+.margin-orange{color:var(--orange);font-weight:700}
+.margin-red{color:var(--red);font-weight:700}
+.emp-note{display:flex;align-items:center;gap:8px;padding:12px 16px;background:var(--accent-light);border:1px solid rgba(15,111,222,0.15);border-radius:var(--radius);margin-bottom:16px;font-size:12.5px;color:var(--accent);line-height:1.5}
+.bulk-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.bulk-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13px;transition:all var(--transition);font-family:inherit;cursor:pointer}
+.bulk-btn:hover{border-color:var(--accent);color:var(--accent)}
+.bulk-btn.green{background:var(--green);color:#fff;border-color:var(--green)}
+.bulk-btn.green:hover{background:#12853d}
+.cb-cell{width:36px;text-align:center}
+.cb-cell input[type="checkbox"]{width:16px;height:16px;cursor:pointer;accent-color:var(--accent)}
 </style>
 </head>
 <body>
+
+<!-- ═══════════════════════════════════════════
+     SIDEBAR
+     ═══════════════════════════════════════════ -->
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -41,7 +44,7 @@
       <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
       <a href="jobs-board.html" class="nav-item "><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
       <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
-      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+      <a href="crew-costs.html" class="nav-item active"><span class="ni">💵</span> Crew Costs</a>
     </div>
     <div class="nav-group"><div class="nav-group-label">Showcase</div>
       <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
@@ -53,63 +56,733 @@
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
+
+<!-- ═══════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════ -->
 <div class="main">
+
+  <!-- Top Bar -->
   <header class="topbar">
-    <div class="topbar-left"><h1>Crew Costs</h1><span class="t-sub">Track crew hours, job costs & payments</span></div>
-    <div class="topbar-right"><button class="topbar-btn">🖨 Export CSV</button></div>
+    <div class="topbar-left"><h1>Crew Costs</h1><span class="t-sub">Track crew hours, job costs & profitability</span></div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="showToast('CSV exported successfully')">🖨 Export CSV</button>
+    </div>
   </header>
+
+  <!-- Content -->
   <div class="content">
+
+    <!-- ═══ KPI Cards ═══ -->
     <div class="kpi-strip kpi-4">
-      <div class="kpi-card"><div class="kv" style="color:var(--accent)">$6,840</div><div class="kl">Crew Cost MTD</div><div class="kdate">↑ 12%</div><div class="ka" style="background:var(--accent)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--teal)">$18,720</div><div class="kl">Crew Cost YTD</div><div class="kdate">↑ 8%</div><div class="ka" style="background:var(--teal)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--green)">$4,590</div><div class="kl">Paid This Month</div><div class="ka" style="background:var(--green)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--orange)">$2,250</div><div class="kl">Pending Payments</div><div class="kdate">⚠ 3 unpaid</div><div class="ka" style="background:var(--orange)"></div></div>
-    </div>
-    <div class="filter-bar">
-      <select class="form-select" style="width:200px;padding:8px 12px;font-size:13px"><option selected>All Crew Members</option><option>James Rodriguez</option><option>Carlos Mendez</option><option>Kevin Park</option></select>
-      <select class="form-select" style="width:160px;padding:8px 12px;font-size:13px"><option selected>All Jobs</option><option>JOB-0001</option><option>JOB-0002</option></select>
-      <select class="form-select" style="width:140px;padding:8px 12px;font-size:13px"><option selected>All Payments</option><option>Paid</option><option>Unpaid</option></select>
-    </div>
-    <!-- Crew Member 1 -->
-    <div class="crew-section">
-      <div class="crew-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <div class="ch-left"><div class="ch-av" style="background:var(--accent)">JR</div><div><div class="ch-name">James Rodriguez</div><div class="ch-role">Crew Member · Hourly @ $45/hr · OT @ $67.50/hr · 5 entries</div></div></div>
-        <div class="ch-total">$1,946.25</div>
+      <div class="kpi-card" style="position:relative">
+        <div class="kv" style="color:var(--green)">$28,450</div>
+        <div class="kl">Total Labor Cost MTD</div>
+        <div class="kdate">💵 Month to date</div>
+        <span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green)">↑ 8%</span>
+        <div class="ka" style="background:var(--green)"></div>
       </div>
-      <div class="crew-body">
-        <table><thead><tr><th>Date</th><th>Job ID</th><th>Job / Customer</th><th>Check-in</th><th>Check-out</th><th>Std Hrs</th><th>OT Hrs</th><th>Amount</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>Mar 4</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a></td><td>AC Install — Lisa Brown</td><td>8:00 AM</td><td>5:30 PM</td><td>8.0</td><td>1.5</td><td style="font-weight:600">$461.25</td><td><span style="color:var(--orange);font-weight:600;font-size:12px">○ Unpaid</span></td></tr>
-          <tr><td>Mar 3</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a></td><td>AC Install — Lisa Brown</td><td>8:15 AM</td><td>4:45 PM</td><td>8.0</td><td>0.5</td><td style="font-weight:600">$393.75</td><td><span style="color:var(--orange);font-weight:600;font-size:12px">○ Unpaid</span></td></tr>
-          <tr><td>Mar 1</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0003</a></td><td>Pipe Repair — Amy Wilson</td><td>9:00 AM</td><td>3:00 PM</td><td>6.0</td><td>—</td><td style="font-weight:600">$270.00</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-          <tr><td>Feb 27</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0004</a></td><td>Kitchen — Robert Taylor</td><td>7:30 AM</td><td>5:00 PM</td><td>8.0</td><td>1.5</td><td style="font-weight:600">$461.25</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-          <tr><td>Feb 25</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0002</a></td><td>HVAC — Mike Williams</td><td>8:00 AM</td><td>4:00 PM</td><td>8.0</td><td>—</td><td style="font-weight:600">$360.00</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-        </tbody></table>
-        <div class="crew-summary"><div class="cs-item"><span class="cs-label">Total Hours:</span><span class="cs-val">40.5 hrs</span></div><div class="cs-item"><span class="cs-label">Total:</span><span class="cs-val">$1,946.25</span></div><div class="cs-item"><span class="cs-label">Paid:</span><span class="cs-val" style="color:var(--green)">$1,091.25</span></div><div class="cs-item"><span class="cs-label">Unpaid:</span><span class="cs-val" style="color:var(--orange)">$855.00</span></div></div>
+      <div class="kpi-card" style="position:relative">
+        <div class="kv" style="color:var(--accent)">$1,850</div>
+        <div class="kl">Avg Cost Per Job</div>
+        <div class="kdate">📊 Across 15 jobs</div>
+        <span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--red-light);color:var(--red)">↑ 3%</span>
+        <div class="ka" style="background:var(--accent)"></div>
       </div>
-    </div>
-    <!-- Crew Member 2 -->
-    <div class="crew-section">
-      <div class="crew-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
-        <div class="ch-left"><div class="ch-av" style="background:var(--teal)">CM</div><div><div class="ch-name">Carlos Mendez</div><div class="ch-role">Crew Member · Hourly @ $35/hr · OT @ $52.50/hr · 4 entries</div></div></div>
-        <div class="ch-total">$1,277.50</div>
+      <div class="kpi-card">
+        <div class="kv" style="color:var(--teal)">342 hrs</div>
+        <div class="kl">Total Hours Logged</div>
+        <div class="kdate">⏱ 6 crew members</div>
+        <div class="ka" style="background:var(--teal)"></div>
       </div>
-      <div class="crew-body" style="display:none">
-        <table><thead><tr><th>Date</th><th>Job ID</th><th>Job / Customer</th><th>Check-in</th><th>Check-out</th><th>Std Hrs</th><th>OT Hrs</th><th>Amount</th><th>Status</th></tr></thead>
-        <tbody>
-          <tr><td>Mar 4</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a></td><td>AC Install — Lisa Brown</td><td>8:00 AM</td><td>4:30 PM</td><td>8.0</td><td>0.5</td><td style="font-weight:600">$306.25</td><td><span style="color:var(--orange);font-weight:600;font-size:12px">○ Unpaid</span></td></tr>
-          <tr><td>Mar 3</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a></td><td>AC Install — Lisa Brown</td><td>8:30 AM</td><td>4:30 PM</td><td>8.0</td><td>—</td><td style="font-weight:600">$280.00</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-          <tr><td>Feb 28</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0006</a></td><td>Floor Repair — Tom Davis</td><td>7:00 AM</td><td>5:30 PM</td><td>8.0</td><td>2.5</td><td style="font-weight:600">$411.25</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-          <tr><td>Feb 20</td><td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0004</a></td><td>Kitchen — Robert Taylor</td><td>8:00 AM</td><td>4:00 PM</td><td>8.0</td><td>—</td><td style="font-weight:600">$280.00</td><td><span style="color:var(--green);font-weight:600;font-size:12px">✓ Paid</span></td></tr>
-        </tbody></table>
-        <div class="crew-summary"><div class="cs-item"><span class="cs-label">Total:</span><span class="cs-val">$1,277.50</span></div><div class="cs-item"><span class="cs-label">Paid:</span><span class="cs-val" style="color:var(--green)">$971.25</span></div><div class="cs-item"><span class="cs-label">Unpaid:</span><span class="cs-val" style="color:var(--orange)">$306.25</span></div></div>
+      <div class="kpi-card" style="position:relative">
+        <div class="kv" style="color:var(--purple)">34%</div>
+        <div class="kl">Profit Margin Avg</div>
+        <div class="kdate">💲 Across completed jobs</div>
+        <span style="position:absolute;top:12px;right:14px;font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--green-light);color:var(--green)">↑ 2%</span>
+        <div class="ka" style="background:var(--purple)"></div>
       </div>
     </div>
+
+    <!-- ═══ Tab Navigation ═══ -->
+    <div class="tab-bar">
+      <div class="tab active" onclick="switchTab('time-cost',this)">⏱ Time & Cost Log</div>
+      <div class="tab" onclick="switchTab('employee-setup',this)">👥 Employee Setup</div>
+      <div class="tab" onclick="switchTab('job-profitability',this)">📊 Job Profitability</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 1: TIME & COST LOG
+         ═══════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-time-cost">
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" style="display:flex;flex-wrap:nowrap;overflow-x:auto;align-items:center;gap:8px">
+        <div class="search-box" style="min-width:220px;width:220px"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchTimeCost" placeholder="Search crew member..."></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">From</label>
+          <input type="date" value="2026-03-01" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-primary);outline:none;width:130px">
+          <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">To</label>
+          <input type="date" value="2026-03-06" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-primary);outline:none;width:130px">
+        </div>
+        <select class="form-select" style="width:180px;padding:8px 12px;font-size:13px;flex-shrink:0">
+          <option selected>All Jobs</option>
+          <option>JOB-0001 - AC Install</option>
+          <option>JOB-0002 - HVAC Repair</option>
+          <option>JOB-0003 - Pipe Repair</option>
+          <option>JOB-0004 - Kitchen Remodel</option>
+          <option>JOB-0005 - Bathroom Reno</option>
+        </select>
+        <select class="form-select" style="width:140px;padding:8px 12px;font-size:13px;flex-shrink:0">
+          <option selected>All Status</option>
+          <option>Paid</option>
+          <option>Unpaid</option>
+        </select>
+      </div>
+
+      <!-- Bulk Actions -->
+      <div class="bulk-bar">
+        <button class="bulk-btn green" onclick="showToast('3 entries marked as paid')">✓ Mark as Paid</button>
+        <button class="bulk-btn" onclick="showToast('CSV exported')">📄 Export CSV</button>
+        <span style="font-size:12px;color:var(--text-muted);margin-left:4px">3 selected</span>
+      </div>
+
+      <!-- Time & Cost Table -->
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width:36px">
+            <col style="width:8%">
+            <col style="width:12%">
+            <col style="width:14%">
+            <col style="width:7%">
+            <col style="width:7%">
+            <col style="width:7%">
+            <col style="width:8%">
+            <col style="width:8%">
+            <col style="width:8%">
+            <col style="width:8%">
+            <col style="width:7%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="cb-cell"><input type="checkbox" onclick="toggleAllCheckboxes(this)"></th>
+              <th>Date</th>
+              <th>Crew Member</th>
+              <th>Job / Task</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Hours</th>
+              <th>Base Pay</th>
+              <th>Expenses</th>
+              <th>Total Cost</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="timeCostBody">
+            <!-- Row 1 -->
+            <tr data-search="james rodriguez ac install lisa brown">
+              <td class="cb-cell"><input type="checkbox" checked></td>
+              <td style="font-size:13px">Mar 6</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">JR</div>
+                  <span style="font-weight:500">James Rodriguez</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a><div style="font-size:12px;color:var(--text-muted)">AC Install - Lisa Brown</div></td>
+              <td style="font-size:13px">7:30 AM</td>
+              <td style="font-size:13px">5:00 PM</td>
+              <td style="font-weight:600">9.5</td>
+              <td style="font-weight:600">$427.50</td>
+              <td style="font-weight:500;color:var(--orange)">$45.00</td>
+              <td style="font-weight:700">$472.50</td>
+              <td><span class="status-pill st-pending">○ Unpaid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 2 -->
+            <tr data-search="james rodriguez ac install lisa brown">
+              <td class="cb-cell"><input type="checkbox" checked></td>
+              <td style="font-size:13px">Mar 5</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">JR</div>
+                  <span style="font-weight:500">James Rodriguez</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a><div style="font-size:12px;color:var(--text-muted)">AC Install - Lisa Brown</div></td>
+              <td style="font-size:13px">8:00 AM</td>
+              <td style="font-size:13px">4:30 PM</td>
+              <td style="font-weight:600">8.5</td>
+              <td style="font-weight:600">$382.50</td>
+              <td style="font-weight:500;color:var(--text-muted)">$0.00</td>
+              <td style="font-weight:700">$382.50</td>
+              <td><span class="status-pill st-pending">○ Unpaid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 3 -->
+            <tr data-search="carlos mendez ac install lisa brown">
+              <td class="cb-cell"><input type="checkbox" checked></td>
+              <td style="font-size:13px">Mar 6</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">CM</div>
+                  <span style="font-weight:500">Carlos Mendez</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a><div style="font-size:12px;color:var(--text-muted)">AC Install - Lisa Brown</div></td>
+              <td style="font-size:13px">8:00 AM</td>
+              <td style="font-size:13px">4:30 PM</td>
+              <td style="font-weight:600">8.5</td>
+              <td style="font-weight:600">$297.50</td>
+              <td style="font-weight:500;color:var(--orange)">$22.00</td>
+              <td style="font-weight:700">$319.50</td>
+              <td><span class="status-pill st-pending">○ Unpaid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 4 -->
+            <tr data-search="carlos mendez hvac repair mike williams">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 5</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">CM</div>
+                  <span style="font-weight:500">Carlos Mendez</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0002</a><div style="font-size:12px;color:var(--text-muted)">HVAC Repair - Mike Williams</div></td>
+              <td style="font-size:13px">8:30 AM</td>
+              <td style="font-size:13px">4:30 PM</td>
+              <td style="font-weight:600">8.0</td>
+              <td style="font-weight:600">$280.00</td>
+              <td style="font-weight:500;color:var(--text-muted)">$0.00</td>
+              <td style="font-weight:700">$280.00</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 5 -->
+            <tr data-search="kevin park pipe repair amy wilson">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 4</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">KP</div>
+                  <span style="font-weight:500">Kevin Park</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0003</a><div style="font-size:12px;color:var(--text-muted)">Pipe Repair - Amy Wilson</div></td>
+              <td style="font-size:13px">9:00 AM</td>
+              <td style="font-size:13px">3:30 PM</td>
+              <td style="font-weight:600">6.5</td>
+              <td style="font-weight:600">$260.00</td>
+              <td style="font-weight:500;color:var(--orange)">$18.50</td>
+              <td style="font-weight:700">$278.50</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 6 -->
+            <tr data-search="kevin park kitchen remodel robert taylor">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 3</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">KP</div>
+                  <span style="font-weight:500">Kevin Park</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0004</a><div style="font-size:12px;color:var(--text-muted)">Kitchen Remodel - Robert Taylor</div></td>
+              <td style="font-size:13px">7:00 AM</td>
+              <td style="font-size:13px">5:00 PM</td>
+              <td style="font-weight:600">10.0</td>
+              <td style="font-weight:600">$400.00</td>
+              <td style="font-weight:500;color:var(--text-muted)">$0.00</td>
+              <td style="font-weight:700">$400.00</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 7 -->
+            <tr data-search="sarah lee bathroom reno sarah johnson">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 4</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">SL</div>
+                  <span style="font-weight:500">Sarah Lee</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0005</a><div style="font-size:12px;color:var(--text-muted)">Bathroom Reno - Sarah Johnson</div></td>
+              <td style="font-size:13px">8:00 AM</td>
+              <td style="font-size:13px">4:00 PM</td>
+              <td style="font-weight:600">8.0</td>
+              <td style="font-weight:600">$320.00</td>
+              <td style="font-weight:500;color:var(--orange)">$35.00</td>
+              <td style="font-weight:700">$355.00</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 8 -->
+            <tr data-search="mike chen ac install lisa brown">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 6</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">MC</div>
+                  <span style="font-weight:500">Mike Chen</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0001</a><div style="font-size:12px;color:var(--text-muted)">AC Install - Lisa Brown</div></td>
+              <td style="font-size:13px">8:00 AM</td>
+              <td style="font-size:13px">6:00 PM</td>
+              <td style="font-weight:600">10.0</td>
+              <td style="font-weight:600">$500.00</td>
+              <td style="font-weight:500;color:var(--orange)">$62.00</td>
+              <td style="font-weight:700">$562.00</td>
+              <td><span class="status-pill st-pending">○ Unpaid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 9 -->
+            <tr data-search="sarah lee hvac repair mike williams">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 2</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">SL</div>
+                  <span style="font-weight:500">Sarah Lee</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0002</a><div style="font-size:12px;color:var(--text-muted)">HVAC Repair - Mike Williams</div></td>
+              <td style="font-size:13px">8:00 AM</td>
+              <td style="font-size:13px">4:00 PM</td>
+              <td style="font-weight:600">8.0</td>
+              <td style="font-weight:600">$320.00</td>
+              <td style="font-weight:500;color:var(--text-muted)">$0.00</td>
+              <td style="font-weight:700">$320.00</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+            <!-- Row 10 -->
+            <tr data-search="james rodriguez kitchen remodel robert taylor">
+              <td class="cb-cell"><input type="checkbox"></td>
+              <td style="font-size:13px">Mar 1</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">JR</div>
+                  <span style="font-weight:500">James Rodriguez</span>
+                </div>
+              </td>
+              <td><a href="job-detail.html" style="color:var(--accent);font-weight:500">JOB-0004</a><div style="font-size:12px;color:var(--text-muted)">Kitchen Remodel - Robert Taylor</div></td>
+              <td style="font-size:13px">7:30 AM</td>
+              <td style="font-size:13px">5:30 PM</td>
+              <td style="font-weight:600">10.0</td>
+              <td style="font-weight:600">$450.00</td>
+              <td style="font-weight:500;color:var(--orange)">$28.00</td>
+              <td style="font-weight:700">$478.00</td>
+              <td><span class="status-pill st-paid">✓ Paid</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="View">👁</a></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 2: EMPLOYEE SETUP
+         ═══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-employee-setup">
+
+      <!-- Info Note -->
+      <div class="emp-note">
+        ℹ <strong>Fully Loaded Rate</strong> = Base Rate + Employer-paid costs (benefits, insurance, payroll taxes, etc.). This gives a true cost-per-hour for profitability calculations.
+      </div>
+
+      <!-- Add Employee Button -->
+      <div style="display:flex;justify-content:flex-end;margin-bottom:14px">
+        <button class="topbar-btn primary" onclick="showToast('Add Employee form would open here')" style="background:var(--accent);color:#fff;border-color:var(--accent);font-weight:600">+ Add Employee</button>
+      </div>
+
+      <!-- Employee Setup Table -->
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width:16%">
+            <col style="width:11%">
+            <col style="width:11%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:12%">
+            <col style="width:10%">
+            <col style="width:8%">
+            <col style="width:14%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Employee Name</th>
+              <th>Role</th>
+              <th>Pay Type</th>
+              <th>Base Rate</th>
+              <th>OT Rate</th>
+              <th>Additional Costs</th>
+              <th>Fully Loaded</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">JR</div>
+                  <span style="font-weight:600">James Rodriguez</span>
+                </div>
+              </td>
+              <td>Lead Technician</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:600">Hourly</span></td>
+              <td style="font-weight:600">$45.00/hr</td>
+              <td style="font-weight:600">$67.50/hr</td>
+              <td style="font-size:13px;color:var(--text-secondary)">$8.50/hr<div style="font-size:11px;color:var(--text-muted)">Insurance + Taxes</div></td>
+              <td style="font-weight:700;color:var(--accent)">$53.50/hr</td>
+              <td><span class="status-pill st-active">● Active</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--teal);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">CM</div>
+                  <span style="font-weight:600">Carlos Mendez</span>
+                </div>
+              </td>
+              <td>Technician</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:600">Hourly</span></td>
+              <td style="font-weight:600">$35.00/hr</td>
+              <td style="font-weight:600">$52.50/hr</td>
+              <td style="font-size:13px;color:var(--text-secondary)">$6.80/hr<div style="font-size:11px;color:var(--text-muted)">Insurance + Taxes</div></td>
+              <td style="font-weight:700;color:var(--accent)">$41.80/hr</td>
+              <td><span class="status-pill st-active">● Active</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">KP</div>
+                  <span style="font-weight:600">Kevin Park</span>
+                </div>
+              </td>
+              <td>Apprentice</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:600">Hourly</span></td>
+              <td style="font-weight:600">$40.00/hr</td>
+              <td style="font-weight:600">$60.00/hr</td>
+              <td style="font-size:13px;color:var(--text-secondary)">$5.20/hr<div style="font-size:11px;color:var(--text-muted)">Taxes only</div></td>
+              <td style="font-weight:700;color:var(--accent)">$45.20/hr</td>
+              <td><span class="status-pill st-active">● Active</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">SL</div>
+                  <span style="font-weight:600">Sarah Lee</span>
+                </div>
+              </td>
+              <td>Technician</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--accent-light);color:var(--accent);font-weight:600">Hourly</span></td>
+              <td style="font-weight:600">$40.00/hr</td>
+              <td style="font-weight:600">$60.00/hr</td>
+              <td style="font-size:13px;color:var(--text-secondary)">$7.10/hr<div style="font-size:11px;color:var(--text-muted)">Insurance + Taxes</div></td>
+              <td style="font-weight:700;color:var(--accent)">$47.10/hr</td>
+              <td><span class="status-pill st-active">● Active</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">MC</div>
+                  <span style="font-weight:600">Mike Chen</span>
+                </div>
+              </td>
+              <td>Senior Technician</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--green-light);color:var(--green);font-weight:600">Daily</span></td>
+              <td style="font-weight:600">$500.00/day</td>
+              <td style="font-weight:600">n/a</td>
+              <td style="font-size:13px;color:var(--text-secondary)">$65.00/day<div style="font-size:11px;color:var(--text-muted)">Full benefits pkg</div></td>
+              <td style="font-weight:700;color:var(--accent)">$565.00/day</td>
+              <td><span class="status-pill st-active">● Active</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#999;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;flex-shrink:0">DW</div>
+                  <span style="font-weight:600;color:var(--text-muted)">David Wong</span>
+                </div>
+              </td>
+              <td style="color:var(--text-muted)">Technician</td>
+              <td><span style="font-size:12px;padding:3px 9px;border-radius:20px;background:var(--orange-light);color:var(--orange);font-weight:600">Weekly</span></td>
+              <td style="font-weight:600;color:var(--text-muted)">$1,800/wk</td>
+              <td style="font-weight:600;color:var(--text-muted)">n/a</td>
+              <td style="font-size:13px;color:var(--text-muted)">$310/wk<div style="font-size:11px;color:var(--text-muted)">Insurance + Taxes</div></td>
+              <td style="font-weight:700;color:var(--text-muted)">$2,110/wk</td>
+              <td><span class="status-pill st-inactive">● Inactive</span></td>
+              <td><div class="action-row"><a href="#" class="ab" data-tip="Edit" onclick="showToast('Edit employee form would open')">✎</a><a href="#" class="ab ab-red" data-tip="Delete">🗑</a></div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         TAB 3: JOB PROFITABILITY
+         ═══════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-job-profitability">
+
+      <!-- Filter Bar -->
+      <div class="filter-bar" style="display:flex;flex-wrap:nowrap;overflow-x:auto;align-items:center;gap:8px">
+        <div class="search-box" style="min-width:240px;width:240px"><span style="color:var(--text-muted)">🔍</span><input type="text" id="searchProfit" placeholder="Search by job, customer..."></div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">From</label>
+          <input type="date" value="2026-01-01" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-primary);outline:none;width:130px">
+          <label style="font-size:12px;font-weight:600;color:var(--text-muted);white-space:nowrap">To</label>
+          <input type="date" value="2026-03-06" style="font-size:12px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text-primary);outline:none;width:130px">
+        </div>
+        <select class="form-select" style="width:160px;padding:8px 12px;font-size:13px;flex-shrink:0">
+          <option selected>All Statuses</option>
+          <option>Completed</option>
+          <option>In Progress</option>
+          <option>Scheduled</option>
+        </select>
+      </div>
+
+      <!-- Profitability Table -->
+      <div class="table-wrap">
+        <table>
+          <colgroup>
+            <col style="width:14%">
+            <col style="width:11%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:9%">
+            <col style="width:7%">
+            <col style="width:9%">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Job ID / Name</th>
+              <th>Customer</th>
+              <th>Revenue</th>
+              <th>Labor Cost</th>
+              <th>Material Cost</th>
+              <th>Expenses</th>
+              <th>Total Cost</th>
+              <th>Profit</th>
+              <th>Margin</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="profitBody">
+            <!-- Job 1 - High margin -->
+            <tr data-search="job-0001 ac install lisa brown">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0001</a>
+                <div style="font-size:12px;color:var(--text-muted)">Full AC Install</div>
+              </td>
+              <td style="font-weight:500">Lisa Brown</td>
+              <td style="font-weight:700">$22,000</td>
+              <td style="font-weight:600">$6,240</td>
+              <td style="font-weight:600">$5,800</td>
+              <td style="font-weight:600">$420</td>
+              <td style="font-weight:700">$12,460</td>
+              <td style="font-weight:700;color:var(--green)">$9,540</td>
+              <td><span class="margin-green">43.4%</span></td>
+              <td><span class="status-pill st-in-progress">● In Progress</span></td>
+            </tr>
+            <!-- Job 2 - High margin -->
+            <tr data-search="job-0002 hvac repair mike williams">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0002</a>
+                <div style="font-size:12px;color:var(--text-muted)">HVAC Repair</div>
+              </td>
+              <td style="font-weight:500">Mike Williams</td>
+              <td style="font-weight:700">$5,750</td>
+              <td style="font-weight:600">$1,680</td>
+              <td style="font-weight:600">$1,200</td>
+              <td style="font-weight:600">$85</td>
+              <td style="font-weight:700">$2,965</td>
+              <td style="font-weight:700;color:var(--green)">$2,785</td>
+              <td><span class="margin-green">48.4%</span></td>
+              <td><span class="status-pill st-completed">● Completed</span></td>
+            </tr>
+            <!-- Job 3 - High margin -->
+            <tr data-search="job-0003 pipe repair amy wilson">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0003</a>
+                <div style="font-size:12px;color:var(--text-muted)">Pipe Repair</div>
+              </td>
+              <td style="font-weight:500">Amy Wilson</td>
+              <td style="font-weight:700">$3,200</td>
+              <td style="font-weight:600">$798</td>
+              <td style="font-weight:600">$340</td>
+              <td style="font-weight:600">$18</td>
+              <td style="font-weight:700">$1,156</td>
+              <td style="font-weight:700;color:var(--green)">$2,044</td>
+              <td><span class="margin-green">63.9%</span></td>
+              <td><span class="status-pill st-completed">● Completed</span></td>
+            </tr>
+            <!-- Job 4 - Medium-high margin -->
+            <tr data-search="job-0004 kitchen remodel robert taylor">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0004</a>
+                <div style="font-size:12px;color:var(--text-muted)">Kitchen Remodel</div>
+              </td>
+              <td style="font-weight:500">Robert Taylor</td>
+              <td style="font-weight:700">$8,500</td>
+              <td style="font-weight:600">$2,856</td>
+              <td style="font-weight:600">$2,100</td>
+              <td style="font-weight:600">$195</td>
+              <td style="font-weight:700">$5,151</td>
+              <td style="font-weight:700;color:var(--green)">$3,349</td>
+              <td><span class="margin-green">39.4%</span></td>
+              <td><span class="status-pill st-completed">● Completed</span></td>
+            </tr>
+            <!-- Job 5 - Medium margin -->
+            <tr data-search="job-0005 bathroom reno sarah johnson">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0005</a>
+                <div style="font-size:12px;color:var(--text-muted)">Bathroom Renovation</div>
+              </td>
+              <td style="font-weight:500">Sarah Johnson</td>
+              <td style="font-weight:700">$12,300</td>
+              <td style="font-weight:600">$4,120</td>
+              <td style="font-weight:600">$4,600</td>
+              <td style="font-weight:600">$310</td>
+              <td style="font-weight:700">$9,030</td>
+              <td style="font-weight:700;color:var(--orange)">$3,270</td>
+              <td><span class="margin-orange">26.6%</span></td>
+              <td><span class="status-pill st-in-progress">● In Progress</span></td>
+            </tr>
+            <!-- Job 6 - Medium margin -->
+            <tr data-search="job-0006 slab leak tom davis">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0006</a>
+                <div style="font-size:12px;color:var(--text-muted)">Slab Leak Repair</div>
+              </td>
+              <td style="font-weight:500">Tom Davis</td>
+              <td style="font-weight:700">$3,200</td>
+              <td style="font-weight:600">$1,240</td>
+              <td style="font-weight:600">$1,080</td>
+              <td style="font-weight:600">$165</td>
+              <td style="font-weight:700">$2,485</td>
+              <td style="font-weight:700;color:var(--orange)">$715</td>
+              <td><span class="margin-orange">22.3%</span></td>
+              <td><span class="status-pill st-completed">● Completed</span></td>
+            </tr>
+            <!-- Job 7 - Medium margin -->
+            <tr data-search="job-0007 emergency pipe david kim">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0007</a>
+                <div style="font-size:12px;color:var(--text-muted)">Emergency Pipe Burst</div>
+              </td>
+              <td style="font-weight:500">David Kim</td>
+              <td style="font-weight:700">$8,900</td>
+              <td style="font-weight:600">$3,450</td>
+              <td style="font-weight:600">$3,100</td>
+              <td style="font-weight:600">$520</td>
+              <td style="font-weight:700">$7,070</td>
+              <td style="font-weight:700;color:var(--orange)">$1,830</td>
+              <td><span class="margin-orange">20.6%</span></td>
+              <td><span class="status-pill st-completed">● Completed</span></td>
+            </tr>
+            <!-- Job 8 - Low margin (red) -->
+            <tr data-search="job-0008 restroom buildout amy wilson">
+              <td>
+                <a href="job-detail.html" style="color:var(--accent);font-weight:600">JOB-0008</a>
+                <div style="font-size:12px;color:var(--text-muted)">Restroom Buildout</div>
+              </td>
+              <td style="font-weight:500">Amy Wilson</td>
+              <td style="font-weight:700">$15,800</td>
+              <td style="font-weight:600">$6,200</td>
+              <td style="font-weight:600">$5,400</td>
+              <td style="font-weight:600">$880</td>
+              <td style="font-weight:700">$12,480</td>
+              <td style="font-weight:700;color:var(--red)">$3,320</td>
+              <td><span class="margin-red">10.8%</span></td>
+              <td><span class="status-pill st-in-progress">● In Progress</span></td>
+            </tr>
+          </tbody>
+          <!-- Summary Row -->
+          <tfoot>
+            <tr class="summary-row">
+              <td style="font-weight:700">TOTALS (8 Jobs)</td>
+              <td></td>
+              <td style="font-weight:700">$79,650</td>
+              <td style="font-weight:700">$26,584</td>
+              <td style="font-weight:700">$23,620</td>
+              <td style="font-weight:700">$2,593</td>
+              <td style="font-weight:700">$52,797</td>
+              <td style="font-weight:700;color:var(--green)">$26,853</td>
+              <td><span class="margin-green">33.7%</span></td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
   </div>
+  <!-- end content -->
 </div>
+<!-- end main -->
+
+<!-- ═══ Toast ═══ -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+/* ═══ Tab Switching ═══ */
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ═══ Toast ═══ */
+function showToast(m) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = '\u2713 ' + m;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ═══ Select All Checkboxes ═══ */
+function toggleAllCheckboxes(master) {
+  document.querySelectorAll('#timeCostBody input[type="checkbox"]').forEach(cb => {
+    cb.checked = master.checked;
+  });
+}
+
+/* ═══ Search: Time & Cost Log ═══ */
+document.getElementById('searchTimeCost').addEventListener('input', function(e) {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('#timeCostBody tr').forEach(r => {
+    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+  });
+});
+
+/* ═══ Search: Job Profitability ═══ */
+document.getElementById('searchProfit').addEventListener('input', function(e) {
+  const q = e.target.value.toLowerCase();
+  document.querySelectorAll('#profitBody tr').forEach(r => {
+    r.style.display = r.dataset.search.includes(q) ? '' : 'none';
+  });
+});
+</script>
 </body>
 </html>

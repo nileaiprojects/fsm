@@ -186,75 +186,137 @@
 
     <!-- TITLE -->
     <h2>Sign In to TurboFSM</h2>
-    <div class="subtitle">Enter your registered email or phone number</div>
+    <div class="subtitle">Enter your credentials to access your account</div>
 
-    <!-- STEP INDICATOR -->
-    <div class="step-indicator">
-      <div class="step-dot active" id="dot1">1</div>
-      <div class="step-line" id="line1"></div>
-      <div class="step-dot" id="dot2">2</div>
-    </div>
-    <div class="step-labels">
-      <span class="step-label active" id="label1">Enter Email/Phone</span>
-      <span class="step-label" id="label2">Verify OTP</span>
-    </div>
-
-    <!-- ═══ STEP 1: EMAIL / PHONE ═══ -->
-    <div class="step-panel active" id="step1">
+    <!-- ═══ EMAIL / PASSWORD FORM ═══ -->
+    <div id="passwordForm">
       <div class="form-group">
-        <label>Email or Phone Number<span class="req">*</span></label>
-        <input type="text" class="form-input" id="emailInput" placeholder="john@company.com or (555) 123-4567">
+        <label>Email Address<span class="req">*</span></label>
+        <input type="email" class="form-input" id="emailInput" placeholder="john@company.com">
       </div>
-      <button type="button" class="btn-send-otp" onclick="goToStep2()">Send OTP</button>
+      <div class="form-group">
+        <label>Password<span class="req">*</span></label>
+        <input type="password" class="form-input" id="passwordInput" placeholder="Enter your password">
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+        <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-light);cursor:pointer">
+          <input type="checkbox" style="width:15px;height:15px;accent-color:var(--primary)"> Remember me
+        </label>
+        <a href="#" style="font-size:13px;color:var(--primary);font-weight:500;text-decoration:none" onclick="event.preventDefault();showForgotPassword()">Forgot Password?</a>
+      </div>
+      <a href="dashboard.html" class="btn-send-otp" style="display:block;text-align:center;text-decoration:none">Sign In</a>
+
+      <div style="display:flex;align-items:center;gap:12px;margin:22px 0 18px">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:12px;color:var(--text-muted);font-weight:500">OR</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+
+      <button type="button" style="width:100%;padding:12px;font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:var(--text-light);cursor:pointer;font-family:inherit;transition:all 0.2s" onclick="showOTPForm()">Sign in with OTP</button>
     </div>
 
-    <!-- ═══ STEP 2: OTP VERIFICATION ═══ -->
-    <div class="step-panel" id="step2">
-      <button type="button" class="btn-back" onclick="goToStep1()">← Change email/phone</button>
-
-      <div class="otp-sent-to">
-        OTP sent to <strong id="sentTo">john@company.com</strong>
+    <!-- ═══ OTP FORM (hidden by default) ═══ -->
+    <div id="otpFormSection" style="display:none">
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot1">1</div>
+        <div class="step-line" id="line1"></div>
+        <div class="step-dot" id="dot2">2</div>
+      </div>
+      <div class="step-labels">
+        <span class="step-label active" id="label1">Enter Email/Phone</span>
+        <span class="step-label" id="label2">Verify OTP</span>
       </div>
 
-      <div class="otp-inputs">
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-        <input type="text" maxlength="1" inputmode="numeric" data-otp>
-      </div>
-
-      <a href="dashboard.html" class="btn-verify">Verify &amp; Sign In</a>
-
-      <div class="otp-actions">
-        <div class="resend-link">
-          Didn't receive the code? <a href="#" onclick="event.preventDefault()">Resend OTP</a>
-          <span style="font-size:12px;color:var(--text-muted)"> (available after 60s)</span>
+      <div class="step-panel active" id="step1">
+        <div class="form-group">
+          <label>Email or Phone Number<span class="req">*</span></label>
+          <input type="text" class="form-input" id="otpEmailInput" placeholder="john@company.com or (555) 123-4567">
         </div>
-        <div class="otp-validity">OTP valid for 10 minutes</div>
+        <button type="button" class="btn-send-otp" onclick="goToStep2()">Send OTP</button>
+        <button type="button" style="width:100%;margin-top:10px;padding:12px;font-size:14px;font-weight:600;border:1.5px solid var(--border);border-radius:8px;background:#fff;color:var(--text-light);cursor:pointer;font-family:inherit" onclick="showPasswordForm()">Back to Password Sign In</button>
       </div>
+
+      <div class="step-panel" id="step2">
+        <button type="button" class="btn-back" onclick="goToStep1()">← Change email/phone</button>
+
+        <div class="otp-sent-to">
+          OTP sent to <strong id="sentTo">john@company.com</strong>
+        </div>
+
+        <div class="otp-inputs">
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+          <input type="text" maxlength="1" inputmode="numeric" data-otp>
+        </div>
+
+        <a href="dashboard.html" class="btn-verify">Verify &amp; Sign In</a>
+
+        <div class="otp-actions">
+          <div class="resend-link">
+            Didn't receive the code? <a href="#" onclick="event.preventDefault()">Resend OTP</a>
+            <span style="font-size:12px;color:var(--text-muted)"> (available after 60s)</span>
+          </div>
+          <div class="otp-validity">OTP valid for 10 minutes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FORGOT PASSWORD (hidden by default) ═══ -->
+    <div id="forgotSection" style="display:none">
+      <button type="button" class="btn-back" onclick="hideForgotPassword()">← Back to Sign In</button>
+      <div style="font-size:14px;color:var(--text-light);margin-bottom:18px;line-height:1.5">
+        Enter your email address and we'll send you a link to reset your password.
+      </div>
+      <div class="form-group">
+        <label>Email Address<span class="req">*</span></label>
+        <input type="email" class="form-input" placeholder="john@company.com">
+      </div>
+      <button type="button" class="btn-send-otp" onclick="this.textContent='Reset Link Sent!';this.style.background='var(--green)'">Send Reset Link</button>
     </div>
 
     <!-- BOTTOM LINKS -->
     <div class="form-divider"></div>
     <div class="form-links">
-      Don't have an account? <a href="registration.html">Start Free Trial</a>
+      Don't have an account? <a href="registration.html">Sign Up</a>
     </div>
 
   </div>
 
 <script>
-// Step navigation
+// Form switching
+function showOTPForm() {
+  document.getElementById('passwordForm').style.display = 'none';
+  document.getElementById('forgotSection').style.display = 'none';
+  document.getElementById('otpFormSection').style.display = 'block';
+}
+function showPasswordForm() {
+  document.getElementById('otpFormSection').style.display = 'none';
+  document.getElementById('forgotSection').style.display = 'none';
+  document.getElementById('passwordForm').style.display = 'block';
+}
+function showForgotPassword() {
+  document.getElementById('passwordForm').style.display = 'none';
+  document.getElementById('otpFormSection').style.display = 'none';
+  document.getElementById('forgotSection').style.display = 'block';
+}
+function hideForgotPassword() {
+  document.getElementById('forgotSection').style.display = 'none';
+  document.getElementById('passwordForm').style.display = 'block';
+}
+
+// OTP step navigation
 function goToStep2() {
-  var email = document.getElementById('emailInput').value.trim();
+  var email = document.getElementById('otpEmailInput').value.trim();
   if (!email) email = 'john@company.com';
   document.getElementById('sentTo').textContent = email;
 
   document.getElementById('step1').classList.remove('active');
   document.getElementById('step2').classList.add('active');
 
-  // Update indicators
   document.getElementById('dot1').classList.remove('active');
   document.getElementById('dot1').classList.add('completed');
   document.getElementById('dot1').textContent = '✓';
@@ -263,7 +325,6 @@ function goToStep2() {
   document.getElementById('label1').classList.remove('active');
   document.getElementById('label2').classList.add('active');
 
-  // Focus first OTP input
   var first = document.querySelector('[data-otp]');
   if (first) first.focus();
 }
@@ -272,7 +333,6 @@ function goToStep1() {
   document.getElementById('step2').classList.remove('active');
   document.getElementById('step1').classList.add('active');
 
-  // Reset indicators
   document.getElementById('dot1').classList.add('active');
   document.getElementById('dot1').classList.remove('completed');
   document.getElementById('dot1').textContent = '1';
@@ -281,10 +341,10 @@ function goToStep1() {
   document.getElementById('label1').classList.add('active');
   document.getElementById('label2').classList.remove('active');
 
-  document.getElementById('emailInput').focus();
+  document.getElementById('otpEmailInput').focus();
 }
 
-// OTP auto-advance: type a digit and jump to next box
+// OTP auto-advance
 document.querySelectorAll('[data-otp]').forEach(function(input, i, all) {
   input.addEventListener('input', function() {
     this.value = this.value.replace(/[^0-9]/g, '');
@@ -298,7 +358,6 @@ document.querySelectorAll('[data-otp]').forEach(function(input, i, all) {
       all[i - 1].classList.remove('filled');
     }
   });
-  // Allow paste of full OTP
   input.addEventListener('paste', function(e) {
     e.preventDefault();
     var data = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');

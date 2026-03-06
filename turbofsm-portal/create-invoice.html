@@ -119,6 +119,30 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 .toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar-bg);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:700;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all 300ms ease;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 
+/* ═══ INVOICE FORMAT ═══ */
+.inv-format-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.inv-format-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition)}
+.inv-format-opt:hover{border-color:var(--accent)}
+.inv-format-opt.selected{border-color:var(--accent);background:var(--accent-light)}
+.inv-format-opt .radio{width:18px;height:18px;border:2px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;transition:all var(--transition)}
+.inv-format-opt.selected .radio{border-color:var(--accent)}
+.inv-format-opt.selected .radio::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.inv-format-opt .opt-title{font-size:13px;font-weight:600}
+.inv-format-opt .opt-desc{font-size:11.5px;color:var(--text-muted);margin-top:2px;line-height:1.4}
+.vat-input-row{display:none;margin-top:10px;padding:12px 14px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);align-items:center;gap:10px}
+.vat-input-row.visible{display:flex}
+.vat-input-row label{font-size:12px;font-weight:600;color:var(--text-secondary);white-space:nowrap}
+.vat-input-row input{width:80px;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px;font-family:inherit;text-align:center}
+.vat-input-row input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 2px rgba(15,111,222,0.07)}
+
+/* ═══ INVOICE NUMBER ═══ */
+.inv-number-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border-light)}
+.inv-number-row .form-group{flex:1}
+.inv-number-row .form-group input{width:100%}
+.inv-number-row .form-group input:disabled{background:var(--bg);color:var(--text-secondary);cursor:not-allowed}
+.custom-inv-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:var(--text-secondary);white-space:nowrap;user-select:none;padding-top:18px}
+.custom-inv-toggle input[type="checkbox"]{width:15px;height:15px;cursor:pointer;accent-color:var(--accent)}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .card{animation:fadeUp .3s ease both}
 </style>
@@ -127,7 +151,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 
 <!-- ═══ SIDEBAR ═══ -->
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Overview</div>
       <a href="dashboard.html" class="nav-item"><span class="ni">■</span> Dashboard</a>
@@ -155,7 +179,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -166,7 +191,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
     <div class="topbar-left">
       <a href="invoicing.html" class="topbar-btn" style="padding:7px 10px">← Back</a>
       <h1>Create Invoice</h1>
-      <span class="t-sub">#INV-20260305-007</span>
+      <span class="t-sub" id="topbarInvNumber">#INV-20260305-007</span>
     </div>
     <div class="topbar-right">
       <button class="topbar-btn" onclick="showToast('Draft saved')">💾 Save Draft</button>
@@ -193,9 +218,61 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
       <!-- LEFT: Main form -->
       <div>
 
+        <!-- Invoice Format -->
+        <div class="card">
+          <div class="card-title">📋 Invoice Format</div>
+          <div style="font-size:12.5px;color:var(--text-secondary)">Choose how line items and amounts appear on the invoice</div>
+          <div class="inv-format-grid">
+            <div class="inv-format-opt" data-format="consolidated" onclick="selectFormat(this)">
+              <div class="radio"></div>
+              <div>
+                <div class="opt-title">Consolidated Amount Only</div>
+                <div class="opt-desc">Invoice shows only the total consolidated amount, no line item breakdown</div>
+              </div>
+            </div>
+            <div class="inv-format-opt" data-format="line-consolidated" onclick="selectFormat(this)">
+              <div class="radio"></div>
+              <div>
+                <div class="opt-title">Line Items, Consolidated Amount</div>
+                <div class="opt-desc">Shows line items for reference but amount is consolidated into one total</div>
+              </div>
+            </div>
+            <div class="inv-format-opt selected" data-format="line-individual" onclick="selectFormat(this)">
+              <div class="radio"></div>
+              <div>
+                <div class="opt-title">Line Items with Individual Pricing</div>
+                <div class="opt-desc">Shows each line item with its individual price and quantity</div>
+              </div>
+            </div>
+            <div class="inv-format-opt" data-format="include-vat" onclick="toggleVat(this)">
+              <div class="radio"></div>
+              <div>
+                <div class="opt-title">Include VAT</div>
+                <div class="opt-desc">Allows adding a VAT percentage to the invoice total</div>
+              </div>
+            </div>
+          </div>
+          <div class="vat-input-row" id="vatInputRow">
+            <label>VAT Percentage:</label>
+            <input type="number" id="vatPercent" value="20" min="0" max="100" step="0.5" placeholder="20">
+            <span style="font-size:12px;color:var(--text-muted)">%</span>
+            <span style="font-size:12px;color:var(--text-secondary);margin-left:auto" id="vatAmtLabel">VAT: $0.00</span>
+          </div>
+        </div>
+
         <!-- Customer & Job -->
         <div class="card">
           <div class="card-title">👤 Customer & Job Details</div>
+          <div class="inv-number-row">
+            <div class="form-group">
+              <label>Invoice Number</label>
+              <input type="text" id="invoiceNumberInput" value="#INV-20260305-007" disabled>
+            </div>
+            <label class="custom-inv-toggle">
+              <input type="checkbox" id="customInvToggle" onchange="toggleCustomInvoiceNumber(this)">
+              Use Custom Invoice Number
+            </label>
+          </div>
           <div class="form-row">
             <div class="form-group">
               <label>Customer</label>
@@ -553,6 +630,49 @@ function showToast(msg) {
   clearTimeout(t._to);
   t._to = setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+// ═══ Invoice Format Selection ═══
+function selectFormat(el) {
+  // Options 1-3 are mutually exclusive; deselect whichever of 1-3 is currently selected
+  document.querySelectorAll('.inv-format-opt:not([data-format="include-vat"])').forEach(opt => {
+    opt.classList.remove('selected');
+  });
+  el.classList.add('selected');
+}
+
+function toggleVat(el) {
+  // VAT option toggles independently of options 1-3
+  el.classList.toggle('selected');
+  const vatRow = document.getElementById('vatInputRow');
+  if (el.classList.contains('selected')) {
+    vatRow.classList.add('visible');
+  } else {
+    vatRow.classList.remove('visible');
+  }
+}
+
+// ═══ Custom Invoice Number Toggle ═══
+function toggleCustomInvoiceNumber(checkbox) {
+  const input = document.getElementById('invoiceNumberInput');
+  if (checkbox.checked) {
+    input.disabled = false;
+    input.focus();
+    input.select();
+  } else {
+    input.disabled = true;
+    input.value = '#INV-20260305-007'; // reset to auto-generated
+  }
+}
+
+// Sync invoice number input to topbar
+document.addEventListener('DOMContentLoaded', function() {
+  const invInput = document.getElementById('invoiceNumberInput');
+  if (invInput) {
+    invInput.addEventListener('input', function() {
+      document.getElementById('topbarInvNumber').textContent = this.value;
+    });
+  }
+});
 </script>
 </body>
 </html>

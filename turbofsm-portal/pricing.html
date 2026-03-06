@@ -90,7 +90,7 @@
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Overview</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -118,7 +118,8 @@
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -135,113 +136,81 @@
   </header>
   <div class="content">
 
+    <!-- TurboFSM branding header -->
+    <div style="text-align:center;margin-bottom:28px;padding:20px 0 10px">
+      <div style="display:inline-flex;align-items:center;gap:10px;margin-bottom:12px">
+        <div style="width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;font-weight:700">⚡</div>
+        <span style="font-size:22px;font-weight:700;color:var(--accent)">TurboFSM</span>
+      </div>
+      <div style="font-size:14px;color:var(--text-secondary);max-width:500px;margin:0 auto">Choose the plan that fits your business. All plans include a 14-day free trial.</div>
+    </div>
+
     <!-- ═══ PLAN CARDS ═══ -->
     <div class="plan-grid">
 
       <!-- Starter -->
       <div class="plan-card">
         <div class="plan-name">Starter</div>
-        <div class="plan-price">$0<span class="free-label">14-day free trial</span></div>
+        <div class="plan-price">$29<span class="period">/month</span></div>
         <div class="plan-limits">
-          <div>Up to 10 users</div>
+          <div>Up to 3 users</div>
           <div class="storage">5 GB storage</div>
         </div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
           <li><span class="check">✓</span> Lead Creation &amp; Management</li>
-          <li><span class="check">✓</span> AI-Based Lead Analysis</li>
           <li><span class="check">✓</span> Schedule Follow-up &amp; Site Inspection</li>
-          <li><span class="check">✓</span> Create &amp; Send Estimate</li>
-          <li><span class="check">✓</span> Create Job &amp; Assign Crew</li>
+          <li><span class="check">✓</span> Create &amp; Send Estimates</li>
+          <li><span class="check">✓</span> Create Job &amp; Assign Team</li>
           <li><span class="check">✓</span> Track Job Closure</li>
-          <li><span class="check">✓</span> Raise &amp; Track Invoice</li>
-          <li><span class="check">✓</span> Reports</li>
+          <li><span class="check">✓</span> Basic Invoicing</li>
+          <li><span class="check">✓</span> Email Support</li>
         </ul>
-        <a href="registration.html" class="plan-btn primary">Start Free Trial</a>
+        <a href="registration.html" class="plan-btn outline">Start Free Trial</a>
       </div>
 
-      <!-- Basic (Current Plan) -->
+      <!-- Professional (Current Plan) -->
       <div class="plan-card current">
-        <div class="plan-badge">Your Current Plan</div>
-        <div class="plan-name">Basic</div>
-        <div class="plan-price">$60<span class="period">/month</span></div>
+        <div class="plan-badge">Current Plan</div>
+        <div class="plan-name">Professional</div>
+        <div class="plan-price">$79<span class="period">/month</span></div>
         <div class="plan-limits">
-          <div>Up to 5 users</div>
-          <div class="storage">5 GB storage</div>
+          <div>Up to 10 users</div>
+          <div class="storage">15 GB storage</div>
         </div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
-          <li><span class="check">✓</span> Lead Creation &amp; Management</li>
-          <li><span class="check">✓</span> Schedule Follow-up &amp; Site Inspection</li>
-          <li><span class="check">✓</span> Create &amp; Send Estimate</li>
-          <li><span class="check">✓</span> Create Job &amp; Assign Crew</li>
-          <li><span class="check">✓</span> Track Job Closure</li>
+          <li><span class="check">✓</span> Everything in Starter</li>
+          <li><span class="check">✓</span> AI-Based Lead Analysis</li>
+          <li><span class="check">✓</span> Advanced Invoicing &amp; Collections</li>
+          <li><span class="check">✓</span> Crew Cost Tracking</li>
+          <li><span class="check">✓</span> Reports &amp; Analytics</li>
+          <li><span class="check">✓</span> Customer Portal</li>
+          <li><span class="check">✓</span> Priority Email &amp; Chat Support</li>
         </ul>
         <span class="plan-btn current-btn">Current Plan</span>
       </div>
 
-      <!-- Super -->
+      <!-- Enterprise -->
       <div class="plan-card">
-        <div class="plan-name">Super</div>
-        <div class="plan-price">$100<span class="period">/month</span></div>
+        <div class="plan-name">Enterprise</div>
+        <div class="plan-price">$149<span class="period">/month</span></div>
         <div class="plan-limits">
-          <div>Up to 10 users</div>
-          <div class="storage">5 GB storage</div>
+          <div>Unlimited users</div>
+          <div class="storage">50 GB storage</div>
         </div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
-          <li><span class="check">✓</span> All Basic features</li>
-          <li><span class="check">✓</span> Raise &amp; Track Invoice</li>
-          <li><span class="check">✓</span> Reports</li>
+          <li><span class="check">✓</span> Everything in Professional</li>
+          <li><span class="check">✓</span> Floor Plan Creation</li>
+          <li><span class="check">✓</span> Virtual Assistant</li>
+          <li><span class="check">✓</span> Advanced AI Insights</li>
+          <li><span class="check">✓</span> Custom Branding &amp; White Label</li>
+          <li><span class="check">✓</span> Multi-location Support</li>
+          <li><span class="check">✓</span> API Access &amp; Integrations</li>
+          <li><span class="check">✓</span> Dedicated Account Manager</li>
         </ul>
-        <a href="#" class="plan-btn outline">Select Plan</a>
-      </div>
-
-      <!-- Gold -->
-      <div class="plan-card">
-        <div class="plan-name">Gold</div>
-        <div class="plan-price">$130<span class="period">/month</span></div>
-        <div class="plan-limits">
-          <div>Up to 15 users</div>
-          <div class="storage">5 GB storage</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="check">✓</span> All Super features</li>
-        </ul>
-        <a href="#" class="plan-btn outline">Select Plan</a>
-      </div>
-
-      <!-- Platinum -->
-      <div class="plan-card">
-        <div class="plan-name">Platinum</div>
-        <div class="plan-price">$200<span class="period">/month</span></div>
-        <div class="plan-limits">
-          <div>Up to 25 users</div>
-          <div class="storage">5 GB storage</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="check">✓</span> All Super features</li>
-        </ul>
-        <a href="#" class="plan-btn outline">Select Plan</a>
-      </div>
-
-      <!-- Platinum Pro -->
-      <div class="plan-card">
-        <div class="plan-name">Platinum Pro</div>
-        <div class="plan-price">$400<span class="period">/month</span></div>
-        <div class="plan-limits">
-          <div>Up to 50 users</div>
-          <div class="storage">20 GB storage</div>
-        </div>
-        <div class="plan-divider"></div>
-        <ul class="plan-features">
-          <li><span class="check">✓</span> All Platinum features</li>
-          <li><span class="check">✓</span> AI-Based Lead Analysis</li>
-          <li><span class="check">✓</span> 20 GB storage</li>
-        </ul>
-        <a href="#" class="plan-btn outline">Select Plan</a>
+        <a href="#" class="plan-btn primary">Upgrade to Enterprise</a>
       </div>
 
     </div>
@@ -252,12 +221,9 @@
       <thead>
         <tr>
           <th>Feature</th>
-          <th><span class="th-plan">Starter</span><span class="th-price">$0</span><span class="th-users">14-Day Free Trial · Up to 10 Users</span></th>
-          <th><span class="th-plan">Basic</span><span class="th-price">$60/mo</span><span class="th-users">Up to 5 Users</span></th>
-          <th><span class="th-plan">Super</span><span class="th-price">$100/mo</span><span class="th-users">Up to 10 Users</span></th>
-          <th><span class="th-plan">Gold</span><span class="th-price">$130/mo</span><span class="th-users">Up to 15 Users</span></th>
-          <th><span class="th-plan">Platinum</span><span class="th-price">$200/mo</span><span class="th-users">Up to 25 Users</span></th>
-          <th><span class="th-plan">Platinum Pro</span><span class="th-price">$400/mo</span><span class="th-users">Up to 50 Users</span></th>
+          <th><span class="th-plan">Starter</span><span class="th-price">$29/mo</span><span class="th-users">Up to 3 Users</span></th>
+          <th><span class="th-plan">Professional</span><span class="th-price">$79/mo</span><span class="th-users">Up to 10 Users</span></th>
+          <th><span class="th-plan">Enterprise</span><span class="th-price">$149/mo</span><span class="th-users">Unlimited Users</span></th>
         </tr>
       </thead>
       <tbody>
@@ -266,78 +232,27 @@
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr class="highlight">
           <td>AI-Based Lead Analysis</td>
+          <td><span class="icon-no">✗</span></td>
           <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
-          <td>Schedule Follow-up</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
+          <td>Schedule Follow-up &amp; Site Inspection</td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
-          <td>Schedule Site Inspection</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-        </tr>
-        <tr>
-          <td>Create Estimate</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-        </tr>
-        <tr class="highlight">
-          <td>Floor Plan Creation</td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-no">✗</span></td>
-        </tr>
-        <tr>
-          <td>Send Estimate</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
+          <td>Create &amp; Send Estimates</td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
-          <td>Create Job</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-        </tr>
-        <tr>
-          <td>Assign Crew</td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
+          <td>Create Job &amp; Assign Team</td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
@@ -347,36 +262,78 @@
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Basic Invoicing</td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
-          <td>Raise &amp; Track Invoice</td>
-          <td><span class="icon-yes">✓</span></td>
+          <td>Advanced Invoicing &amp; Collections</td>
           <td><span class="icon-no">✗</span></td>
-          <td><span class="icon-yes">✓</span></td>
-          <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
-          <td>Reports</td>
-          <td><span class="icon-yes">✓</span></td>
+          <td>Crew Cost Tracking</td>
           <td><span class="icon-no">✗</span></td>
           <td><span class="icon-yes">✓</span></td>
           <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Reports &amp; Analytics</td>
+          <td><span class="icon-no">✗</span></td>
           <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Customer Portal</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr class="highlight">
+          <td>Floor Plan Creation</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr class="highlight">
+          <td>Virtual Assistant</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Custom Branding &amp; White Label</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>Multi-location Support</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-yes">✓</span></td>
+        </tr>
+        <tr>
+          <td>API Access &amp; Integrations</td>
+          <td><span class="icon-no">✗</span></td>
+          <td><span class="icon-no">✗</span></td>
           <td><span class="icon-yes">✓</span></td>
         </tr>
         <tr>
           <td>Storage Space</td>
           <td>5 GB</td>
-          <td>5 GB</td>
-          <td>5 GB</td>
-          <td>5 GB</td>
-          <td>5 GB</td>
-          <td>20 GB</td>
+          <td>15 GB</td>
+          <td>50 GB</td>
+        </tr>
+        <tr>
+          <td>Support</td>
+          <td>Email</td>
+          <td>Priority Email &amp; Chat</td>
+          <td>Dedicated Account Manager</td>
         </tr>
       </tbody>
     </table>
@@ -394,36 +351,29 @@
       </thead>
       <tbody>
         <tr>
-          <td>Single User Add-on</td>
-          <td>$10/mo per additional user</td>
-          <td><button class="purchase-btn">Purchase</button></td>
+          <td>Additional User</td>
+          <td>$10/mo per user</td>
+          <td><button class="purchase-btn">Add</button></td>
         </tr>
         <tr>
-          <td>AI-Based Lead Analysis</td>
-          <td>$30/mo</td>
-          <td><button class="purchase-btn">Purchase</button></td>
+          <td>AI-Based Lead Analysis (Starter plan)</td>
+          <td>$15/mo</td>
+          <td><button class="purchase-btn">Add</button></td>
         </tr>
         <tr>
-          <td>Floor Plan Creation</td>
-          <td>$40/mo</td>
-          <td><button class="purchase-btn">Purchase</button></td>
-        </tr>
-        <tr>
-          <td>Virtual Assistant</td>
-          <td>$60/mo</td>
-          <td><button class="purchase-btn">Purchase</button></td>
-        </tr>
-        <tr>
-          <td>Additional Storage</td>
-          <td>$10/mo per 10 GB</td>
-          <td><button class="purchase-btn">Purchase</button></td>
+          <td>Additional Storage (10 GB)</td>
+          <td>$5/mo</td>
+          <td><button class="purchase-btn">Add</button></td>
         </tr>
       </tbody>
     </table>
 
-    <!-- ═══ PROCEED BUTTON ═══ -->
-    <div class="proceed-wrap">
-      <button class="proceed-btn">Proceed to Payment</button>
+    <!-- ═══ FAQ / INFO ═══ -->
+    <div style="text-align:center;padding:20px 0 10px">
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">
+        All plans include a 14-day free trial. No credit card required to get started.<br>
+        Need a custom plan? <a href="#" style="color:var(--accent);font-weight:600;text-decoration:none">Contact our sales team</a>
+      </div>
     </div>
 
   </div>

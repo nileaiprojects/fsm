@@ -85,12 +85,37 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 .em-row{display:flex;justify-content:space-between;padding:6px 0;font-size:13px;border-bottom:1px solid var(--border-light)}.em-row:last-child{border-bottom:none}
 .em-label{color:var(--text-secondary)}.em-val{font-weight:600}
 
+/* Workflow progression */
+.wf-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 24px;margin-bottom:18px;display:flex;align-items:center;gap:0}
+.wf-step{display:flex;align-items:center;gap:8px;flex:1;position:relative}
+.wf-step:not(:last-child)::after{content:'';flex:1;height:2px;background:var(--border);margin:0 12px}
+.wf-step.done:not(:last-child)::after{background:var(--green)}
+.wf-step.active:not(:last-child)::after{background:linear-gradient(90deg,var(--orange) 50%,var(--border) 50%)}
+.wf-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;border:2px solid var(--border);background:var(--surface);flex-shrink:0;color:var(--text-muted)}
+.wf-step.done .wf-dot{background:var(--green);border-color:var(--green);color:#fff}
+.wf-step.active .wf-dot{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 0 0 4px var(--orange-light)}
+.wf-label{font-size:11.5px;font-weight:600;color:var(--text-muted);white-space:nowrap}
+.wf-step.done .wf-label{color:var(--green)}
+.wf-step.active .wf-label{color:var(--orange)}
+
+/* Cancel modal */
+.modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center}
+.modal-box{background:var(--surface);border-radius:var(--radius-lg);padding:28px 32px;width:440px;box-shadow:var(--shadow-lg);text-align:center}
+.modal-box .mb-icon{font-size:36px;margin-bottom:12px}
+.modal-box .mb-title{font-size:17px;font-weight:700;margin-bottom:8px}
+.modal-box .mb-text{font-size:13.5px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+.modal-box .mb-actions{display:flex;gap:10px;justify-content:center}
+.modal-box .mb-btn{padding:10px 24px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:600;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer;font-family:inherit;transition:all var(--transition)}
+.modal-box .mb-btn:hover{border-color:var(--accent);color:var(--accent)}
+.modal-box .mb-btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.modal-box .mb-btn.danger:hover{background:#c82333}
+
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -118,7 +143,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -128,7 +154,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 <div class="main">
   <header class="topbar">
     <div class="topbar-left"><a href="jobs-board.html" style="font-size:14px;color:var(--text-muted);margin-right:4px">←</a><h1>Job Detail</h1><span class="t-sub">JOB-20260210-004 · John Smith</span></div>
-    <div class="topbar-right"><a href="job-invoice.html" class="topbar-btn">💰 Invoice</a><a href="job-cost-sheet.html" class="topbar-btn">📊 Cost Sheet</a><a href="create-job.html" class="topbar-btn">✎ Edit Job</a></div>
+    <div class="topbar-right"><a href="job-invoice.html" class="topbar-btn">💰 Invoice</a><a href="job-cost-sheet.html" class="topbar-btn">📊 Cost Sheet</a><a href="edit-job.html" class="topbar-btn">✎ Edit Job</a><button class="topbar-btn" style="background:var(--red-light);color:var(--red);border-color:var(--red)" onclick="document.getElementById('cancelModal').style.display='flex'">✕ Cancel Job</button></div>
   </header>
 
   <div class="content">
@@ -140,6 +166,14 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
       <div class="jsb-item"><div class="jsb-label">Status</div><span class="status-pill st-in-progress">● In Progress</span></div>
       <div class="jsb-item"><div class="jsb-label">Value</div><div class="jsb-value" style="color:var(--accent)">$8,500</div></div>
       <div class="jsb-item" style="margin-left:auto"><div class="jsb-label">Crew</div><div style="display:flex"><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:10px;font-weight:600">JR</span><span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:600;margin-left:-6px">CM</span></div></div>
+    </div>
+
+    <!-- Workflow Progression -->
+    <div class="wf-bar">
+      <div class="wf-step done"><div class="wf-dot">✓</div><div class="wf-label">Scheduled</div></div>
+      <div class="wf-step active"><div class="wf-dot">2</div><div class="wf-label">In Progress</div></div>
+      <div class="wf-step"><div class="wf-dot">3</div><div class="wf-label">Work Complete</div></div>
+      <div class="wf-step"><div class="wf-dot">4</div><div class="wf-label">Closed (All Paid)</div></div>
     </div>
 
     <div class="tab-bar">
@@ -240,16 +274,23 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
     </div>
   </div>
 </div>
+
+<!-- Cancel Job Modal -->
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal-box">
+    <div class="mb-icon">⚠</div>
+    <div class="mb-title">Cancel This Job?</div>
+    <div class="mb-text">Are you sure you want to cancel this job? Any unpaid invoices against this job will be cancelled.</div>
+    <div class="mb-actions">
+      <button class="mb-btn" onclick="document.getElementById('cancelModal').style.display='none'">No, Keep Job</button>
+      <button class="mb-btn danger" onclick="document.getElementById('cancelModal').style.display='none';document.querySelector('.status-pill').innerHTML='● Cancelled';document.querySelector('.status-pill').className='status-pill';document.querySelector('.status-pill').style.cssText='background:var(--red-light);color:var(--red)'">Yes, Cancel Job</button>
+    </div>
+  </div>
+</div>
+
 <script>
 function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+name).classList.add('active')}
 function switchDay(btn,id){document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');['day1','day2','day3'].forEach(d=>document.getElementById(d).style.display=d===id?'':'none')}
-</script>
-
-<script>
-
-function switchTab(name,el){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));el.classList.add('active');document.getElementById('tab-'+name).classList.add('active')}
-function switchDay(btn,id){document.querySelectorAll('.day-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');['day1','day2','day3'].forEach(d=>document.getElementById(d).style.display=d===id?'':'none')}
-
 </script>
 </body>
 </html>

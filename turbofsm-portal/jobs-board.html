@@ -111,6 +111,16 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
 
 /* ═══ ACTIONS — Single-line icon buttons with tooltips ═══ */
 .action-row{display:flex;align-items:center;gap:3px;flex-wrap:nowrap}
+.action-group{display:flex;align-items:center;gap:4px;flex-wrap:nowrap;white-space:nowrap}
+.ra{display:inline-flex;align-items:center;gap:3px;padding:4px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:11px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all var(--transition);text-decoration:none;white-space:nowrap;flex-shrink:0;font-family:inherit}
+.ra:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.ra.ra-primary{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+.ra.ra-primary:hover{background:var(--accent);color:#fff}
+.ra.ra-danger{background:var(--red-light);color:var(--red);border-color:var(--red)}
+.ra.ra-danger:hover{background:var(--red);color:#fff}
+.ra.green:hover{border-color:var(--green);color:var(--green);background:var(--green-light)}
+.ra.teal:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
+.ra.orange:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-light)}
 .ab{position:relative;width:30px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:13px;transition:all var(--transition);color:var(--text-secondary);text-decoration:none;flex-shrink:0}
 .ab:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
 .ab.ab-teal:hover{border-color:var(--teal);color:var(--teal);background:var(--teal-light)}
@@ -131,7 +141,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -159,7 +169,8 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -177,7 +188,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
       <div class="kpi-card"><div class="kv" style="color:var(--accent)">9</div><div class="kl">Total Jobs</div><div class="kdate">📋 All time</div><div class="ka" style="background:var(--accent)"></div></div>
       <div class="kpi-card"><div class="kv" style="color:#495057">4</div><div class="kl">Yet to Start</div><div class="kdate">⏳ From estimates</div><div class="ka" style="background:#868e96"></div></div>
       <div class="kpi-card"><div class="kv" style="color:var(--orange)">2</div><div class="kl">In Progress</div><div class="kdate">🔧 Active now</div><div class="ka" style="background:var(--orange)"></div></div>
-      <div class="kpi-card"><div class="kv" style="color:var(--green)">2</div><div class="kl">Completed</div><div class="kdate">✓ This month</div><div class="ka" style="background:var(--green)"></div></div>
+      <div class="kpi-card"><div class="kv" style="color:var(--green)">2</div><div class="kl">Closed (All Paid)</div><div class="kdate">✓ This month</div><div class="ka" style="background:var(--green)"></div></div>
       <div class="kpi-card"><div class="kv" style="color:var(--teal)">$61,450</div><div class="kl">Total Value</div><div class="kdate">💰 Active pipeline</div><div class="ka" style="background:var(--teal)"></div></div>
     </div>
 
@@ -197,7 +208,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
       <div class="section-body" id="body-s1">
         <div class="table-wrap">
           <table>
-            <colgroup><col style="width:30%"><col style="width:11%"><col style="width:9%"><col style="width:12%"><col style="width:12%"><col style="width:16%"></colgroup>
+            <colgroup><col style="width:24%"><col style="width:10%"><col style="width:9%"><col style="width:11%"><col style="width:12%"><col style="width:34%"></colgroup>
             <thead><tr><th>Job / Customer / Site</th><th>Value</th><th>Estimate</th><th>Invoice</th><th>Schedule</th><th style="text-align:right">Actions</th></tr></thead>
             <tbody>
               <tr data-search="job-001 lisa brown maple san antonio re-piping">
@@ -252,7 +263,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
             <button class="chip active" data-sf="all">All <span class="cnt">5</span></button>
             <button class="chip" data-sf="scheduled">Scheduled <span class="cnt">1</span></button>
             <button class="chip" data-sf="in-progress">In Progress <span class="cnt">2</span></button>
-            <button class="chip" data-sf="completed">Completed <span class="cnt">2</span></button>
+            <button class="chip" data-sf="completed">Closed (All Paid) <span class="cnt">2</span></button>
           </div>
           <div class="sh-chevron" id="chev-s2">▼</div>
         </div>
@@ -260,7 +271,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
       <div class="section-body" id="body-s2">
         <div class="table-wrap">
           <table>
-            <colgroup><col style="width:27%"><col style="width:11%"><col style="width:9%"><col style="width:10%"><col style="width:10%"><col style="width:15%"></colgroup>
+            <colgroup><col style="width:22%"><col style="width:10%"><col style="width:8%"><col style="width:10%"><col style="width:10%"><col style="width:40%"></colgroup>
             <thead><tr><th>Job / Customer / Site</th><th>Schedule</th><th>Crew</th><th>Status</th><th>Invoice</th><th style="text-align:right">Actions</th></tr></thead>
             <tbody id="scheduledBody">
               <!-- Scheduled (new status) -->
@@ -270,7 +281,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
                 <td><div class="crew-stack"><div class="crew-av c2">CM</div><div class="crew-av c3">KP</div></div></td>
                 <td><span class="status-pill st-scheduled">● Scheduled</span></td>
                 <td><span class="inv-pill inv-sent">✓ Sent</span></td>
-                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><div class="act-sep"></div><a href="edit-job.html" class="ra">✎ Edit</a><button class="ra ra-danger" onclick="cancelJob(this,'Mark Taylor')">✕ Cancel</button></div></td>
               </tr>
               <!-- In Progress 1 -->
               <tr data-sf="in-progress" data-search="job-004 john smith oak austin kitchen pipe">
@@ -279,7 +290,7 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
                 <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c2">CM</div></div></td>
                 <td><span class="status-pill st-in-progress">● In Progress</span></td>
                 <td><span class="inv-pill inv-sent">✓ Sent</span></td>
-                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="edit-job.html" class="ra">✎ Edit</a><button class="ra ra-danger" onclick="cancelJob(this,'John Smith')">✕ Cancel</button></div></td>
               </tr>
               <!-- In Progress 2 -->
               <tr data-sf="in-progress" data-search="job-005 sarah johnson pine dallas bathroom">
@@ -288,23 +299,23 @@ tbody tr:hover .job-cell .jc-id{max-height:16px;opacity:1}
                 <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c3">KP</div><div class="crew-av c4">DC</div></div></td>
                 <td><span class="status-pill st-in-progress">● In Progress</span></td>
                 <td><span class="inv-pill inv-partial">◐ Partial</span></td>
-                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="create-job.html" class="ra">✎ Edit</a></div></td>
+                <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a><button class="ra orange" onclick="showToast('Change request form opened')">+ CR</button><div class="act-sep"></div><a href="edit-job.html" class="ra">✎ Edit</a><button class="ra ra-danger" onclick="cancelJob(this,'Sarah Johnson')">✕ Cancel</button></div></td>
               </tr>
-              <!-- Completed 1 -->
+              <!-- Closed (All Paid) 1 -->
               <tr data-sf="completed" data-search="job-006 tom davis cedar fort worth slab leak">
                 <td class="job-cell"><div class="jc-top"><span class="jc-name">Tom Davis</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 654 Cedar Ct, Fort Worth TX</div><div class="jc-id">JOB-20260120-006</div></td>
                 <td><div style="font-weight:500;font-size:13px">Feb 20 – 21</div><div style="font-size:11px;color:var(--text-muted)">2 days</div></td>
                 <td><div class="crew-stack"><div class="crew-av c2">CM</div></div></td>
-                <td><span class="status-pill st-completed">● Completed</span></td>
+                <td><span class="status-pill st-completed">● Closed (All Paid)</span></td>
                 <td><span class="inv-pill inv-paid">✓ Paid</span></td>
                 <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a></div></td>
               </tr>
-              <!-- Completed 2 -->
+              <!-- Closed (All Paid) 2 -->
               <tr data-sf="completed" data-search="job-007 david kim oak austin emergency">
                 <td class="job-cell"><div class="jc-top"><span class="jc-name">David Kim</span><span class="job-type-tag jt-one">One-time</span></div><div class="jc-site"><span class="pin">📍</span> 112 Oak Ridge, Austin TX</div><div class="jc-id">JOB-20260105-007</div></td>
                 <td><div style="font-weight:500;font-size:13px">Feb 1 – 3</div><div style="font-size:11px;color:var(--text-muted)">3 days</div></td>
                 <td><div class="crew-stack"><div class="crew-av c1">JR</div><div class="crew-av c3">KP</div></div></td>
-                <td><span class="status-pill st-completed">● Completed</span></td>
+                <td><span class="status-pill st-completed">● Closed (All Paid)</span></td>
                 <td><span class="inv-pill inv-paid">✓ Paid</span></td>
                 <td><div class="action-group" style="justify-content:flex-end"><a href="job-detail.html" class="ra">👁 Details</a><a href="create-invoice.html" class="ra green">💰 Invoice</a><a href="job-cost-sheet.html" class="ra teal">📊 Costs</a></div></td>
               </tr>
@@ -334,7 +345,7 @@ document.getElementById('searchInput').addEventListener('input',e=>{const q=e.ta
 document.querySelectorAll('[data-sf].chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('[data-sf].chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const f=c.dataset.sf;document.querySelectorAll('#scheduledBody tr').forEach(r=>{r.style.display=(f==='all'||r.dataset.sf===f)?'':'none'})})});
 
 // Cancel
-function cancelJob(btn,name){if(!confirm('Cancel job for '+name+'?'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
+function cancelJob(btn,name){if(!confirm('Are you sure you want to cancel the job for '+name+'? Any unpaid invoices against this job will be cancelled.'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
 
 // Toast
 function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
@@ -357,7 +368,7 @@ document.getElementById('searchInput').addEventListener('input',e=>{const q=e.ta
 document.querySelectorAll('[data-sf].chip').forEach(c=>{c.addEventListener('click',()=>{document.querySelectorAll('[data-sf].chip').forEach(x=>x.classList.remove('active'));c.classList.add('active');const f=c.dataset.sf;document.querySelectorAll('#scheduledBody tr').forEach(r=>{r.style.display=(f==='all'||r.dataset.sf===f)?'':'none'})})});
 
 // Cancel
-function cancelJob(btn,name){if(!confirm('Cancel job for '+name+'?'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
+function cancelJob(btn,name){if(!confirm('Are you sure you want to cancel the job for '+name+'? Any unpaid invoices against this job will be cancelled.'))return;btn.closest('tr').style.opacity='.4';btn.closest('tr').style.pointerEvents='none';showToast('Job cancelled for '+name)}
 
 // Toast
 function showToast(msg){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}

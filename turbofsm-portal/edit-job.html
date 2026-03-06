@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TurboFSM — Edit Job Details</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--bg:#f6f7f9;--surface:#ffffff;--surface-hover:#f8f9fb;--border:#e2e5ea;--border-light:#eef0f3;--text-primary:#1a1d23;--text-secondary:#5f6880;--text-muted:#8e96a8;--accent:#0f6fde;--accent-light:#e8f1fc;--accent-hover:#0b5bb8;--teal:#0d9488;--teal-light:#e6f7f5;--orange:#e67e22;--orange-light:#fef3e2;--red:#dc3545;--red-light:#fde8ea;--green:#16a34a;--green-light:#e8f8ee;--purple:#7c3aed;--purple-light:#f0ebfe;--sidebar-bg:#1a1d23;--sidebar-text:#8a92a6;--sidebar-active:#ffffff;--sidebar-active-bg:rgba(255,255,255,0.07);--radius-sm:6px;--radius:10px;--radius-lg:14px;--shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);--shadow-md:0 4px 12px rgba(0,0,0,0.07);--shadow-lg:0 8px 24px rgba(0,0,0,0.12);--transition:180ms ease}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text-primary);font-size:14px;line-height:1.55;display:flex;min-height:100vh}
+a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d0d5dd;border-radius:3px}
+.sidebar{width:244px;min-height:100vh;background:var(--sidebar-bg);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.sidebar-brand{padding:20px 20px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.sidebar-brand .logo{width:33px;height:33px;background:linear-gradient(135deg,var(--accent),var(--teal));border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;flex-shrink:0}
+.sidebar-brand .brand-name{color:#fff;font-weight:600;font-size:15px}
+.sidebar-nav{flex:1;padding:14px 10px;overflow-y:auto}.nav-group{margin-bottom:20px}.nav-group-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:rgba(255,255,255,0.25);padding:0 12px;margin-bottom:6px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;color:var(--sidebar-text);border-radius:8px;cursor:pointer;transition:all var(--transition);font-size:13.5px;position:relative}
+.nav-item:hover{background:var(--sidebar-active-bg);color:#c8cdd8}
+.nav-item.active{background:var(--sidebar-active-bg);color:var(--sidebar-active);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:var(--accent);border-radius:0 3px 3px 0}
+.nav-item .ni{width:18px;text-align:center;font-size:14px;flex-shrink:0;opacity:.65}.nav-item.active .ni{opacity:1}
+.sidebar-footer{padding:14px 16px;border-top:1px solid rgba(255,255,255,0.06)}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:4px 0}
+.sidebar-user .avatar{width:32px;height:32px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.sidebar-user .uname{color:#fff;font-size:12px;font-weight:500}.sidebar-user .urole{color:rgba(255,255,255,0.35);font-size:11px}
+.main{margin-left:244px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}.topbar-left h1{font-size:17px;font-weight:600}
+.t-sub{font-size:13px;color:var(--text-muted)}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:13.5px;transition:all var(--transition);font-family:inherit;text-decoration:none}
+.topbar-btn:hover{border-color:var(--accent);color:var(--accent)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}.topbar-btn.primary:hover{background:var(--accent-hover)}
+
+.content{flex:1;padding:22px 28px;overflow-y:auto}
+
+/* Form */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.form-full{grid-column:1/-1}
+.section-num{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;background:var(--accent);color:#fff;font-size:11px;font-weight:700;margin-right:8px}
+.form-section-title{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center}
+.form-section-subtitle{font-size:12px;color:var(--text-muted);margin-bottom:16px}
+.form-group{margin-bottom:14px}.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.form-input{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;transition:border-color var(--transition);background:var(--surface);color:var(--text-primary)}
+.form-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-select{width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);color:var(--text-primary);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238e96a8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+.form-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-textarea{min-height:80px;resize:vertical;width:100%;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;background:var(--surface);color:var(--text-primary)}
+.form-textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-light)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.form-row-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}
+.hint{font-size:12px;color:var(--text-muted);margin-top:4px}
+.link-btn{font-size:12.5px;color:var(--accent);font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:4px;background:none;border:none;padding:0;font-family:inherit}
+
+/* Toggle */
+.toggle-group{display:flex;gap:6px}.toggle-btn{padding:8px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--transition);color:var(--text-secondary);font-family:inherit}
+.toggle-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}.toggle-btn:hover:not(.active){border-color:var(--accent);color:var(--accent)}
+
+/* Day picker */
+.day-picker{display:flex;gap:6px;margin-top:8px}
+.day-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--border);background:var(--surface);font-size:12px;font-weight:600;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.day-btn:hover{border-color:var(--accent);color:var(--accent)}.day-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Crew cards */
+.crew-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.crew-card{padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);display:flex;align-items:center;gap:10px}
+.crew-card:hover{border-color:var(--accent)}.crew-card.selected{border-color:var(--accent);background:var(--accent-light)}
+.crew-card .cc-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:#fff;flex-shrink:0}
+.crew-card .cc-name{font-weight:600;font-size:13px}.crew-card .cc-role{font-size:11px;color:var(--text-muted)}
+.crew-card .cc-check{margin-left:auto;width:18px;height:18px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;color:transparent;transition:all var(--transition);flex-shrink:0}
+.crew-card.selected .cc-check{border-color:var(--accent);background:var(--accent);color:#fff}
+
+/* Week grid calendar */
+.wk-table{width:100%;border-collapse:collapse;margin-top:12px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.wk-table thead th{padding:8px 4px;font-size:10px;font-weight:600;text-align:center;color:var(--text-muted);background:var(--bg);border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:.3px}
+.wk-table thead th:first-child{text-align:left;padding-left:14px;width:140px;border-right:1px solid var(--border)}
+.wk-table thead th .wk-day-name{display:block;font-size:10px;color:var(--text-muted);letter-spacing:.5px}
+.wk-table thead th .wk-day-num{display:block;font-size:14px;font-weight:700;color:var(--text-primary);margin-top:1px}
+.wk-table thead th.today .wk-day-num{color:var(--accent)}
+.wk-table thead th.today{background:var(--accent-light)}
+.wk-table tbody td{padding:0;border-bottom:1px solid var(--border-light);border-right:1px solid var(--border-light);height:52px;vertical-align:top;position:relative}
+.wk-table tbody td:first-child{border-right:1px solid var(--border);padding:10px 14px;vertical-align:middle;background:var(--surface)}
+.wk-table tbody td:last-child{border-right:none}
+.wk-table tbody tr:last-child td{border-bottom:none}
+.wk-cell{padding:3px}
+.wk-block{display:block;padding:3px 5px;border-radius:3px;font-size:9px;font-weight:600;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wk-block-job{background:var(--teal-light);color:var(--teal)}.wk-block-appt{background:var(--purple-light);color:var(--purple)}.wk-block-new{background:var(--accent-light);color:var(--accent);border:1px dashed var(--accent)}
+.cal-legend{display:flex;gap:16px;margin-top:10px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted)}
+.legend-dot{width:12px;height:12px;border-radius:3px}
+
+/* Line items */
+.items-table{width:100%;border-collapse:collapse;margin-top:10px}
+.items-table th{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg)}
+.items-table td{padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;vertical-align:top}
+.items-table .it-input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:4px;font-size:13px}
+.items-table .it-input:focus{border-color:var(--accent);outline:none}
+.items-table .it-del{width:28px;height:28px;border:none;background:transparent;color:var(--text-muted);font-size:16px;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.items-table .it-del:hover{background:var(--red-light);color:var(--red)}
+
+/* Checklist builder */
+.cl-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border-light)}
+.cl-item:last-child{border-bottom:none}
+.cl-item input[type="text"]{flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px}.cl-item input:focus{border-color:var(--accent);outline:none}
+.cl-item .cl-day{padding:4px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;background:var(--surface);color:var(--text-secondary);min-width:70px;text-align:center}
+.cl-del{width:26px;height:26px;border:none;background:transparent;color:var(--text-muted);font-size:14px;cursor:pointer;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all var(--transition)}
+.cl-del:hover{background:var(--red-light);color:var(--red)}
+
+/* File drop */
+.file-drop{border:2px dashed var(--border);border-radius:var(--radius);padding:24px;text-align:center;color:var(--text-muted);cursor:pointer;transition:all var(--transition)}
+.file-drop:hover{border-color:var(--accent);background:var(--accent-light);color:var(--accent)}
+.file-item{display:flex;align-items:center;gap:10px;padding:8px 12px;background:var(--bg);border:1px solid var(--border-light);border-radius:var(--radius-sm);margin-top:6px;font-size:12.5px}
+.file-item .fi-del{margin-left:auto;cursor:pointer;color:var(--text-muted);border:none;background:none;font-size:14px}
+.file-item .fi-del:hover{color:var(--red)}
+
+/* ═══ EDIT-JOB SPECIFIC: Collapsible sections ═══ */
+.edit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px;overflow:hidden;transition:box-shadow var(--transition)}
+.edit-card:hover{box-shadow:var(--shadow)}
+.edit-card-header{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;cursor:default}
+.edit-card-header .card-title{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
+.edit-card-header .card-title .section-num{margin-right:4px}
+.edit-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12.5px;font-weight:500;cursor:pointer;transition:all var(--transition);font-family:inherit}
+.edit-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.edit-card-body{padding:0 24px 22px;display:none}
+.edit-card.editing .edit-card-body{display:block;animation:fadeUp .25s ease}
+.edit-card.editing .edit-btn{display:none}
+
+/* Read-only display values */
+.read-row{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;padding:0 24px 18px}
+.read-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 24px;padding:0 24px 18px}
+.read-row-full{padding:0 24px 18px}
+.read-field{margin-bottom:6px}
+.read-field .rl{font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:2px}
+.read-field .rv{font-size:13.5px;font-weight:500;color:var(--text-primary)}
+.read-field .rv.muted{color:var(--text-secondary);font-weight:400}
+.read-badges{display:flex;gap:6px;flex-wrap:wrap;padding:0 24px 18px}
+.read-badge{padding:5px 12px;background:var(--accent-light);color:var(--accent);border-radius:var(--radius-sm);font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+
+/* Status badge in topbar */
+.status-badge{padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:600;display:inline-flex;align-items:center;gap:5px}
+.status-badge.scheduled{background:var(--accent-light);color:var(--accent)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--sidebar-bg);color:#fff;padding:12px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;box-shadow:var(--shadow-lg);z-index:700;display:flex;align-items:center;gap:8px;transform:translateY(20px);opacity:0;transition:all 300ms ease;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
+  <nav class="sidebar-nav">
+    <div class="nav-group"><div class="nav-group-label">Main</div>
+      <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Sales</div>
+      <a href="lead-manager.html" class="nav-item "><span class="ni">◈</span> Lead Manager <span class="badge">8</span></a>
+      <a href="appointments.html" class="nav-item "><span class="ni">📅</span> Appointments</a>
+      <a href="schedule.html" class="nav-item "><span class="ni">🕓</span> Schedule</a>
+      <a href="estimates.html" class="nav-item "><span class="ni">📄</span> Estimation</a>
+      <a href="customers.html" class="nav-item "><span class="ni">👥</span> Customers</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Operations</div>
+      <a href="floor-plan.html" class="nav-item "><span class="ni">□</span> Floor Plan</a>
+      <a href="jobs-board.html" class="nav-item active"><span class="ni">🛠</span> Jobs Board <span class="badge">9</span></a>
+      <a href="invoicing.html" class="nav-item "><span class="ni">💰</span> Invoicing</a>
+      <a href="crew-costs.html" class="nav-item "><span class="ni">💵</span> Crew Costs</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Showcase</div>
+      <a href="profile-presentation.html" class="nav-item "><span class="ni">🎤</span> Profile & Presentation</a>
+    </div>
+    <div class="nav-group"><div class="nav-group-label">Setup</div>
+      <a href="management-master.html" class="nav-item "><span class="ni">⚙</span> Management Master</a>
+      <a href="client-settings.html" class="nav-item "><span class="ni">🔧</span> Client Settings</a>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
+    <div class="sidebar-logout"><span>➜</span> Log Out</div>
+  </div>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <a href="jobs-board.html" style="font-size:14px;color:var(--text-muted);margin-right:4px">←</a>
+      <h1>Edit Job Details</h1>
+      <span class="t-sub">JOB-20260218-007</span>
+      <span class="status-badge scheduled">● Scheduled</span>
+    </div>
+    <div class="topbar-right">
+      <a href="jobs-board.html" class="topbar-btn">Back to Jobs Board</a>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══ Section 1: Source & Reference ═══ -->
+    <div class="edit-card" id="card-source">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">1</span> Source & Reference</div>
+        <button class="edit-btn" onclick="toggleEdit('card-source')">✎ Edit</button>
+      </div>
+      <!-- Read-only display -->
+      <div class="read-row">
+        <div class="read-field"><div class="rl">Job ID</div><div class="rv">JOB-20260218-007</div></div>
+        <div class="read-field"><div class="rl">Job Type</div><div class="rv">One-time</div></div>
+        <div class="read-field"><div class="rl">Linked Estimate</div><div class="rv">EST-20260210-0004</div></div>
+        <div class="read-field"><div class="rl">Linked Lead</div><div class="rv">LD-0002 · Sarah Johnson</div></div>
+      </div>
+      <!-- Edit form (hidden by default) -->
+      <div class="edit-card-body">
+        <div class="form-group"><label class="form-label">Job ID</label><input type="text" class="form-input" value="JOB-20260218-007" readonly style="background:var(--bg)"><div class="hint">Auto-generated — cannot be changed</div></div>
+        <div class="form-group"><label class="form-label">Linked Estimate</label><input type="text" class="form-input" value="EST-20260210-0004"><div class="hint">Link to auto-fill customer & line items</div></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Linked Lead</label><select class="form-select"><option>-- None --</option><option>LD-0001 · John Smith</option><option selected>LD-0002 · Sarah Johnson</option></select></div>
+          <div class="form-group"><label class="form-label">Job Type</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">One-time</button><button class="toggle-btn" onclick="togBtn(this)">Recurring</button></div></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section 2: Customer & Site ═══ -->
+    <div class="edit-card" id="card-customer">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">2</span> Customer & Site</div>
+        <button class="edit-btn" onclick="toggleEdit('card-customer')">✎ Edit</button>
+      </div>
+      <div class="read-row">
+        <div class="read-field"><div class="rl">Customer Name</div><div class="rv">Sarah Johnson</div></div>
+        <div class="read-field"><div class="rl">Phone</div><div class="rv">(555) 234-8901</div></div>
+        <div class="read-field"><div class="rl">Email</div><div class="rv">sarah.johnson@example.com</div></div>
+        <div class="read-field"><div class="rl">Service Site</div><div class="rv">Corporate HQ — 200 Tech Park Dr, Springfield, IL</div></div>
+      </div>
+      <div class="edit-card-body">
+        <div class="form-group"><label class="form-label">Customer Name</label><select class="form-select"><option>James Wilson</option><option>John Smith</option><option selected>Sarah Johnson</option></select></div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Phone</label><input type="text" class="form-input" value="(555) 234-8901"></div>
+          <div class="form-group"><label class="form-label">Email</label><input type="text" class="form-input" value="sarah.johnson@example.com"></div>
+        </div>
+        <div class="form-group"><label class="form-label">Service Site</label><select class="form-select"><option selected>Corporate HQ — 200 Tech Park Dr, Springfield, IL</option><option>Downtown Office — 456 Commerce Blvd, Springfield, IL</option><option>Warehouse B — 789 Industrial Park</option></select></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section 3: Schedule & Crew Assignment ═══ -->
+    <div class="edit-card" id="card-schedule">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">3</span> Schedule & Crew Assignment</div>
+        <button class="edit-btn" onclick="toggleEdit('card-schedule')">✎ Edit</button>
+      </div>
+      <div class="read-row">
+        <div class="read-field"><div class="rl">Start Date</div><div class="rv">Feb 18, 2026</div></div>
+        <div class="read-field"><div class="rl">End Date</div><div class="rv">Feb 20, 2026</div></div>
+        <div class="read-field"><div class="rl">Start Time</div><div class="rv">08:00 AM</div></div>
+        <div class="read-field"><div class="rl">End Time</div><div class="rv">05:00 PM</div></div>
+        <div class="read-field"><div class="rl">Crew Check-in/Check-out</div><div class="rv">Required</div></div>
+      </div>
+      <div style="padding:0 24px 4px;font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Assigned Crew</div>
+      <div class="read-badges">
+        <span class="read-badge"><span style="width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;font-size:9px;display:inline-flex;align-items:center;justify-content:center">JR</span> James Rodriguez</span>
+        <span class="read-badge"><span style="width:20px;height:20px;border-radius:50%;background:var(--teal);color:#fff;font-size:9px;display:inline-flex;align-items:center;justify-content:center">CM</span> Carlos Mendez</span>
+      </div>
+      <div class="edit-card-body">
+        <div class="form-row-4">
+          <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" value="2026-02-18"></div>
+          <div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-input" value="2026-02-20"></div>
+          <div class="form-group"><label class="form-label">Start Time</label><input type="time" class="form-input" value="08:00"></div>
+          <div class="form-group"><label class="form-label">End Time</label><input type="time" class="form-input" value="17:00"><div style="margin-top:4px"><label style="font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" style="margin-right:4px"> Anytime</label></div></div>
+        </div>
+        <div class="form-row" style="margin-top:4px">
+          <div class="form-group"><label class="form-label">Require Crew Check-in / Check-out?</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">Yes</button><button class="toggle-btn" onclick="togBtn(this)">No</button></div><div class="hint">Crew must log location-based check-in on the mobile app</div></div>
+          <div></div>
+        </div>
+
+        <div style="font-size:13px;font-weight:600;margin:16px 0 10px">Select Crew Members</div>
+        <div class="crew-grid">
+          <div class="crew-card selected" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--accent)">JR</div><div><div class="cc-name">James Rodriguez</div><div class="cc-role">Master Plumber</div></div><div class="cc-check">✓</div></div>
+          <div class="crew-card selected" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--teal)">CM</div><div><div class="cc-name">Carlos Mendez</div><div class="cc-role">Journeyman</div></div><div class="cc-check">✓</div></div>
+          <div class="crew-card" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--orange)">KP</div><div><div class="cc-name">Kevin Park</div><div class="cc-role">Apprentice</div></div><div class="cc-check">✓</div></div>
+          <div class="crew-card" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--purple)">DC</div><div><div class="cc-name">David Chen</div><div class="cc-role">Master Plumber</div></div><div class="cc-check">✓</div></div>
+          <div class="crew-card" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--red)">MS</div><div><div class="cc-name">Maria Santos</div><div class="cc-role">Journeyman</div></div><div class="cc-check">✓</div></div>
+        </div>
+
+        <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">Crew Availability — Week of Feb 16, 2026</div>
+        <table class="wk-table">
+          <thead><tr><th>Crew</th><th><span class="wk-day-name">MON</span><span class="wk-day-num">16</span></th><th><span class="wk-day-name">TUE</span><span class="wk-day-num">17</span></th><th class="today"><span class="wk-day-name">WED</span><span class="wk-day-num">18</span></th><th><span class="wk-day-name">THU</span><span class="wk-day-num">19</span></th><th><span class="wk-day-name">FRI</span><span class="wk-day-num">20</span></th><th><span class="wk-day-name">SAT</span><span class="wk-day-num">21</span></th><th><span class="wk-day-name">SUN</span><span class="wk-day-num">22</span></th></tr></thead>
+          <tbody>
+            <tr><td><div style="font-weight:600;font-size:12px">James Rodriguez</div><div style="font-size:10px;color:var(--text-muted)">Master Plumber</div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-job">Job #05</span></div></td>
+              <td><div class="wk-cell"></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"></div></td><td><div class="wk-cell"></div></td>
+            </tr>
+            <tr><td><div style="font-weight:600;font-size:12px">Carlos Mendez</div><div style="font-size:10px;color:var(--text-muted)">Journeyman</div></td>
+              <td><div class="wk-cell"></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-appt">Appt</span></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"><span class="wk-block wk-block-new">THIS JOB</span></div></td>
+              <td><div class="wk-cell"></div></td><td><div class="wk-cell"></div></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="cal-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--accent-light);border:1px dashed var(--accent)"></div> This Job</div><div class="legend-item"><div class="legend-dot" style="background:var(--teal-light)"></div> Existing Job</div><div class="legend-item"><div class="legend-dot" style="background:var(--purple-light)"></div> Appointment</div><div class="legend-item"><div class="legend-dot" style="background:var(--border-light)"></div> Available</div></div>
+
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section 4: Checklist ═══ -->
+    <div class="edit-card" id="card-checklist">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">4</span> Checklist <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:4px">(5 items)</span></div>
+        <button class="edit-btn" onclick="toggleEdit('card-checklist')">✎ Edit</button>
+      </div>
+      <div class="read-row-full">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-primary)"><span style="color:var(--text-muted);font-size:12px;font-weight:600;min-width:48px">Day 1</span> Inspect existing HVAC system and document issues</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-primary)"><span style="color:var(--text-muted);font-size:12px;font-weight:600;min-width:48px">Day 1</span> Replace air filters in all units</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-primary)"><span style="color:var(--text-muted);font-size:12px;font-weight:600;min-width:48px">Day 2</span> Clean condenser coils and drain lines</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-primary)"><span style="color:var(--text-muted);font-size:12px;font-weight:600;min-width:48px">Day 3</span> Test thermostat calibration and refrigerant levels</div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-primary)"><span style="color:var(--text-muted);font-size:12px;font-weight:600;min-width:48px">Day 3</span> Final walkthrough with facility manager</div>
+        </div>
+      </div>
+      <div class="edit-card-body">
+        <div id="checklistItems">
+          <div class="cl-item"><input type="text" value="Inspect existing HVAC system and document issues" placeholder="Task description"><select class="cl-day"><option selected>Day 1</option><option>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
+          <div class="cl-item"><input type="text" value="Replace air filters in all units" placeholder="Task description"><select class="cl-day"><option selected>Day 1</option><option>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
+          <div class="cl-item"><input type="text" value="Clean condenser coils and drain lines" placeholder="Task description"><select class="cl-day"><option>Day 1</option><option selected>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
+          <div class="cl-item"><input type="text" value="Test thermostat calibration and refrigerant levels" placeholder="Task description"><select class="cl-day"><option>Day 1</option><option>Day 2</option><option selected>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
+          <div class="cl-item"><input type="text" value="Final walkthrough with facility manager" placeholder="Task description"><select class="cl-day"><option>Day 1</option><option>Day 2</option><option selected>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
+        </div>
+        <button class="link-btn" style="margin-top:10px" onclick="addChecklist()">+ Add Checklist Item</button>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section 5: Documents & Notes ═══ -->
+    <div class="edit-card" id="card-documents">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">5</span> Documents & Notes</div>
+        <button class="edit-btn" onclick="toggleEdit('card-documents')">✎ Edit</button>
+      </div>
+      <div class="read-row-full">
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Attached Files</div>
+        <div class="file-item" style="margin-top:0"><span>📄</span> hvac-maintenance-checklist.pdf <span style="color:var(--text-muted);font-size:11px;margin-left:4px">380 KB</span></div>
+        <div class="file-item"><span>🖼</span> rooftop-unit-photo.jpg <span style="color:var(--text-muted);font-size:11px;margin-left:4px">2.1 MB</span></div>
+        <div class="file-item"><span>📄</span> building-access-permit.pdf <span style="color:var(--text-muted);font-size:11px;margin-left:4px">156 KB</span></div>
+        <div style="margin-top:14px">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px">Job Notes</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6">Access via service elevator on east side. Building security requires sign-in at front desk. Rooftop units accessible through stairwell B on the 4th floor. Contact facility manager Tom Bradley at (555) 111-2233 for access.</div>
+        </div>
+      </div>
+      <div class="edit-card-body">
+        <div class="file-drop"><div style="font-size:20px;margin-bottom:4px">☁</div><div style="font-size:12.5px;font-weight:500">Drop files or click to upload</div><div style="font-size:11px;margin-top:2px">PNG, JPG, PDF up to 10MB each</div></div>
+        <div class="file-item"><span>📄</span> hvac-maintenance-checklist.pdf <span style="color:var(--text-muted);font-size:11px;margin-left:4px">380 KB</span><button class="fi-del">✕</button></div>
+        <div class="file-item"><span>🖼</span> rooftop-unit-photo.jpg <span style="color:var(--text-muted);font-size:11px;margin-left:4px">2.1 MB</span><button class="fi-del">✕</button></div>
+        <div class="file-item"><span>📄</span> building-access-permit.pdf <span style="color:var(--text-muted);font-size:11px;margin-left:4px">156 KB</span><button class="fi-del">✕</button></div>
+        <div class="form-group" style="margin-top:14px"><label class="form-label">Job Notes</label><textarea class="form-textarea" style="min-height:100px">Access via service elevator on east side. Building security requires sign-in at front desk. Rooftop units accessible through stairwell B on the 4th floor. Contact facility manager Tom Bradley at (555) 111-2233 for access.</textarea></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Section 6: Line Items & Scope of Work ═══ -->
+    <div class="edit-card" id="card-lineitems">
+      <div class="edit-card-header">
+        <div class="card-title"><span class="section-num">6</span> Line Items & Scope of Work</div>
+        <button class="edit-btn" onclick="toggleEdit('card-lineitems')">✎ Edit</button>
+      </div>
+      <div class="read-row-full">
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr>
+            <th style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:left;border-bottom:1px solid var(--border);background:var(--bg);width:50%">Description</th>
+            <th style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:center;border-bottom:1px solid var(--border);background:var(--bg);width:10%">Qty</th>
+            <th style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);background:var(--bg);width:20%">Unit Price</th>
+            <th style="font-size:10.5px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.3px;padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);background:var(--bg);width:20%">Total</th>
+          </tr></thead>
+          <tbody>
+            <tr><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:500">HVAC System Inspection & Diagnostic</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">1</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$1,200.00</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600;text-align:right">$1,200.00</td></tr>
+            <tr><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:500">Air Filter Replacement (all units)</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">6</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$85.00</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600;text-align:right">$510.00</td></tr>
+            <tr><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:500">Condenser Coil Cleaning</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">3</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$350.00</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600;text-align:right">$1,050.00</td></tr>
+            <tr><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:500">Refrigerant Top-off & Calibration</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:center">1</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;text-align:right">$480.00</td><td style="padding:10px;border-bottom:1px solid var(--border-light);font-size:13px;font-weight:600;text-align:right">$480.00</td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;justify-content:flex-end;margin-top:10px"><span style="font-size:13px;color:var(--text-secondary)">Subtotal: </span><span style="font-size:16px;font-weight:700;color:var(--accent);margin-left:6px">$3,240.00</span></div>
+      </div>
+      <div class="edit-card-body">
+        <table class="items-table">
+          <thead><tr><th style="width:40%">Description</th><th style="width:10%">Qty</th><th style="width:15%">Unit Price</th><th style="width:15%">Total</th><th style="width:5%"></th></tr></thead>
+          <tbody id="lineItems">
+            <tr><td><input type="text" class="it-input" value="HVAC System Inspection & Diagnostic"></td><td><input type="number" class="it-input" value="1" style="text-align:center"></td><td><input type="text" class="it-input" value="$1,200.00"></td><td style="font-weight:600">$1,200.00</td><td><button class="it-del" onclick="this.closest('tr').remove()">🗑</button></td></tr>
+            <tr><td><input type="text" class="it-input" value="Air Filter Replacement (all units)"></td><td><input type="number" class="it-input" value="6" style="text-align:center"></td><td><input type="text" class="it-input" value="$85.00"></td><td style="font-weight:600">$510.00</td><td><button class="it-del" onclick="this.closest('tr').remove()">🗑</button></td></tr>
+            <tr><td><input type="text" class="it-input" value="Condenser Coil Cleaning"></td><td><input type="number" class="it-input" value="3" style="text-align:center"></td><td><input type="text" class="it-input" value="$350.00"></td><td style="font-weight:600">$1,050.00</td><td><button class="it-del" onclick="this.closest('tr').remove()">🗑</button></td></tr>
+            <tr><td><input type="text" class="it-input" value="Refrigerant Top-off & Calibration"></td><td><input type="number" class="it-input" value="1" style="text-align:center"></td><td><input type="text" class="it-input" value="$480.00"></td><td style="font-weight:600">$480.00</td><td><button class="it-del" onclick="this.closest('tr').remove()">🗑</button></td></tr>
+          </tbody>
+        </table>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px"><button class="link-btn" onclick="addLine()">+ Add Line Item</button><div><span style="font-size:13px;color:var(--text-secondary)">Subtotal: </span><span style="font-size:16px;font-weight:700;color:var(--accent)">$3,240.00</span></div></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+          <button class="topbar-btn" onclick="cancelEdit(this)">Cancel</button>
+          <button class="topbar-btn primary" onclick="saveSection(this)">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+function toggleEdit(cardId) {
+  const card = document.getElementById(cardId);
+  card.classList.add('editing');
+}
+
+function cancelEdit(btn) {
+  const card = btn.closest('.edit-card');
+  card.classList.remove('editing');
+}
+
+function saveSection(btn) {
+  const card = btn.closest('.edit-card');
+  card.classList.remove('editing');
+  showToast('Section updated successfully');
+}
+
+function togBtn(btn) {
+  btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function addChecklist() {
+  const c = document.getElementById('checklistItems');
+  const d = document.createElement('div');
+  d.className = 'cl-item';
+  d.innerHTML = '<input type="text" placeholder="New task description"><select class="cl-day"><option>Day 1</option><option>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest(\'.cl-item\').remove()">✕</button>';
+  c.appendChild(d);
+}
+
+function addLine() {
+  const t = document.getElementById('lineItems');
+  const r = document.createElement('tr');
+  r.innerHTML = '<td><input type="text" class="it-input" placeholder="Description"></td><td><input type="number" class="it-input" value="1" style="text-align:center"></td><td><input type="text" class="it-input" placeholder="$0.00"></td><td style="font-weight:600">$0.00</td><td><button class="it-del" onclick="this.closest(\'tr\').remove()">🗑</button></td>';
+  t.appendChild(r);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = '✓ ' + msg;
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

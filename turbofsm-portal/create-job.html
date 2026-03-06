@@ -166,7 +166,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Main</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -194,7 +194,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -241,7 +242,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
         <!-- Schedule — One-time -->
         <div class="form-section form-full" id="onetimeSchedule">
           <div class="form-section-title"><span class="section-num">3</span> Schedule & Crew Assignment</div>
-          <div class="form-section-subtitle">Set dates, times, assign crew, and check availability</div>
+          <div class="form-section-subtitle">Set dates, times, assign team, and check availability</div>
           <div class="form-row-4">
             <div class="form-group"><label class="form-label">Start Date</label><input type="date" class="form-input" value="2026-03-10"></div>
             <div class="form-group"><label class="form-label">End Date</label><input type="date" class="form-input" value="2026-03-12"></div>
@@ -249,11 +250,11 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
             <div class="form-group"><label class="form-label">End Time</label><input type="time" class="form-input" value="17:00"><div style="margin-top:4px"><label style="font-size:12px;color:var(--text-muted);cursor:pointer"><input type="checkbox" style="margin-right:4px"> Anytime</label></div></div>
           </div>
           <div class="form-row" style="margin-top:4px">
-            <div class="form-group"><label class="form-label">Require Crew Check-in / Check-out?</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">Yes</button><button class="toggle-btn" onclick="togBtn(this)">No</button></div><div class="hint">Crew must log location-based check-in on the mobile app</div></div>
+            <div class="form-group"><label class="form-label">Require Team Check-in / Check-out?</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">Yes</button><button class="toggle-btn" onclick="togBtn(this)">No</button></div><div class="hint">Team must log location-based check-in on the mobile app</div></div>
             <div></div>
           </div>
 
-          <div style="font-size:13px;font-weight:600;margin:16px 0 10px">Select Crew Members</div>
+          <div style="font-size:13px;font-weight:600;margin:16px 0 10px">Select Team Members</div>
           <div class="crew-grid">
             <div class="crew-card selected" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--accent)">JR</div><div><div class="cc-name">James Rodriguez</div><div class="cc-role">Master Plumber</div></div><div class="cc-check">✓</div></div>
             <div class="crew-card selected" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--teal)">CM</div><div><div class="cc-name">Carlos Mendez</div><div class="cc-role">Journeyman</div></div><div class="cc-check">✓</div></div>
@@ -262,9 +263,9 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
             <div class="crew-card" onclick="this.classList.toggle('selected')"><div class="cc-av" style="background:var(--red)">MS</div><div><div class="cc-name">Maria Santos</div><div class="cc-role">Journeyman</div></div><div class="cc-check">✓</div></div>
           </div>
 
-          <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">📅 Crew Availability — Week of Mar 9, 2026</div>
+          <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:4px">📅 Availability — Week of Mar 9, 2026</div>
           <table class="wk-table">
-            <thead><tr><th>Crew</th><th><span class="wk-day-name">MON</span><span class="wk-day-num">9</span></th><th class="today"><span class="wk-day-name">TUE</span><span class="wk-day-num">10</span></th><th><span class="wk-day-name">WED</span><span class="wk-day-num">11</span></th><th><span class="wk-day-name">THU</span><span class="wk-day-num">12</span></th><th><span class="wk-day-name">FRI</span><span class="wk-day-num">13</span></th><th><span class="wk-day-name">SAT</span><span class="wk-day-num">14</span></th><th><span class="wk-day-name">SUN</span><span class="wk-day-num">15</span></th></tr></thead>
+            <thead><tr><th>Team Member</th><th><span class="wk-day-name">MON</span><span class="wk-day-num">9</span></th><th class="today"><span class="wk-day-name">TUE</span><span class="wk-day-num">10</span></th><th><span class="wk-day-name">WED</span><span class="wk-day-num">11</span></th><th><span class="wk-day-name">THU</span><span class="wk-day-num">12</span></th><th><span class="wk-day-name">FRI</span><span class="wk-day-num">13</span></th><th><span class="wk-day-name">SAT</span><span class="wk-day-num">14</span></th><th><span class="wk-day-name">SUN</span><span class="wk-day-num">15</span></th></tr></thead>
             <tbody>
               <tr><td><div style="font-weight:600;font-size:12px">James Rodriguez</div><div style="font-size:10px;color:var(--text-muted)">Master Plumber</div></td>
                 <td><div class="wk-cell"><span class="wk-block wk-block-job">Job #12</span></div></td>
@@ -289,12 +290,12 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 
         <!-- Recurring Schedule (hidden by default) -->
         <div class="form-section form-full" id="recurringSchedule" style="display:none">
-          <div class="form-section-title"><span class="section-num">3</span> Recurring Schedule & Crew</div>
-          <div class="form-section-subtitle">Configure frequency, billing cycle, and crew</div>
+          <div class="form-section-title"><span class="section-num">3</span> Recurring Schedule & Team</div>
+          <div class="form-section-subtitle">Configure frequency, billing cycle, and team</div>
           <div class="form-row-3">
             <div class="form-group"><label class="form-label">Service Frequency</label><select class="form-select"><option>Daily (Business Days)</option><option selected>Weekly</option><option>Biweekly (2x/week)</option><option>Fortnightly</option><option>Monthly</option></select></div>
             <div class="form-group"><label class="form-label">Billing Cycle</label><div class="toggle-group"><button class="toggle-btn" onclick="togBtn(this)">Weekly</button><button class="toggle-btn" onclick="togBtn(this)">Fortnightly</button><button class="toggle-btn active" onclick="togBtn(this)">Monthly</button></div></div>
-            <div class="form-group"><label class="form-label">Same Crew All Visits?</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">Yes</button><button class="toggle-btn" onclick="togBtn(this)">No</button></div></div>
+            <div class="form-group"><label class="form-label">Same Team All Visits?</label><div class="toggle-group"><button class="toggle-btn active" onclick="togBtn(this)">Yes</button><button class="toggle-btn" onclick="togBtn(this)">No</button></div></div>
           </div>
           <div class="form-row-4">
             <div class="form-group"><label class="form-label">Rate / Visit</label><input type="text" class="form-input" value="$300.00"></div>
@@ -315,7 +316,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
         <!-- Checklist -->
         <div class="form-section">
           <div class="form-section-title"><span class="section-num">4</span> Checklist <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:6px">(Optional)</span></div>
-          <div class="form-section-subtitle">Assign tasks the crew marks on the app</div>
+          <div class="form-section-subtitle">Assign tasks the team marks on the app</div>
           <div id="checklistItems">
             <div class="cl-item"><input type="text" value="Shut off main water supply" placeholder="Task description"><select class="cl-day"><option>Day 1</option><option>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
             <div class="cl-item"><input type="text" value="Remove old piping from wall" placeholder="Task description"><select class="cl-day"><option selected>Day 1</option><option>Day 2</option><option>Day 3</option><option>All Days</option></select><button class="cl-del" onclick="this.closest('.cl-item').remove()">✕</button></div>
@@ -333,7 +334,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
           <div class="file-drop"><div style="font-size:20px;margin-bottom:4px">☁</div><div style="font-size:12.5px;font-weight:500">Drop files or click to upload</div><div style="font-size:11px;margin-top:2px">PNG, JPG, PDF up to 10MB each</div></div>
           <div class="file-item"><span>📄</span> site-access-permit.pdf <span style="color:var(--text-muted);font-size:11px;margin-left:4px">420 KB</span><button class="fi-del">✕</button></div>
           <div class="file-item"><span>🖼</span> floor-plan-kitchen.jpg <span style="color:var(--text-muted);font-size:11px;margin-left:4px">1.8 MB</span><button class="fi-del">✕</button></div>
-          <div class="form-group" style="margin-top:14px"><label class="form-label">Job Notes</label><textarea class="form-textarea" placeholder="Instructions for crew, special access details, safety notes..."></textarea></div>
+          <div class="form-group" style="margin-top:14px"><label class="form-label">Job Notes</label><textarea class="form-textarea" placeholder="Instructions for team, special access details, safety notes..."></textarea></div>
         </div>
 
         <!-- Line Items -->

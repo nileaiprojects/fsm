@@ -68,7 +68,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 .inv-doc-body{padding:36px 40px}
 
 /* ACTION BAR */
-.action-bar{background:var(--sidebar-bg);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+.action-bar{background:var(--sidebar-bg);border-radius:var(--radius-lg);padding:14px 20px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .action-bar .ab-label{color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-right:4px;white-space:nowrap}
 .action-bar .ab{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;white-space:nowrap;width:auto;height:auto;position:static;text-decoration:none}
 .action-bar .ab:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}
@@ -78,6 +78,21 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 .action-bar .ab.ab-green:hover{background:#128c3e}
 .action-bar .ab.ab-orange{background:var(--orange);border-color:var(--orange)}
 .action-bar .ab.ab-orange:hover{background:#cf6d15}
+.action-bar .ab.ab-red{background:var(--red);border-color:var(--red)}
+.action-bar .ab.ab-red:hover{background:#b82d3b}
+.action-bar .ab-divider{width:1px;height:28px;background:rgba(255,255,255,0.12);margin:0 4px;flex-shrink:0}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--surface);border-radius:var(--radius-lg);padding:28px;width:90%;max-width:480px;box-shadow:var(--shadow-lg);animation:fadeUp .2s ease}
+.modal-box h3{font-size:16px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.modal-box p{font-size:14px;color:var(--text-secondary);line-height:1.6;margin-bottom:20px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+.modal-btn{padding:10px 20px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-family:inherit}
+.modal-btn:hover{border-color:var(--accent);color:var(--accent)}
+.modal-btn.danger{background:var(--red);color:#fff;border-color:var(--red)}
+.modal-btn.danger:hover{background:#b82d3b}
 
 /* PAYMENT HISTORY */
 .pay-item{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border-light)}
@@ -113,7 +128,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Overview</div>
       <a href="dashboard.html" class="nav-item"><span class="ni">■</span> Dashboard</a>
@@ -141,7 +156,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -173,6 +189,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
       <span class="ab-label">Actions</span>
       <button class="ab ab-accent" onclick="showToast('Invoice resent to John Smith via email')">✈ Resend Invoice</button>
       <a href="record-payment.html" class="ab ab-green">💵 Record Payment</a>
+      <button class="ab ab-red" onclick="showReverseModal()">↩ Reverse Payment</button>
+      <div class="ab-divider"></div>
       <button class="ab" onclick="showToast('SMS sent with invoice link')">💬 Send via SMS</button>
       <button class="ab ab-orange" onclick="showToast('Payment reminder sent to John Smith')">⚠ Send Reminder</button>
       <button class="ab" onclick="showToast('Invoice link copied')">🔗 Copy Link</button>
@@ -396,9 +414,28 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </div>
 </div>
 
+<!-- Reverse Payment Confirmation Modal -->
+<div class="modal-overlay" id="reverseModal">
+  <div class="modal-box">
+    <h3>↩ Reverse Payment</h3>
+    <p>Are you sure you want to reverse this payment? The invoice status will be updated accordingly.</p>
+    <div class="modal-actions">
+      <button class="modal-btn" onclick="closeReverseModal()">Cancel</button>
+      <button class="modal-btn danger" onclick="confirmReversePayment()">Confirm Reversal</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"><span id="toastMsg"></span></div>
 <script>
 function showToast(m){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent='✓ '+m;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),3000)}
+
+function showReverseModal(){document.getElementById('reverseModal').classList.add('show')}
+function closeReverseModal(){document.getElementById('reverseModal').classList.remove('show')}
+function confirmReversePayment(){closeReverseModal();showToast('Payment of $4,250.00 has been reversed. Invoice status updated.')}
+
+// Close modal on overlay click
+document.getElementById('reverseModal').addEventListener('click',function(e){if(e.target===this)closeReverseModal()});
 </script>
 </body>
 </html>

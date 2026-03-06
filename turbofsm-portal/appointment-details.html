@@ -58,7 +58,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 .content{padding:22px 28px}
 
 /* ═══ ACTIONS BAR — Prominent, right under topbar ═══ */
-.actions-bar{background:var(--sidebar-bg);border-radius:var(--radius-lg);padding:16px 22px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:nowrap;position:relative;z-index:1}
+.actions-bar{background:var(--sidebar-bg);border-radius:var(--radius-lg);padding:16px 22px;margin-bottom:18px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;position:relative;z-index:1}
 .actions-bar .ab-label{color:rgba(255,255,255,0.5);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;margin-right:6px}
 .actions-bar .ab{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;transition:all var(--transition);border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.06);color:#fff;white-space:nowrap;width:auto;height:auto;position:static;text-decoration:none}
 .actions-bar .ab:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}
@@ -206,7 +206,7 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
 </head>
 <body>
 <aside class="sidebar">
-  <div class="sidebar-brand"><div class="logo">⚡</div><span class="brand-name">TurboFSM</span></div>
+  <div class="sidebar-brand"><img src="logo.png" alt="ABC Plumbing" style="width:33px;height:33px;border-radius:8px;flex-shrink:0"><span class="brand-name">ABC Plumbing Co.</span></div>
   <nav class="sidebar-nav">
     <div class="nav-group"><div class="nav-group-label">Overview</div>
       <a href="dashboard.html" class="nav-item "><span class="ni">■</span> Dashboard</a>
@@ -234,7 +234,8 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
   </nav>
   <div class="sidebar-footer">
     <div class="storage-bar"><div class="sl">2.1 GB / 5 GB</div><div class="st"><div class="sf"></div></div><a href="pricing.html">Buy More Space</a></div>
-    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">ABC Plumbing Co.</div></div></div>
+    <div class="sidebar-user"><div class="avatar">JS</div><div><div class="uname">John Smith</div><div class="urole">Admin</div></div></div>
+<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;margin-top:6px;font-size:10px;color:rgba(255,255,255,0.3)"><img src="logo.png" alt="TurboFSM" style="width:14px;height:14px;border-radius:3px;opacity:0.5">Powered by TurboFSM</div>
     <div class="sidebar-logout"><span>➜</span> Log Out</div>
   </div>
 </aside>
@@ -471,11 +472,11 @@ a{color:inherit;text-decoration:none}button,select,input,textarea{font-family:in
       </div>
 
       <div class="form-group">
-        <label class="form-label">Assign Crew</label>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Select crew members for the follow-up.</div>
+        <label class="form-label">Assign Team</label>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Select team members for the follow-up.</div>
         <div class="crew-search">
           <span style="color:var(--text-muted)">🔍</span>
-          <input placeholder="Search crew members...">
+          <input placeholder="Search team members...">
         </div>
         <div class="crew-tags">
           <span class="crew-tag">Sarah Lee · Office Manager <span class="remove">×</span></span>
@@ -562,72 +563,6 @@ function setBudgetMode(mode) {
     naText.classList.add('show');
   }
 }
-function addTimelineNote(){var t=document.getElementById("newNoteText").value.trim();if(!t)return;var now=new Date();var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})+" · "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});var timeline=document.querySelector(".timeline");var entry=document.createElement("div");entry.className="tl-entry";entry.innerHTML='<div class="tl-dot note"></div><div class="tl-meta">'+dateStr+' <span class="tl-author">by John Smith</span></div><div class="tl-content">'+t+'</div>';timeline.insertBefore(entry,timeline.firstChild);document.getElementById("newNoteText").value="";document.getElementById("noteInputArea").style.display="none"}
-</script>
-
-
-<script>
-
-// Toggle Post-Appointment Edit Mode
-function togglePostEdit(editing) {
-  const card = document.getElementById('postApptCard');
-  const editBtn = document.getElementById('editPostBtn');
-  const saveBtn = document.getElementById('saveEditBtn');
-  const cancelBtn = document.getElementById('cancelEditBtn');
-
-  if (editing) {
-    card.classList.add('editing');
-    editBtn.style.display = 'none';
-    saveBtn.style.display = 'inline-block';
-    cancelBtn.style.display = 'inline-block';
-  } else {
-    card.classList.remove('editing');
-    editBtn.style.display = 'inline-block';
-    saveBtn.style.display = 'none';
-    cancelBtn.style.display = 'none';
-  }
-}
-
-// Follow-up Yes/No toggle
-function setFollowup(yes) {
-  const btnYes = document.getElementById('fuYes');
-  const btnNo = document.getElementById('fuNo');
-  const dateField = document.getElementById('fuDateField');
-  const noActions = document.getElementById('noFuActions');
-
-  if (yes) {
-    btnYes.classList.add('active');
-    btnNo.classList.remove('active');
-    dateField.classList.add('show');
-    noActions.classList.remove('show');
-  } else {
-    btnYes.classList.remove('active');
-    btnNo.classList.add('active');
-    dateField.classList.remove('show');
-    noActions.classList.add('show');
-  }
-}
-
-// Budget Figure / NA toggle
-function setBudgetMode(mode) {
-  const btnFigure = document.getElementById('budgetFigure');
-  const btnNA = document.getElementById('budgetNA');
-  const inputWrap = document.getElementById('budgetInputWrap');
-  const naText = document.getElementById('budgetNAText');
-
-  if (mode === 'figure') {
-    btnFigure.classList.add('active');
-    btnNA.classList.remove('active');
-    inputWrap.classList.add('show');
-    naText.classList.remove('show');
-  } else {
-    btnFigure.classList.remove('active');
-    btnNA.classList.add('active');
-    inputWrap.classList.remove('show');
-    naText.classList.add('show');
-  }
-}
-
 function addTimelineNote(){var t=document.getElementById("newNoteText").value.trim();if(!t)return;var now=new Date();var dateStr=now.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})+" · "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});var timeline=document.querySelector(".timeline");var entry=document.createElement("div");entry.className="tl-entry";entry.innerHTML='<div class="tl-dot note"></div><div class="tl-meta">'+dateStr+' <span class="tl-author">by John Smith</span></div><div class="tl-content">'+t+'</div>';timeline.insertBefore(entry,timeline.firstChild);document.getElementById("newNoteText").value="";document.getElementById("noteInputArea").style.display="none"}
 </script>
 </body>
